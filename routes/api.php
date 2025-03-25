@@ -16,5 +16,6 @@ Route::post('/products', [ProductController::class, 'store']);
 Route::get('/orders', [OrderController::class, 'index']);
 Route::post('/orders', [OrderController::class, 'store']);
 
-Route::get('/users', [UserController::c<<<<<<< HEAD);
+Route::get('/users', [UserController::class, 'index']);
+
 Route::get('/orders/{id}', [OrderController::class, 'show']);
