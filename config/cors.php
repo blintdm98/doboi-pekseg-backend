@@ -6,7 +6,7 @@ return [
 
 'allowed_methods' => ['*'],
 
-'allowed_origins' => ['http://192.168.1.135:8081'],
+'allowed_origins' => ['*'],
 
 'allowed_origins_patterns' => [],
 
