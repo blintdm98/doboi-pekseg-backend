@@ -2,7 +2,6 @@
 
 @section('content')
     <h1 class="text-2xl font-bold mb-4">Rendelések</h1>
-
     <table class="min-w-full bg-white rounded-lg shadow">
         <thead>
             <tr class="bg-gray-100 text-left text-sm text-gray-700 uppercase tracking-wider">
@@ -27,7 +26,16 @@
                     </td>
                     <td class="px-4 py-2">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                     <td class="px-4 py-2">
-                        <a href="{{ url('/admin/orders/'.$order->id) }}" class="text-blue-600 hover:underline">Megnéz</a>
+                        <div x-data="{ open: false }">
+                            <button 
+                                @click="open = true" 
+                                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
+                            >
+                                Megnéz
+                            </button>
+
+                            @include('components.modal', ['order' => $order])
+                        </div>
                     </td>
                 </tr>
             @endforeach

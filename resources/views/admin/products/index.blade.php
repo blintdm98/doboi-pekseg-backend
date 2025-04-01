@@ -2,6 +2,7 @@
 
 @section('content')
     <h1 class="text-2xl font-bold mb-4">Termékek</h1>
+    <div class="text-red-500">alma</div>
 
     <table class="min-w-full bg-white rounded-lg shadow">
         <thead>
@@ -19,9 +20,9 @@
                     <td class="px-4 py-2">{{ $product->name }}</td>
                     <td class="px-4 py-2">{{ number_format($product->price, 2) }}</td>
                     <td class="px-6 py-4">
-                            <button class="text-blue-500 hover:underline">Szerkeszt</button>
-                            <button class="text-red-500 hover:underline ml-3">Törlés</button>
-                        </td>
+                        <button class="text-blue-500 hover:underline">Szerkeszt</button>
+                        <button class="text-red-800 hover:underline ml-3">Törlés</button>
+                    </td>
                 </tr>
             @endforeach
         </tbody>

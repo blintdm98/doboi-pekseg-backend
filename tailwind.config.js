@@ -1,10 +1,10 @@
-module.exports = {
-  purge: [],
-  darkMode: false, // or 'media' or 'class'
+export default {
+  content: [
+    './resources/views/**/*.blade.php',
+    './resources/js/**/*.js',
+    './resources/**/*.vue',
+  ],
   theme: {
-    extend: {},
-  },
-  variants: {
     extend: {},
   },
   plugins: [],
