@@ -26,9 +26,11 @@
                     </td>
                     <td class="px-4 py-2">{{ $order->created_at->format('Y-m-d H:i') }}</td>
                     <td class="px-4 py-2">
-                        <div x-data="{ open: false }">
+                        <div 
+                            x-data="orderModal({{ $order->id }})" 
+                        >
                             <button 
-                                @click="open = true" 
+                                @click="openModal" 
                                 class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition"
                             >
                                 Megnéz
