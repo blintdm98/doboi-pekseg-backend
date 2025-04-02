@@ -10,6 +10,7 @@ use App\Http\Controllers\UserController;
 Route::get('/stores', [StoreController::class, 'index']);
 Route::post('/stores', [StoreController::class, 'store']);
 Route::delete('/stores/{id}', [StoreController::class, 'destroy']);
+Route::put('/stores/{store}', [StoreController::class, 'update']);
 
 Route::get('/products', [ProductController::class, 'index']);
 Route::post('/products', [ProductController::class, 'store']);

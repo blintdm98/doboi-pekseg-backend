@@ -15,8 +15,26 @@ class StoreController extends Controller
 
     public function store(Request $request)
     {
-        $store = Store::create($request->all());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'logo' => 'nullable|url',
+        ]);
+    
+        $store = Store::create($validated);
         return response()->json($store, 201);
+    }
+
+    public function update(Request $request, Store $store)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'address' => 'required|string|max:255',
+            'logo' => 'nullable|url',
+        ]);
+    
+        $store->update($validated);
+        return response()->json($store);
     }
 
     public function destroy($id)
