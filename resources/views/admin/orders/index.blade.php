@@ -36,7 +36,7 @@
                                 Megnéz
                             </button>
 
-                            @include('components.modal', ['order' => $order])
+                            @include('components.order_modal', ['order' => $order])
                         </div>
                     </td>
                 </tr>

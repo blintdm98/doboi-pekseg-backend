@@ -13,6 +13,8 @@ Route::delete('/stores/{id}', [StoreController::class, 'destroy']);
 
 Route::get('/products', [ProductController::class, 'index']);
 Route::post('/products', [ProductController::class, 'store']);
+Route::delete('/products/{id}', [ProductController::class, 'destroy']);
+Route::put('/products/{product}', [ProductController::class, 'update']);
 
 Route::get('/orders', [OrderController::class, 'index']);
 Route::post('/orders', [OrderController::class, 'store']);

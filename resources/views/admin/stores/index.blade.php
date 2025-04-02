@@ -2,6 +2,12 @@
 
 @section('content')
     <h1 class="text-2xl font-bold mb-4">Üzletek</h1>
+    <button 
+            @click="openModal"
+            class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-700 transition mb-4"
+        >
+            + Új üzlet hozzáadása
+    </button>
 
     <table class="min-w-full bg-white rounded-lg shadow">
         <thead>

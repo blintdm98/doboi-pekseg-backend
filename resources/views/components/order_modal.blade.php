@@ -2,6 +2,7 @@
     x-show="open"
     @click.self="close"
     x-transition
+    x-cloak
     class="fixed inset-0 z-50 flex items-start justify-center bg-black/20"
 >
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-xl mt-[4rem]">
