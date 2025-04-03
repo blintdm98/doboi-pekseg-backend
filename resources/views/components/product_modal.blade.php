@@ -46,7 +46,7 @@ function productTable() {
 
         openModal(product = null) {
             this.modalOpen = true;
-            this.isEdit = !!product;
+            this.isEdit = product !== null && !!product.id;
             if (product) {
                 this.editedProductId = product.id;
                 this.newProduct = { ...product };
@@ -62,44 +62,51 @@ function productTable() {
         },
 
         async submitProduct() {
-            try {
-                let res;
-                if (this.isEdit) {
-                    res = await fetch(`/api/products/${this.editedProductId}`, {
-                        method: 'PUT',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify(this.newProduct)
-                    });
-                } else {
-                    res = await fetch('/api/products', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json',
-                        },
-                        body: JSON.stringify(this.newProduct)
-                    });
-                }
-
-                if (!res.ok) throw new Error('Hiba történt');
-
-                const data = await res.json();
-
-                if (this.isEdit) {
-                    this.products = this.products.map(p => p.id === data.id ? data : p);
-                } else {
-                    this.products.push(data);
-                }
-
-                this.closeModal();
-            } catch (e) {
-                alert('Hiba mentés közben');
-                console.error(e);
+        try {
+            // Ne maradjon benne véletlenül id új létrehozáskor
+            if (!this.isEdit && this.newProduct.id) {
+                delete this.newProduct.id;
             }
-        },
+
+            let res;
+
+            if (this.isEdit && this.editedProductId) {
+                res = await fetch(`/api/products/${this.editedProductId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(this.newProduct)
+                });
+            } else {
+                res = await fetch('/api/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    body: JSON.stringify(this.newProduct)
+                });
+            }
+
+            if (!res.ok) throw new Error('Hiba történt a mentés során');
+
+            const data = await res.json();
+
+            if (this.isEdit) {
+                this.products = this.products.map(p => p.id === data.id ? data : p);
+            } else {
+                this.products = [...this.products, data];
+            }
+
+            this.closeModal();
+
+        } catch (e) {
+            alert('Hiba a termék mentése közben');
+            console.error(e);
+        }
+    },
 
         async deleteProduct(id) {
             if (!confirm('Biztosan törlöd ezt a terméket?')) return;
