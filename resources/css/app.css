@@ -1,5 +1,8 @@
 @import "tailwindcss";
-@source "../views";
+@import '../../vendor/wireui/wireui/ts/global.css';
+@source '../../vendor/wireui/wireui';
+
+@custom-variant dark (&:where(.theme-dark, .theme-dark *));
 
 [x-cloak] { display: none !important; }
 

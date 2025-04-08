@@ -1,3 +1,6 @@
 import './bootstrap';
 
-import '../css/app.css';
+import { Livewire, Alpine } from '../../vendor/livewire/livewire/dist/livewire.esm';
+window.Alpine = Alpine;
+
+Livewire.start()
