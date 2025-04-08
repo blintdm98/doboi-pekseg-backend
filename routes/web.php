@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UserController;
 use App\Livewire\Admin\Products\ProductList;
+use App\Livewire\Admin\Store\StoreList;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\ProductAdminController;
 use App\Http\Controllers\Admin\StoreAdminController;
@@ -19,12 +20,5 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/products', ProductList::class)->name('products');
 
-    Route::get('/stores', [StoreAdminController::class, 'index'])->name('stores');
-
-
-//    Route::prefix('admin')->group(function () {
-//        Route::get('/orders', [OrderAdminController::class, 'index']);
-//        Route::get('/stores', [StoreAdminController::class, 'index']);
-//        Route::get('/products', [ProductAdminController::class, 'index']);
-//    });
+    Route::get('/stores', StoreList::class)->name('stores');
 });

@@ -9,4 +9,6 @@ return [
     'edit'      => 'Edit',
     'cancel'    => 'Cancel',
     'save'      => 'Save',
+    'address'   => 'Address',
+    'logo'      => 'Logo',
 ];
