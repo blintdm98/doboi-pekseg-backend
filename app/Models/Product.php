@@ -6,12 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'price', 'store_id'];
-
-    public function store()
-    {
-        return $this->belongsTo(Store::class);
-    }
+    protected $fillable = ['name', 'price'];
 
     public function orderDetails()
     {

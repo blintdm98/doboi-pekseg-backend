@@ -17,8 +17,9 @@ Route::middleware('auth')->group(function () {
         return view('pages.dashboard');
     })->name('dashboard');
 
-    Route::get('/admin/products', ProductList::class)->name('products');
-    Route::get('/admin/stores', [StoreAdminController::class, 'index'])->name('stores');
+    Route::get('/products', ProductList::class)->name('products');
+
+    Route::get('/stores', [StoreAdminController::class, 'index'])->name('stores');
 
 
 //    Route::prefix('admin')->group(function () {
