@@ -6,6 +6,7 @@ use App\Http\Controllers\StoreController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\OrderDetailController;
 
 Route::get('/stores', [StoreController::class, 'index']);
 Route::post('/stores', [StoreController::class, 'store']);
@@ -19,7 +20,8 @@ Route::put('/products/{product}', [ProductController::class, 'update']);
 
 Route::get('/orders', [OrderController::class, 'index']);
 Route::post('/orders', [OrderController::class, 'store']);
+Route::get('/orders/{id}', [OrderController::class, 'show']);
+
+Route::put('/order-details/{id}/dispatch', [OrderDetailController::class, 'updateDispatched']);
 
 Route::get('/users', [UserController::class, 'index']);
-
-Route::get('/orders/{id}', [OrderController::class, 'show']);

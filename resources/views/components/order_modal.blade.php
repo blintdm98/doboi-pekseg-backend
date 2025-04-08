@@ -21,12 +21,26 @@
 
             <ul class="mt-4 space-y-2" x-show="!loading">
                 <template x-for="item in details" :key="item.id">
-                    <li x-text="`${item.product.name} – ${item.quantity} db`"></li>
+                    <li>
+                        <div class="flex items-center justify-between gap-2">
+                            <span x-text="`${item.product.name} – ${item.quantity} db`"></span>
+
+                            <input
+                                type="number"
+                                min="0"
+                                x-model.number="item.dispatched_quantity"
+                                class="border border-gray-300 rounded px-2 py-1 w-20"
+                                placeholder="Kiküldött"
+                            />
+                        </div>
+                    </li>
                 </template>
             </ul>
         </div>
-
-        <div class="mt-6 text-right">
+        <div class="mt-6 text-right space-x-2">
+            <button @click="saveDispatched()" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
+                Mentés
+            </button>
             <button @click="close" class="bg-gray-200 px-4 py-2 rounded">Bezárás</button>
         </div>
     </div>
@@ -56,6 +70,29 @@ function orderModal(orderId) {
 
         close() {
             this.open = false;
+        },
+
+        async saveDispatched() {
+            try {
+                for (const item of this.details) {
+                    await fetch(`/api/order-details/${item.id}/dispatch`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            dispatched_quantity: item.dispatched_quantity ?? 0
+                        })
+                    });
+                }
+
+                alert("Kiküldött mennyiségek frissítve!");
+                this.close();
+            } catch (e) {
+                console.error("Mentés hiba:", e);
+                alert("Hiba történt a mentés során.");
+            }
         }
     }
 }

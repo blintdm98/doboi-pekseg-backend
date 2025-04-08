@@ -21,12 +21,13 @@ class OrderController extends Controller
             'user_id' => $request->user_id,
             'status' => 'pending',
         ]);
-
+        logger($request->items);
         foreach ($request->items as $item) {
             OrderDetail::create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],
                 'quantity' => $item['quantity'],
+                'dispatched_quantity' => 0,
             ]);
         }
 
