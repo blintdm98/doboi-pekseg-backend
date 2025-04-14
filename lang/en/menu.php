@@ -4,4 +4,5 @@ return [
     'products'  => 'Products',
     'stores'    => 'Stores',
     'orders'    => 'Orders',
+    'users'    => 'Users',
 ];

@@ -5,6 +5,7 @@ use App\Livewire\Admin\Order\OrderCreate;
 use App\Livewire\Admin\Order\OrderList;
 use App\Livewire\Admin\Products\ProductList;
 use App\Livewire\Admin\Store\StoreList;
+use App\Livewire\Admin\Users\UserList;
 use Illuminate\Support\Facades\Route;
 
 
@@ -23,4 +24,6 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/orders', OrderList::class)->name('orders');
     Route::get('/orders/create', OrderCreate::class)->name('orders.create');
+
+    Route::get('/users', UserList::class)->name('users');
 });

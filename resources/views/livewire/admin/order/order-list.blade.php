@@ -1,6 +1,6 @@
 <div>
     <div class="mb-8 flex justify-between">
-        <h2 class="text-xl font-bold">Rendelések</h2>
+        <h2 class="text-gray-800 dark:text-gray-200">Rendelések</h2>
     </div>
 
     <x-table>
