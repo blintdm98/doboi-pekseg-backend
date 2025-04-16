@@ -17,8 +17,8 @@
                         wire:model="form.address"
                     />
                     <x-input
-                        label="{{__('common.logo')}}"
-                        placeholder="{{__('common.logo')}}"
+                        type="file"
+                        label="{{ __('common.logo') }}"
                         wire:model="form.logo"
                     />
                 </div>
@@ -42,7 +42,13 @@
             <x-table.tr>
                 <x-table.td>{{$store->name}}</x-table.td>
                 <x-table.td>{{$store->address}}</x-table.td>
-                <x-table.td>{{$store->logo}}</x-table.td>
+                <x-table.td class="flex justify-center items-center">
+                @if($store->logo)
+                    <img src="{{ asset('storage/' . $store->logo) }}" class="h-12 w-12 object-cover rounded" />
+                @else
+                    <span class="text-sm text-gray-400">Nincs logó</span>
+                @endif
+                </x-table.td>
                 <x-table.td>
                     <x-button info label="{{__('common.edit')}}" wire:click="editStore({{$store->id}})"/>
                 </x-table.td>

@@ -7,10 +7,11 @@ use App\Models\Store;
 use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
+use Livewire\WithFileUploads;
 
 class StoreList extends Component
 {
-    use WithPagination, WireUiActions;
+    use WithPagination, WireUiActions, WithFileUploads;
 
     public StoreForm $form;
 

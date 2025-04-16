@@ -10,7 +10,15 @@ class StoreController extends Controller
 {
     public function index()
     {
-        return response()->json(Store::all());
+        $stores = Store::all()->map(function ($store) {
+            $store->logo = $store->logo 
+                ? asset('storage/' . $store->logo) 
+                : null;
+
+            return $store;
+        });
+
+        return response()->json($stores);
     }
 
     public function store(Request $request)
