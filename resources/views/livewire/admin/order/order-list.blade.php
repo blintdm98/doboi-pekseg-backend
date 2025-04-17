@@ -52,6 +52,14 @@
         <x-slot name="footer">
             <x-button flat label="Mégsem" wire:click="$set('orderModal', false)"/>
             <x-button primary label="Mentés" wire:click="save"/>
+            @if($selectedOrder)
+                <x-button
+                    negative
+                    label="Törlés"
+                    wire:click="deleteOrder({{ $selectedOrder->id }})"
+                    class="mt-2"
+                />
+            @endif
         </x-slot>
     </x-modal-card>
 </div>

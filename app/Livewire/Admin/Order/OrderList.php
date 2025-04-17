@@ -61,5 +61,32 @@ class OrderList extends Component
             'orders' => $this->getOrders(),
         ]);
     }
+
+    public function deleteOrder($orderId)
+{
+    $order = Order::find($orderId);
+
+    if (!$order) {
+        $this->notification()->send([
+            'title' => 'Hiba',
+            'description' => 'A rendelés nem található',
+            'icon' => 'error',
+        ]);
+        return;
+    }
+
+    OrderDetail::where('order_id', $orderId)->delete();
+
+    $order->delete();
+
+    $this->orderModal = false;
+    $this->selectedOrder = null;
+    $this->orderDetails = [];
+
+    $this->notification()->send([
+        'title' => 'Sikeres törlés',
+        'icon' => 'success',
+    ]);
+}
 }
 
