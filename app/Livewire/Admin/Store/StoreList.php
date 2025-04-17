@@ -52,4 +52,16 @@ class StoreList extends Component
             'stores' => $this->getStores()
         ]);
     }
+
+    public function delete()
+    {
+        $this->form->delete();
+
+        $this->storeModal = false;
+
+        $this->notification()->send([
+            'icon'  => 'success',
+            'title' => __('common.deleted_successfully'),
+        ]);
+    }
 }

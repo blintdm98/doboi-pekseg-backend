@@ -7,6 +7,7 @@ use App\Models\Product;
 use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
+use Illuminate\Support\Facades\Http;
 
 class ProductList extends Component
 {
@@ -49,6 +50,18 @@ class ProductList extends Component
     {
         return view('livewire.admin.products.product-list', [
             'products' => $this->getProducts(),
+        ]);
+    }
+
+    public function delete()
+    {
+        $this->form->delete();
+
+        $this->productModal = false;
+
+        $this->notification()->send([
+            'icon'  => 'success',
+            'title' => __('common.deleted_successfully'),
         ]);
     }
 }

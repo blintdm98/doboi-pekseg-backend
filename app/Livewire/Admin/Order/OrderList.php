@@ -30,7 +30,7 @@ class OrderList extends Component
             ->get()
             ->map(fn($item) => [
                 'id' => $item->id,
-                'product_name' => $item->product->name,
+                'product_name' => $item->product?->name ?? 'Ez a termék már nem elérhető',
                 'quantity' => $item->quantity,
                 'dispatched_quantity' => $item->dispatched_quantity,
             ])

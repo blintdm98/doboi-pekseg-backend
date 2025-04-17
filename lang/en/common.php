@@ -11,4 +11,6 @@ return [
     'save'      => 'Save',
     'address'   => 'Address',
     'logo'      => 'Logo',
+    'delete' => 'Delete',
+    'deleted_successfully' => 'Deleted succesfully!',
 ];

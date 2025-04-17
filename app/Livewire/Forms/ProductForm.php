@@ -40,4 +40,11 @@ class ProductForm extends Form
             $this->product->update($this->except('product'));
         }
     }
+
+    public function delete()
+    {
+        if ($this->product) {
+            $this->product->delete();
+        }
+    }
 }

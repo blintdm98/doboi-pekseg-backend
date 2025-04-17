@@ -62,4 +62,11 @@ class StoreForm extends Form
             ]);
         }
     }
+
+    public function delete()
+    {
+        if ($this->store) {
+            $this->store->delete();
+        }
+    }
 }

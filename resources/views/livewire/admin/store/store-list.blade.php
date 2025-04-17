@@ -23,9 +23,14 @@
                     />
                 </div>
                 <x-slot name="footer">
-                    <div class="flex justify-between gap-x-4">
-                        <x-button flat label="{{__('common.cancel')}}" x-on:click="close"/>
-                        <x-button primary label="{{__('common.save')}}" wire:click="save"/>
+                    <div class="flex justify-between gap-x-4 w-full">
+                        <div class="flex gap-x-2">
+                            <x-button flat label="{{ __('common.cancel') }}" x-on:click="close"/>
+                            @if($form->store)
+                                <x-button danger label="{{__('common.delete')}}" wire:click="delete"/>
+                            @endif
+                        </div>
+                        <x-button primary label="{{ __('common.save') }}" wire:click="save"/>
                     </div>
                 </x-slot>
             </x-modal-card>
