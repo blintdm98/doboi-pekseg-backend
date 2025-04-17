@@ -50,4 +50,16 @@ class UserList extends Component
             'users' => $this->getUsers(),
         ]);
     }
+
+    public function delete()
+    {
+        $this->form->delete();
+
+        $this->userModal = false;
+
+        $this->notification()->send([
+            'icon'  => 'success',
+            'title' => __('common.deleted_successfully'),
+        ]);
+    }
 }

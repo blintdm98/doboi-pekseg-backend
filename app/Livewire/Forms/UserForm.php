@@ -55,4 +55,11 @@ class UserForm extends Form
             User::create($data);
         }
     }
+
+    public function delete()
+    {
+        if ($this->user) {
+            $this->user->delete();
+        }
+    }
 }
