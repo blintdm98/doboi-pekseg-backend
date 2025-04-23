@@ -13,4 +13,6 @@ return [
     'logo'      => 'Logo',
     'delete' => 'Delete',
     'deleted_successfully' => 'Deleted succesfully!',
+    'image' => 'Image',
+    'noimg' => 'No Image',
 ];

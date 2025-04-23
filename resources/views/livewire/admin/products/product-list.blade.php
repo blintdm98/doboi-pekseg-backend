@@ -17,6 +17,11 @@
                         placeholder="{{__('common.price')}}"
                         wire:model="form.price"
                     />
+                    <x-input
+                        type="file"
+                        label="Kép"
+                        wire:model="form.image"
+                    />
 
                 </div>
                 <x-slot name="footer">
@@ -37,12 +42,20 @@
         <x-slot:head>
             <x-table.th>{{__('common.name')}}</x-table.th>
             <x-table.th>{{__('common.price')}}</x-table.th>
+            <x-table.th>{{__('common.image')}}</x-table.th>
             <x-table.th>{{__('common.edit')}}</x-table.th>
         </x-slot:head>
         @foreach($products as $product)
             <x-table.tr>
                 <x-table.td>{{$product->name}}</x-table.td>
                 <x-table.td>{{$product->price}}</x-table.td>
+                <x-table.td class="flex justify-center items-center">
+                    @if($product->image)
+                        <img src="{{ asset('storage/' . $product->image) }}" class="h-12 w-12 object-cover rounded" />
+                    @else
+                        <span class="text-sm text-gray-400">{{__('common.noimg')}}</span>
+                    @endif
+                </x-table.td>
                 <x-table.td>
                     <x-button info label="{{__('common.edit')}}" wire:click="editProduct({{$product->id}})"/>
                 </x-table.td>

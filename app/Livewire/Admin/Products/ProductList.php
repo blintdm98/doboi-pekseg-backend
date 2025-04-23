@@ -8,10 +8,11 @@ use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 use Illuminate\Support\Facades\Http;
+use Livewire\WithFileUploads; 
 
 class ProductList extends Component
 {
-    use WithPagination, WireUiActions;
+    use WithPagination, WireUiActions, WithFileUploads;
 
     public ProductForm $form;
 

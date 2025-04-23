@@ -43,7 +43,6 @@ class StoreForm extends Form
 
         $logoPath = null;
 
-        // Ha új fájl lett kiválasztva, akkor mentsük el
         if ($this->logo && is_object($this->logo)) {
             $logoPath = $this->logo->store('logos', 'public');
         }
@@ -58,7 +57,7 @@ class StoreForm extends Form
             $this->store->update([
                 'name' => $this->name,
                 'address' => $this->address,
-                'logo' => $logoPath ?? $this->store->logo, // ha nem módosítjuk
+                'logo' => $logoPath ?? $this->store->logo,
             ]);
         }
     }

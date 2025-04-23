@@ -5,9 +5,11 @@ namespace App\Livewire\Forms;
 use App\Models\Product;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
+use Livewire\WithFileUploads;
 
 class ProductForm extends Form
 {
+    use WithFileUploads; 
     public ?Product $product = null;
 
     #[Validate(['required'])]
@@ -15,6 +17,9 @@ class ProductForm extends Form
 
     #[Validate(['required', 'numeric'])]
     public $price = '';
+
+    #[Validate('nullable')]
+    public $image = '';
 
     public function initForm()
     {
@@ -34,10 +39,23 @@ class ProductForm extends Form
     {
         $this->validate();
 
+        $imagePath = null;
+        if ($this->image && is_object($this->image)) {
+            $imagePath = $this->image->store('products', 'public');
+        }
+
         if (is_null($this->product)) {
-            Product::create($this->except('product'));
+            Product::create([
+                'name' => $this->name,
+                'price' => $this->price,
+                'image' => $imagePath,
+            ]);
         } else {
-            $this->product->update($this->except('product'));
+            $this->product->update([
+                'name' => $this->name,
+                'price' => $this->price,
+                'image' => $imagePath ?? $this->product->image,
+            ]);
         }
     }
 

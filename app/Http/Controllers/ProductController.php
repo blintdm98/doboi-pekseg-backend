@@ -10,7 +10,14 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return response()->json(Product::all());
+        $products = Product::all()->map(function ($product) {
+            $product->image = $product->image 
+                ? asset('storage/' . $product->image) 
+                : null;
+            return $product;
+        });
+
+        return response()->json($products);
     }
 
     public function store(Request $request)
