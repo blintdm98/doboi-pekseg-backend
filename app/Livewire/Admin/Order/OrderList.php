@@ -47,6 +47,12 @@ class OrderList extends Component
             ]);
         }
 
+        if ($this->selectedOrder) {
+            $this->selectedOrder->update([
+                'status' => 'completed',
+            ]);
+        }
+
         $this->orderModal = false;
 
         $this->notification()->send([
