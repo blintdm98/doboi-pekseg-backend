@@ -18,8 +18,8 @@ class ProductForm extends Form
     #[Validate(['required', 'numeric'])]
     public $price = '';
 
-    #[Validate('nullable')]
-    public $image = '';
+    #[Validate(['nullable', 'image', 'max:2048'])]
+    public $image;
 
     public function initForm()
     {
@@ -39,23 +39,26 @@ class ProductForm extends Form
     {
         $this->validate();
 
-        $imagePath = null;
-        if ($this->image && is_object($this->image)) {
-            $imagePath = $this->image->store('products', 'public');
-        }
-
         if (is_null($this->product)) {
-            Product::create([
+            $product = Product::create([
                 'name' => $this->name,
                 'price' => $this->price,
-                'image' => $imagePath,
             ]);
         } else {
             $this->product->update([
                 'name' => $this->name,
                 'price' => $this->price,
-                'image' => $imagePath ?? $this->product->image,
             ]);
+
+            $product = $this->product;
+        }
+
+        if ($this->image) {
+            $product->clearMediaCollection('images');
+
+            $product->addMedia($this->image->getRealPath())
+                    ->usingFileName($this->image->getClientOriginalName())
+                    ->toMediaCollection('images');
         }
     }
 

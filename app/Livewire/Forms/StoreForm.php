@@ -41,16 +41,12 @@ class StoreForm extends Form
     {
         $this->validate();
 
-        logger('Mentés indult');
-
         if (is_null($this->store)) {
-            logger('Új store létrehozása');
             $store = Store::create([
                 'name' => $this->name,
                 'address' => $this->address,
             ]);
         } else {
-            logger('Store frissítése');
             $this->store->update([
                 'name' => $this->name,
                 'address' => $this->address,
@@ -59,17 +55,11 @@ class StoreForm extends Form
         }
 
         if ($this->logo) {
-            logger('Kép mentése indul');
             $store->clearMediaCollection('logos');
 
             $store->addMedia($this->logo->getRealPath())
                 ->usingFileName($this->logo->getClientOriginalName())
                 ->toMediaCollection('logos');
-
-            logger('Kép mentése kész');
-        }
-        else {
-            logger('Nincs feltöltött kép');
         }
     }
 

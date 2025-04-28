@@ -20,8 +20,7 @@ class ProductList extends Component
 
     public function getProducts()
     {
-        return Product::latest()
-            ->paginate(20);
+        return Product::with('media')->latest()->paginate(20);
     }
 
     public function openModal()
