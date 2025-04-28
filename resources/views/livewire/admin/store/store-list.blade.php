@@ -48,8 +48,8 @@
                 <x-table.td>{{$store->name}}</x-table.td>
                 <x-table.td>{{$store->address}}</x-table.td>
                 <x-table.td class="flex justify-center items-center">
-                @if($store->logo)
-                    <img src="{{ asset('storage/' . $store->logo) }}" class="h-12 w-12 object-cover rounded" />
+                @if($store->getFirstMediaUrl('logos'))
+                    <img src="{{ $store->getFirstMediaUrl('logos') }}" class="h-12 w-12 object-cover rounded" />
                 @else
                     <span class="text-sm text-gray-400">Nincs logó</span>
                 @endif

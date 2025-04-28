@@ -42,8 +42,7 @@ class StoreList extends Component
 
     public function getStores()
     {
-        return Store::latest()
-            ->paginate(20);
+        return Store::with('media')->latest()->paginate(20);
     }
 
     public function render()

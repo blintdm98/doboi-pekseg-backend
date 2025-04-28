@@ -19,7 +19,7 @@ class StoreForm extends Form
     #[Validate(['nullable'])]
     public $address = '';
 
-    #[Validate(['nullable'])]
+    #[Validate(['nullable', 'image', 'max:2048'])]
     public $logo = '';
 
     public function initForm()
@@ -41,24 +41,35 @@ class StoreForm extends Form
     {
         $this->validate();
 
-        $logoPath = null;
-
-        if ($this->logo && is_object($this->logo)) {
-            $logoPath = $this->logo->store('logos', 'public');
-        }
+        logger('Mentés indult');
 
         if (is_null($this->store)) {
-            Store::create([
+            logger('Új store létrehozása');
+            $store = Store::create([
                 'name' => $this->name,
                 'address' => $this->address,
-                'logo' => $logoPath,
             ]);
         } else {
+            logger('Store frissítése');
             $this->store->update([
                 'name' => $this->name,
                 'address' => $this->address,
-                'logo' => $logoPath ?? $this->store->logo,
             ]);
+            $store = $this->store;
+        }
+
+        if ($this->logo) {
+            logger('Kép mentése indul');
+            $store->clearMediaCollection('logos');
+
+            $store->addMedia($this->logo->getRealPath())
+                ->usingFileName($this->logo->getClientOriginalName())
+                ->toMediaCollection('logos');
+
+            logger('Kép mentése kész');
+        }
+        else {
+            logger('Nincs feltöltött kép');
         }
     }
 

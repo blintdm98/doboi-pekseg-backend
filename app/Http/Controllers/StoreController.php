@@ -25,11 +25,16 @@ class StoreController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
-            'logo' => 'nullable|url',
+            'logo' => 'nullable|file|mimes:jpg,jpeg,png,svg|max:2048',
         ]);
-    
+
         $store = Store::create($validated);
-        return response()->json($store, 201);
+
+        if ($request->hasFile('logo')) {
+            $store->addMediaFromRequest('logo')->toMediaCollection('logos');
+        }
+
+        return response()->json($store->load('media'), 201);
     }
 
     public function update(Request $request, Store $store)
@@ -37,11 +42,17 @@ class StoreController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'address' => 'required|string|max:255',
-            'logo' => 'nullable|url',
+            'logo' => 'nullable|file|mimes:jpg,jpeg,png,svg|max:2048',
         ]);
-    
+
         $store->update($validated);
-        return response()->json($store);
+
+        if ($request->hasFile('logo')) {
+            $store->clearMediaCollection('logos');
+            $store->addMediaFromRequest('logo')->toMediaCollection('logos');
+        }
+
+        return response()->json($store->load('media'));
     }
 
     public function destroy($id)
