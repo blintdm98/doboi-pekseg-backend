@@ -11,10 +11,12 @@ class StoreController extends Controller
     public function index()
     {
         $stores = Store::all()->map(function ($store) {
-            $store->logo = $store->logo
-                ? asset('storage/' . $store->logo)
-                : null;
-            return $store;
+            return [
+                'id' => $store->id,
+                'name' => $store->name,
+                'address' => $store->address,
+                'logo' => $store->getFirstMediaUrl('logos') ?: null,
+            ];
         });
     
         return response()->json($stores);

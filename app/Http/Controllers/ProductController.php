@@ -11,10 +11,12 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::all()->map(function ($product) {
-            $product->image = $product->image 
-                ? asset('storage/' . $product->image) 
-                : null;
-            return $product;
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'image' => $product->getFirstMediaUrl('images') ?: null,
+            ];
         });
 
         return response()->json($products);
