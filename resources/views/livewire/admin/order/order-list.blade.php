@@ -14,7 +14,7 @@
         @foreach($orders as $order)
             <x-table.tr>
                 <x-table.td>{{ $order->id }}</x-table.td>
-                <x-table.td>{{ $order->store->name }}</x-table.td>
+                <x-table.td>{{ $order->store->name ?? 'Törölt bolt' }}</x-table.td>
                 <x-table.td>{{ $order->status }}</x-table.td>
                 <x-table.td>
                     <x-button info label="Részletek" wire:click="showOrder({{ $order->id }})"/>
@@ -30,7 +30,7 @@
         @if($selectedOrder)
             <div class="space-y-4">
                 <p><strong>Rendelés #{{ $selectedOrder->id }}</strong></p>
-                <p><strong>Üzlet:</strong> {{ $selectedOrder->store->name }}</p>
+                <p><strong>Üzlet:</strong> {{ $selectedOrder->store->name ?? 'Törölt bolt' }}</p>
                 <p><strong>Státusz:</strong> {{ $selectedOrder->status }}</p>
 
                 <div class="space-y-2">

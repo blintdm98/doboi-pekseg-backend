@@ -65,6 +65,10 @@ class StoreController extends Controller
             return response()->json(['message' => 'Üzlet nem található'], 404);
         }
 
+        if ($store->orders()->exists()) {
+            return response()->json(['message' => 'Nem törölhető: aktív rendelései vannak.'], 403);
+        }
+
         $store->delete();
 
         return response()->json(['message' => 'Üzlet sikeresen törölve']);
