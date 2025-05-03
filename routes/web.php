@@ -6,6 +6,7 @@ use App\Livewire\Admin\Order\OrderList;
 use App\Livewire\Admin\Products\ProductList;
 use App\Livewire\Admin\Store\StoreList;
 use App\Livewire\Admin\Users\UserList;
+use App\Livewire\Admin\Dashboard\Dashboard;
 use Illuminate\Support\Facades\Route;
 
 
@@ -14,9 +15,7 @@ Route::get('/login', [UserController::class, 'login'])->name('login');
 Route::middleware('auth')->group(function () {
     Route::get('logout', [UserController::class, 'destroy'])->name('logout');
 
-    Route::get('/', function () {
-        return view('pages.dashboard');
-    })->name('dashboard');
+    Route::get('/', Dashboard::class)->name('dashboard');
 
     Route::get('/products', ProductList::class)->name('products');
 
@@ -26,4 +25,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/orders/create', OrderCreate::class)->name('orders.create');
 
     Route::get('/users', UserList::class)->name('users');
+
+    
 });
