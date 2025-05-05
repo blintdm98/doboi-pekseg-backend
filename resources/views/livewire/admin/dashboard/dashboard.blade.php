@@ -1,11 +1,23 @@
 <!-- resources/views/livewire/admin/dashboard.blade.php -->
 <div class="space-y-6">
     {{-- Statisztikai kártyák --}}
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <x-card title="Összes rendelés" :value="$totalOrders" icon="shopping-cart" />
-        <x-card title="Összes termék" :value="$totalProductsOrdered" icon="package" />
-        <x-card title="Összes bevétel" :value="$totalRevenue . ' lej'" icon="credit-card" />
-        <x-card title="Top bolt" :value="$topStoreName" icon="store" />
+    <div class="p-4 rounded shadow">
+        <x-card title="Top 3 bolt" icon="store">
+            <ul class="space-y-1 text-xl">
+            @php
+            $emojis = ['🥇', '🥈', '🥉'];
+            @endphp
+
+            @forelse($topStores as $index => $store)
+                <li class="flex justify-between items-center">
+                    <span class="text-xl">{{ $emojis[$index] ?? '🏅' }} {{ $store->name }}</span>
+                    <span class="text-xl text-gray-500">{{ $store->total }} rendelés</span>
+                </li>
+            @empty
+                <li class="text-gray-400">Nincs adat</li>
+            @endforelse
+            </ul>
+        </x-card>
     </div>
 
     {{-- Grafikon --}}
@@ -40,7 +52,7 @@
             </table>
         </x-card>
     </div>
-</div>
+</div>    
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>

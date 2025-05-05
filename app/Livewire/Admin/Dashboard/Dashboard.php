@@ -16,6 +16,7 @@ class Dashboard extends Component
     public $topProducts = [];
     public $chartLabels = [];
     public $chartData = [];
+    public $topStores = [];
 
     public function mount()
     {
@@ -53,6 +54,19 @@ class Dashboard extends Component
 
         $this->chartLabels = $orders->pluck('date')->toArray();
         $this->chartData = $orders->pluck('count')->toArray();
+
+        $this->topStores = Order::select('store_id', DB::raw('COUNT(*) as total'))
+        ->with('store')
+        ->groupBy('store_id')
+        ->orderByDesc('total')
+        ->take(3)
+        ->get()
+        ->map(function ($orderGroup) {
+            return (object)[
+                'name' => $orderGroup->store->name ?? 'Törölt bolt',
+                'total' => $orderGroup->total,
+            ];
+        });
 
     }
 
