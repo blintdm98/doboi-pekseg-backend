@@ -12,7 +12,7 @@
     <div class="p-4 rounded shadow">
         <x-card>
             <h3 class="text-xl font-bold mb-2">Rendelések időbeli alakulása</h3>
-            <div id="ordersChart"></div>
+            <canvas id="ordersChart" height="100"></canvas>
         </x-card>
     </div>
 
@@ -41,3 +41,36 @@
         </x-card>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('ordersChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: @json($chartLabels), // pl. ['2024-04-27', '2024-04-28']
+                datasets: [{
+                    label: 'Rendelések száma',
+                    data: @json($chartData), // pl. [4, 9]
+                    backgroundColor: 'rgba(75, 192, 192, 0.3)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+

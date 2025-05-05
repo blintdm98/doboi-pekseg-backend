@@ -14,6 +14,8 @@ class Dashboard extends Component
     public $totalRevenue;
     public $topStoreName;
     public $topProducts = [];
+    public $chartLabels = [];
+    public $chartData = [];
 
     public function mount()
     {
@@ -31,18 +33,27 @@ class Dashboard extends Component
             ->first()
             ?->store?->name ?? '–';
 
-        $this->topProducts = OrderDetail::select('product_id', DB::raw('SUM(quantity) as total'))
-            ->groupBy('product_id')
-            ->orderByDesc('total')
-            ->with('product')
-            ->take(5)
-            ->get()
-            ->map(function ($item) {
-                return (object)[
-                    'name' => $item->product->name ?? 'Törölt termék',
-                    'total' => $item->total,
-                ];
-            });
+            $this->topProducts = OrderDetail::select('product_id', DB::raw('SUM(quantity) as total'))
+                ->groupBy('product_id')
+                ->orderByDesc('total')
+                ->with('product')
+                ->take(5)
+                ->get()
+                ->map(function ($item) {
+                    return (object)[
+                        'name' => $item->product->name ?? 'Törölt termék',
+                        'total' => $item->total,
+                    ];
+                });
+
+                $orders = Order::selectRaw('DATE(created_at) as date, COUNT(*) as count')
+            ->groupBy('date')
+            ->orderBy('date')
+            ->get();
+
+        $this->chartLabels = $orders->pluck('date')->toArray();
+        $this->chartData = $orders->pluck('count')->toArray();
+
     }
 
     public function render()
