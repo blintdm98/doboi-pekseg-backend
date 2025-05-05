@@ -15,4 +15,5 @@ return [
     'deleted_successfully' => 'Deleted succesfully!',
     'image' => 'Image',
     'noimg' => 'No Image',
+    'saved_successfully' => 'Saved Succesfully!'
 ];
