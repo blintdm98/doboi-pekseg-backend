@@ -5,6 +5,7 @@ return [
     'password'  => 'Password',
     'add-new'   => 'Add New',
     'name'      => 'Name',
+    'email' => 'Email',
     'price'     => 'Price',
     'edit'      => 'Edit',
     'cancel'    => 'Cancel',
@@ -15,5 +16,15 @@ return [
     'deleted_successfully' => 'Deleted succesfully!',
     'image' => 'Image',
     'noimg' => 'No Image',
-    'saved_successfully' => 'Saved Succesfully!'
+    'saved_successfully' => 'Saved Succesfully!',
+    'error' => 'Error',
+    'ordernotfound' => 'Order Not Found!',
+    'orders' => 'Orders',
+    'order' => 'Order',
+    'user' => 'User',
+    'actions' => 'Actions',
+    'details' => 'Details',
+    'dispatched' => 'Dispatched',
+    'store' => 'Store',
+    'status' => 'Status'
 ];

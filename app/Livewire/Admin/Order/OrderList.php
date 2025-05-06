@@ -19,7 +19,7 @@ class OrderList extends Component
 
     public function getOrders()
     {
-        return Order::with('store')->latest()->paginate(20);
+        return Order::with(['store', 'user'])->latest()->paginate(20);
     }
 
     public function showOrder(Order $order)
@@ -41,15 +41,24 @@ class OrderList extends Component
 
     public function save()
     {
+        $isComplete = true;
+
         foreach ($this->orderDetails as $detail) {
+            $dispatched = $detail['dispatched_quantity'] ?? 0;
+            $ordered = $detail['quantity'] ?? 0;
+
+            if ($dispatched < $ordered) {
+                $isComplete = false;
+            }
+
             OrderDetail::where('id', $detail['id'])->update([
-                'dispatched_quantity' => $detail['dispatched_quantity'] ?? 0,
+                'dispatched_quantity' => $dispatched,
             ]);
         }
 
         if ($this->selectedOrder) {
             $this->selectedOrder->update([
-                'status' => 'completed',
+                'status' => $isComplete ? 'completed' : 'partial',
             ]);
         }
 
@@ -74,8 +83,8 @@ class OrderList extends Component
 
         if (!$order) {
             $this->notification()->send([
-                'title' => 'Hiba',
-                'description' => 'A rendelés nem található',
+                'title' => __('common.error'),
+                'description' => __('common.ordernotfound'),
                 'icon' => 'error',
             ]);
             return;
@@ -90,7 +99,7 @@ class OrderList extends Component
         $this->orderDetails = [];
 
         $this->notification()->send([
-            'title' => 'Sikeres törlés',
+            'title' => __('common.deleted_successfully'),
             'icon' => 'success',
         ]);
     }
