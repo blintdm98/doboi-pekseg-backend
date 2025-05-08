@@ -17,6 +17,8 @@ class StoreList extends Component
 
     public $storeModal = false;
 
+    public $search = '';
+
     public function openModal()
     {
         $this->form->initForm();
@@ -42,13 +44,24 @@ class StoreList extends Component
 
     public function getStores()
     {
-        return Store::with('media')->latest()->paginate(20);
-    }
+        $search = $this->search;
+
+        return Store::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('address', 'like', '%' . $search . '%');
+                });
+            })
+            ->latest()
+            ->paginate(20);
+}
+
 
     public function render()
     {
         return view('livewire.admin.store.store-list', [
-            'stores' => $this->getStores()
+            'stores' => $this->getStores(),
         ]);
     }
 
@@ -62,5 +75,10 @@ class StoreList extends Component
             'icon'  => 'success',
             'title' => __('common.deleted_successfully'),
         ]);
+    }
+
+    public function updatedSearch()
+    {
+        $this->resetPage();
     }
 }

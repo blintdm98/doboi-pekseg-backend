@@ -36,29 +36,40 @@
             </x-modal-card>
         </div>
     </div>
-    <x-table>
-        <x-slot:head>
-            <x-table.th>{{__('common.name')}}</x-table.th>
-            <x-table.th>{{__('common.address')}}</x-table.th>
-            <x-table.th>{{__('common.logo')}}</x-table.th>
-            <x-table.th>{{__('common.edit')}}</x-table.th>
-        </x-slot:head>
-        @foreach($stores as $store)
-            <x-table.tr>
-                <x-table.td>{{$store->name}}</x-table.td>
-                <x-table.td>{{$store->address}}</x-table.td>
-                <x-table.td class="flex justify-center items-center">
-                @if($store->getFirstMediaUrl('logos'))
-                    <img src="{{ $store->getFirstMediaUrl('logos') }}" class="h-12 w-12 object-cover rounded" />
-                @else
-                    <span class="text-sm text-gray-400">Nincs logó</span>
-                @endif
-                </x-table.td>
-                <x-table.td>
-                    <x-button info label="{{__('common.edit')}}" wire:click="editStore({{$store->id}})"/>
-                </x-table.td>
-            </x-table.tr>
-        @endforeach
-    </x-table>
+
+    <div class="space-y-4">
+        <!-- Szűrőmező -->
+        <div class="flex items-center gap-4">
+        <x-input 
+            placeholder="Keresés név vagy cím alapján..." 
+            wire:model.debounce.500ms="search"
+            class="w-full md:w-1/3"
+        />
+        <p class="text-xs text-gray-400">Keresés: "{{ $search }}"</p>
+        </div>
+        <x-table>
+            <x-slot:head>
+                <x-table.th>{{__('common.name')}}</x-table.th>
+                <x-table.th>{{__('common.address')}}</x-table.th>
+                <x-table.th>{{__('common.logo')}}</x-table.th>
+                <x-table.th>{{__('common.edit')}}</x-table.th>
+            </x-slot:head>
+            @foreach($stores as $store)
+                <x-table.tr>
+                    <x-table.td>{{$store->name}}</x-table.td>
+                    <x-table.td>{{$store->address}}</x-table.td>
+                    <x-table.td class="flex justify-center items-center">
+                    @if($store->getFirstMediaUrl('logos'))
+                        <img src="{{ $store->getFirstMediaUrl('logos') }}" class="h-12 w-12 object-cover rounded" />
+                    @else
+                        <span class="text-sm text-gray-400">Nincs logó</span>
+                    @endif
+                    </x-table.td>
+                    <x-table.td>
+                        <x-button info label="{{__('common.edit')}}" wire:click="editStore({{$store->id}})"/>
+                    </x-table.td>
+                </x-table.tr>
+            @endforeach
+        </x-table>
     {{$stores->links()}}
 </div>
