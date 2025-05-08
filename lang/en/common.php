@@ -26,5 +26,6 @@ return [
     'details' => 'Details',
     'dispatched' => 'Dispatched',
     'store' => 'Store',
-    'status' => 'Status'
+    'status' => 'Status',
+    'store_search_placeholder' => 'Keresés név vagy cím alapján...'
 ];

@@ -41,11 +41,10 @@
         <!-- Szűrőmező -->
         <div class="flex items-center gap-4">
         <x-input 
-            placeholder="Keresés név vagy cím alapján..." 
-            wire:model.debounce.500ms="search"
+            placeholder="{{__('common.store_search_placeholder')}}" 
+            wire:model.live.debounce.500ms="search"
             class="w-full md:w-1/3"
         />
-        <p class="text-xs text-gray-400">Keresés: "{{ $search }}"</p>
         </div>
         <x-table>
             <x-slot:head>
@@ -71,5 +70,6 @@
                 </x-table.tr>
             @endforeach
         </x-table>
+    </div>
     {{$stores->links()}}
 </div>

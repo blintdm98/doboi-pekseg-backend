@@ -44,18 +44,16 @@ class StoreList extends Component
 
     public function getStores()
     {
-        $search = $this->search;
-
         return Store::query()
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', '%' . $search . '%')
-                    ->orWhere('address', 'like', '%' . $search . '%');
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('name', 'like', '%' . $this->search . '%')
+                        ->orWhere('address', 'like', '%' . $this->search . '%');
                 });
             })
             ->latest()
             ->paginate(20);
-}
+    }
 
 
     public function render()
