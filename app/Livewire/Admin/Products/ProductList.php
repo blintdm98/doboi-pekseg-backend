@@ -18,9 +18,18 @@ class ProductList extends Component
 
     public $productModal = false;
 
+    public $search = '';
+
     public function getProducts()
     {
-        return Product::with('media')->latest()->paginate(20);
+        $search = $this->search;
+
+        return Product::with('media')
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', '%' . $search . '%');
+            })
+            ->latest()
+            ->paginate(20);
     }
 
     public function openModal()

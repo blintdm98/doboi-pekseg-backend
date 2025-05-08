@@ -38,13 +38,12 @@
     </div>
 
     <div class="space-y-4">
-        <!-- Szűrőmező -->
         <div class="flex items-center gap-4">
-        <x-input 
-            placeholder="{{__('common.store_search_placeholder')}}" 
-            wire:model.live.debounce.500ms="search"
-            class="w-full md:w-1/3"
-        />
+            <x-input 
+                placeholder="{{__('common.store_search_placeholder')}}" 
+                wire:model.live.debounce.500ms="search"
+                class="w-full md:w-1/3"
+            />
         </div>
         <x-table>
             <x-slot:head>
