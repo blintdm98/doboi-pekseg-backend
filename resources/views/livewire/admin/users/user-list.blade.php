@@ -21,22 +21,31 @@
         </x-modal-card>
     </div>
 
-    <x-table>
-        <x-slot:head>
-            <x-table.th>{{ __('common.name') }}</x-table.th>
-            <x-table.th>{{ __('common.email') }}</x-table.th>
-            <x-table.th>{{ __('common.edit') }}</x-table.th>
-        </x-slot:head>
-        @foreach ($users as $user)
-            <x-table.tr>
-                <x-table.td>{{ $user->name }}</x-table.td>
-                <x-table.td>{{ $user->email }}</x-table.td>
-                <x-table.td>
-                    <x-button info label="{{ __('common.edit') }}" wire:click="editUser({{ $user->id }})" />
-                </x-table.td>
-            </x-table.tr>
-        @endforeach
-    </x-table>
+    <div class="space-y-4">
+        <div class="flex items-center gap-4">
+                <x-input 
+                    placeholder="{{__('common.user_search_placeholder')}}" 
+                    wire:model.live.debounce.500ms="search"
+                    class="w-full md:w-1/3"
+                />
+        </div>
 
+        <x-table>
+            <x-slot:head>
+                <x-table.th>{{ __('common.name') }}</x-table.th>
+                <x-table.th>{{ __('common.email') }}</x-table.th>
+                <x-table.th>{{ __('common.edit') }}</x-table.th>
+            </x-slot:head>
+            @foreach ($users as $user)
+                <x-table.tr>
+                    <x-table.td>{{ $user->name }}</x-table.td>
+                    <x-table.td>{{ $user->email }}</x-table.td>
+                    <x-table.td>
+                        <x-button info label="{{ __('common.edit') }}" wire:click="editUser({{ $user->id }})" />
+                    </x-table.td>
+                </x-table.tr>
+            @endforeach
+        </x-table>
+    </div>
     {{ $users->links() }}
 </div>

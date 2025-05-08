@@ -42,7 +42,7 @@
     <div class="space-y-4">
         <div class="flex items-center gap-4">
             <x-input 
-                placeholder="{{__('common.store_search_placeholder')}}" 
+                placeholder="{{__('common.product_search_placeholder')}}" 
                 wire:model.live.debounce.500ms="search"
                 class="w-full md:w-1/3"
             />

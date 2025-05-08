@@ -16,11 +16,28 @@ class OrderList extends Component
 
     public $selectedOrder;
     public $orderDetails = [];
+    public $search = '';
+    public $statusFilter = '';
+
 
     public function getOrders()
     {
-        return Order::with(['store', 'user'])->latest()->paginate(20);
+        $search = trim($this->search);
+
+        return Order::query()
+            ->with(['store', 'user'])
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('status', 'like', "%{$search}%")
+                        ->orWhereHas('store', fn($q) => $q->where('name', 'like', "%{$search}%"))
+                        ->orWhereHas('user', fn($q) => $q->where('name', 'like', "%{$search}%"));
+                });
+            })
+            ->latest()
+            ->paginate(20);
     }
+
+
 
     public function showOrder(Order $order)
     {

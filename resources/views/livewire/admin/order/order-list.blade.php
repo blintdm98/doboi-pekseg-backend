@@ -3,40 +3,48 @@
         <h2 class="text-gray-800 dark:text-gray-200">{{ __('common.orders') }}</h2>
     </div>
 
-    <x-table>
-        <x-slot:head>
-            <x-table.th>#</x-table.th>
-            <x-table.th>{{ __('common.user') }}</x-table.th>
-            <x-table.th>{{ __('common.store') }}</x-table.th>
-            <x-table.th>{{ __('common.status') }}</x-table.th>
-            <x-table.th>{{ __('common.actions') }}</x-table.th>
-        </x-slot:head>
+    <div class="space-y-4">
+        <div class="flex items-center gap-4">
+                <x-input 
+                    placeholder="{{__('common.order_search_placeholder')}}" 
+                    wire:model.live.debounce.500ms="search"
+                    class="w-full md:w-1/3"
+                />
+        </div>
+        <x-table>
+            <x-slot:head>
+                <x-table.th>#</x-table.th>
+                <x-table.th>{{ __('common.user') }}</x-table.th>
+                <x-table.th>{{ __('common.store') }}</x-table.th>
+                <x-table.th>{{ __('common.status') }}</x-table.th>
+                <x-table.th>{{ __('common.actions') }}</x-table.th>
+            </x-slot:head>
 
-        @foreach($orders as $order)
-            <x-table.tr>
-                <x-table.td>{{ $order->id }}</x-table.td>
-                <x-table.td>{{ $order->user->name ?? 'N/A' }}</x-table.td>
-                <x-table.td>{{ $order->store->name ?? 'Törölt bolt' }}</x-table.td>
-                <x-table.td>
-                @php
-                        $statusColors = [
-                            'pending' => 'bg-yellow-100 text-yellow-800',
-                            'completed' => 'bg-green-100 text-green-800',
-                            'partial' => 'bg-orange-100 text-orange-800',
-                        ];
-                    @endphp
+            @foreach($orders as $order)
+                <x-table.tr>
+                    <x-table.td>{{ $order->id }}</x-table.td>
+                    <x-table.td>{{ $order->user->name ?? 'N/A' }}</x-table.td>
+                    <x-table.td>{{ $order->store->name ?? 'Törölt bolt' }}</x-table.td>
+                    <x-table.td>
+                    @php
+                            $statusColors = [
+                                'pending' => 'bg-yellow-100 text-yellow-800',
+                                'completed' => 'bg-green-100 text-green-800',
+                                'partial' => 'bg-orange-100 text-orange-800',
+                            ];
+                        @endphp
 
-                    <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-800' }}">
-                        {{ ucfirst($order->status) }}
-                    </span>
-                </x-table.td>
-                <x-table.td>
-                    <x-button info label="{{ __('common.details') }}" wire:click="showOrder({{ $order->id }})"/>
-                </x-table.td>
-            </x-table.tr>
-        @endforeach
-    </x-table>
-
+                        <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-800' }}">
+                            {{ ucfirst($order->status) }}
+                        </span>
+                    </x-table.td>
+                    <x-table.td>
+                        <x-button info label="{{ __('common.details') }}" wire:click="showOrder({{ $order->id }})"/>
+                    </x-table.td>
+                </x-table.tr>
+            @endforeach
+        </x-table>
+    </div>                        
     {{ $orders->links() }}
 
     {{-- Modal --}}

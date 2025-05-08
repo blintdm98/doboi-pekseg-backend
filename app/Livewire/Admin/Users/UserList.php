@@ -16,6 +16,8 @@ class UserList extends Component
 
     public $userModal = false;
 
+    public $search = '';
+
     public function openModal()
     {
         $this->form->initForm();
@@ -41,7 +43,12 @@ class UserList extends Component
 
     public function getUsers()
     {
-        return User::latest()->paginate(20);
+        return User::query()
+            ->when($this->search, function ($query) {
+                $query->where('name', 'like', '%' . $this->search . '%');
+            })
+            ->latest()
+            ->paginate(20);
     }
 
     public function render()

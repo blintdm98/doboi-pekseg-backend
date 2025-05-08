@@ -27,5 +27,8 @@ return [
     'dispatched' => 'Dispatched',
     'store' => 'Store',
     'status' => 'Status',
-    'store_search_placeholder' => 'Keresés név vagy cím alapján...'
+    'store_search_placeholder' => 'Search by name or address...',
+    'product_search_placeholder' => 'Search by name...',
+    'order_search_placeholder' => 'Search by user, store or status...',
+    'user_search_placeholder' => 'Search by user...',
 ];
