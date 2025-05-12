@@ -60,6 +60,22 @@ return [
             'report' => false,
         ],
 
+        'media' => [
+            'driver'      => 'local',
+            'root'        => public_path('media'),
+            'url'         => env('APP_URL') . '/media',
+            'permissions' => [
+                'file' => [
+                    'public'  => 0755,
+                    'private' => 0755
+                ],
+                'dir'  => [
+                    'public'  => 0755,
+                    'private' => 0755
+                ]
+            ]
+        ],
+
     ],
 
     /*
