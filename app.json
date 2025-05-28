@@ -1,0 +1,12 @@
+{
+  "expo": {
+    "extra": {
+      "eas": {
+        "projectId": "171d45ec-f51e-49da-885d-62afefdf5f80"
+      }
+    },
+    "android": {
+      "package": "com.adambalint.doboipeksegbackend"
+    }
+  }
+}

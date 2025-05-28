@@ -16,6 +16,7 @@
                 <x-table.th>#</x-table.th>
                 <x-table.th>{{ __('common.user') }}</x-table.th>
                 <x-table.th>{{ __('common.store') }}</x-table.th>
+                <x-table.th>{{ __('common.comment') }}</x-table.th>
                 <x-table.th>{{ __('common.status') }}</x-table.th>
                 <x-table.th>{{ __('common.actions') }}</x-table.th>
             </x-slot:head>
@@ -25,6 +26,7 @@
                     <x-table.td>{{ $order->id }}</x-table.td>
                     <x-table.td>{{ $order->user->name ?? 'N/A' }}</x-table.td>
                     <x-table.td>{{ $order->store->name ?? 'Törölt bolt' }}</x-table.td>
+                    <x-table.td>{{ $order->comment ?? 'Nincs megjegyzés' }}</x-table.td>
                     <x-table.td>
                     @php
                             $statusColors = [

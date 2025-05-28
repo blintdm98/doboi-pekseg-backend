@@ -20,6 +20,7 @@ class OrderController extends Controller
             'store_id' => $request->store_id,
             'user_id' => $request->user_id,
             'status' => 'pending',
+            'comment' => $request->comment,
         ]);
         logger($request->items);
         foreach ($request->items as $item) {
