@@ -6,39 +6,63 @@
     <div class="space-y-4">
         <div class="flex items-center gap-4">
                 <x-input 
-                    placeholder="{{__('common.order_search_placeholder')}}" 
+                    placeholder="{{__('common.search_placeholder')}}" 
                     wire:model.live.debounce.500ms="search"
                     class="w-full md:w-1/3"
                 />
 
                 <x-select
-                    placeholder="{{ __('common.all') }}"
+                    placeholder="{{ __('common.status') }}"
                     wire:model.live="statusFilter"
                     class="w-full md:w-1/3"
                 >
-                    <x-select.option value="">{{ __('common.all') }}</x-select.option>
+                    <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
                     <x-select.option value="pending">{{ __('common.status_pending') }}</x-select.option>
                     <x-select.option value="partial">{{ __('common.status_partial') }}</x-select.option>
                     <x-select.option value="completed">{{ __('common.status_completed') }}</x-select.option>
                 </x-select>
+
+                <x-select
+                    placeholder="{{ __('common.store') }}"
+                    wire:model.live="storeFilter"
+                    class="w-full md:w-1/3"
+                >
+                    <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
+                    @foreach(\App\Models\Store::orderBy('name')->get() as $store)
+                        <x-select.option value="{{ $store->id }}">{{ $store->name }}</x-select.option>
+                    @endforeach
+                </x-select>
+
+                <x-select
+                    placeholder="{{ __('common.user') }}"
+                    wire:model.live="userFilter"
+                    class="w-full md:w-1/3"
+                >
+                    <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
+                    @foreach(\App\Models\User::orderBy('name')->get() as $user)
+                        <x-select.option value="{{ $user->id }}">{{ $user->name }}</x-select.option>
+                    @endforeach
+                </x-select>
+
+
         </div>
         <x-table>
             <x-slot:head>
-                <x-table.th>#</x-table.th>
-                <x-table.th>{{ __('common.user') }}</x-table.th>
                 <x-table.th>{{ __('common.store') }}</x-table.th>
+                <x-table.th>{{ __('common.dispatched_total') }}</x-table.th>
                 <x-table.th>{{ __('common.comment') }}</x-table.th>
                 <x-table.th>{{ __('common.status') }}</x-table.th>
+                <x-table.th>{{ __('common.user') }}</x-table.th>
                 <x-table.th>{{ __('common.date') }}</x-table.th>
-                <x-table.th>{{ __('common.dispatched_total') }}</x-table.th>
                 <x-table.th>{{ __('common.actions') }}</x-table.th>
             </x-slot:head>
 
             @foreach($orders as $order)
                 <x-table.tr>
-                    <x-table.td>{{ $order->id }}</x-table.td>
-                    <x-table.td>{{ $order->user->name ?? 'N/A' }}</x-table.td>
                     <x-table.td>{{ $order->store->name ?? 'Törölt bolt' }}</x-table.td>
+                    <x-table.td>
+                        {{ $order->orderDetails->sum('dispatched_quantity') }} db
+                    </x-table.td>
                     <x-table.td>{{ $order->comment ?? 'Nincs megjegyzés' }}</x-table.td>
                     <x-table.td>
                     @php
@@ -50,13 +74,11 @@
                         @endphp
 
                         <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-800' }}">
-                            {{ ucfirst($order->status) }}
+                            {{ __('common.status_' . $order->status) }}
                         </span>
                     </x-table.td>
+                    <x-table.td>{{ $order->user->name ?? 'N/A' }}</x-table.td>
                     <x-table.td>{{ $order->created_at->format('Y-m-d H:i') }}</x-table.td>
-                    <x-table.td>
-                        {{ $order->orderDetails->sum('dispatched_quantity') }} db
-                    </x-table.td>
                     <x-table.td>
                         <x-button info label="{{ __('common.details') }}" wire:click="showOrder({{ $order->id }})"/>
                     </x-table.td>
@@ -87,7 +109,7 @@
                         });
                     @endphp
                     <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$selectedOrder->status] ?? 'bg-gray-100 text-gray-800' }}">
-                        {{ ucfirst($selectedOrder->status) }}
+                        {{ __('common.status_' . $order->status) }}
                     </span>
                 </p>
                 <p><strong>{{ __('common.total') }}:</strong> {{ $total }} lej</p>

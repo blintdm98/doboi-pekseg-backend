@@ -18,7 +18,8 @@ class OrderList extends Component
     public $orderDetails = [];
     public $search = '';
     public $statusFilter = '';
-
+    public $storeFilter = '';
+    public $userFilter = '';
 
     public function getOrders()
     {
@@ -101,6 +102,14 @@ class OrderList extends Component
 
         if ($this->statusFilter !== '') {
             $query->where('status', $this->statusFilter);
+        }
+
+        if ($this->storeFilter) {
+            $query->where('store_id', $this->storeFilter);
+        }
+
+        if ($this->userFilter) {
+            $query->where('user_id', $this->userFilter);
         }
 
         return view('livewire.admin.order.order-list', [
