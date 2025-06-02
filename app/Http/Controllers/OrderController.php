@@ -7,11 +7,39 @@ use App\Models\OrderDetail;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
+use Carbon\Carbon;
+
 class OrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return response()->json(Order::with('orderDetails')->get());
+        $storeId = $request->query('store_id');
+
+        $orders = Order::with(['orderDetails.product', 'user'])
+            ->where('store_id', $storeId)
+            ->where('created_at', '>=', Carbon::now()->subMonth()) // csak az elmúlt 1 hónap
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($order) {
+                return [
+                    'id' => $order->id,
+                    'user_name' => $order->user->name ?? 'N/A',
+                    'status' => $order->status,
+                    'created_at' => $order->created_at,
+                    'comment' => $order->comment,
+                    'total' => $order->orderDetails->sum(fn($detail) => $detail->quantity * ($detail->product->price ?? 0)),
+                    'details' => $order->orderDetails->map(function ($detail) {
+                        return [
+                            'product_name' => $detail->product->name ?? 'N/A',
+                            'quantity' => $detail->quantity,
+                            'dispatched_quantity' => $detail->dispatched_quantity,
+                            'subtotal' => $detail->quantity * ($detail->product->price ?? 0),
+                        ];
+                    }),
+                ];
+            });
+
+        return response()->json($orders);
     }
 
     public function store(Request $request)
