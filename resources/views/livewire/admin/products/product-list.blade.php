@@ -12,7 +12,9 @@
                         wire:model="form.name"
                     />
                     <x-input
-                        type="number"
+                        type="text"
+                        inputmode="decimal"
+                        pattern="^\d+([.,]\d{0,2})?$"
                         label="{{__('common.price')}}"
                         placeholder="{{__('common.price')}}"
                         wire:model="form.price"

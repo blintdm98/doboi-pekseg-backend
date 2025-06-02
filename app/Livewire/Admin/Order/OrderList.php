@@ -49,7 +49,7 @@ class OrderList extends Component
                 'id' => $item->id,
                 'product_name' => $item->product?->name ?? 'Ez a termék már nem elérhető',
                 'quantity' => $item->quantity,
-                'dispatched_quantity' => $item->dispatched_quantity,
+                'dispatched_quantity' => $item->dispatched_quantity ?: $item->quantity,
             ])
             ->toArray();
 
@@ -89,8 +89,22 @@ class OrderList extends Component
 
     public function render()
     {
+        $query = Order::with(['user', 'store', 'orderDetails']);
+
+        if ($this->search) {
+            $query->where(function ($q) {
+                $q->where('status', 'like', '%' . $this->search . '%')
+                ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
+                ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
+            });
+        }
+
+        if ($this->statusFilter !== '') {
+            $query->where('status', $this->statusFilter);
+        }
+
         return view('livewire.admin.order.order-list', [
-            'orders' => $this->getOrders(),
+            'orders' => $query->latest()->paginate(10),
         ]);
     }
 

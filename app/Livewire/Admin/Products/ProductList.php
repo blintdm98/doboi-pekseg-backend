@@ -46,6 +46,8 @@ class ProductList extends Component
 
     public function save()
     {
+        $this->form->price = str_replace(',', '.', $this->form->price);
+        
         $this->form->save();
         $this->productModal = false;
 

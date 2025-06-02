@@ -10,6 +10,17 @@
                     wire:model.live.debounce.500ms="search"
                     class="w-full md:w-1/3"
                 />
+
+                <x-select
+                    placeholder="{{ __('common.all') }}"
+                    wire:model.live="statusFilter"
+                    class="w-full md:w-1/3"
+                >
+                    <x-select.option value="">{{ __('common.all') }}</x-select.option>
+                    <x-select.option value="pending">{{ __('common.status_pending') }}</x-select.option>
+                    <x-select.option value="partial">{{ __('common.status_partial') }}</x-select.option>
+                    <x-select.option value="completed">{{ __('common.status_completed') }}</x-select.option>
+                </x-select>
         </div>
         <x-table>
             <x-slot:head>
@@ -18,6 +29,8 @@
                 <x-table.th>{{ __('common.store') }}</x-table.th>
                 <x-table.th>{{ __('common.comment') }}</x-table.th>
                 <x-table.th>{{ __('common.status') }}</x-table.th>
+                <x-table.th>{{ __('common.date') }}</x-table.th>
+                <x-table.th>{{ __('common.dispatched_total') }}</x-table.th>
                 <x-table.th>{{ __('common.actions') }}</x-table.th>
             </x-slot:head>
 
@@ -39,6 +52,10 @@
                         <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-800' }}">
                             {{ ucfirst($order->status) }}
                         </span>
+                    </x-table.td>
+                    <x-table.td>{{ $order->created_at->format('Y-m-d H:i') }}</x-table.td>
+                    <x-table.td>
+                        {{ $order->orderDetails->sum('dispatched_quantity') }} db
                     </x-table.td>
                     <x-table.td>
                         <x-button info label="{{ __('common.details') }}" wire:click="showOrder({{ $order->id }})"/>
@@ -64,10 +81,16 @@
                         ];
                     @endphp
 
+                    @php
+                        $total = $selectedOrder->orderDetails->sum(function($detail) {
+                            return $detail->quantity * ($detail->product->price ?? 0);
+                        });
+                    @endphp
                     <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$selectedOrder->status] ?? 'bg-gray-100 text-gray-800' }}">
                         {{ ucfirst($selectedOrder->status) }}
                     </span>
                 </p>
+                <p><strong>{{ __('common.total') }}:</strong> {{ $total }} lej</p>
                 <div class="space-y-2">
                     @foreach($orderDetails as $index => $detail)
                         <div class="flex justify-between items-center gap-4">
