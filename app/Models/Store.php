@@ -10,5 +10,5 @@ class Store extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    protected $fillable = ['name', 'address'];
+    protected $fillable = ['name', 'address', 'phone'];
 }

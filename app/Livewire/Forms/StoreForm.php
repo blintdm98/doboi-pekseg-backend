@@ -22,6 +22,9 @@ class StoreForm extends Form
     #[Validate(['nullable', 'image', 'max:2048'])]
     public $logo = '';
 
+    #[Validate(['nullable', 'string', 'min:10'])]
+    public $phone = '';
+
     public function initForm()
     {
         $this->reset();
@@ -35,6 +38,7 @@ class StoreForm extends Form
         $this->name = $store->name;
         $this->address = $store->address;
         // $this->logo = $store->logo;
+        $this->phone = $store->phone;
     }
 
     public function save()
@@ -45,11 +49,13 @@ class StoreForm extends Form
             $store = Store::create([
                 'name' => $this->name,
                 'address' => $this->address,
+                'phone' => $this->phone,
             ]);
         } else {
             $this->store->update([
                 'name' => $this->name,
                 'address' => $this->address,
+                'phone' => $this->phone,
             ]);
             $store = $this->store;
         }

@@ -17,6 +17,11 @@
                         wire:model="form.address"
                     />
                     <x-input
+                        label="{{ __('common.phone') }}"
+                        placeholder="{{ __('common.phone') }}"
+                        wire:model="form.phone"
+                    />
+                    <x-input
                         type="file"
                         label="{{ __('common.logo') }}"
                         wire:model="form.logo"
@@ -49,6 +54,7 @@
             <x-slot:head>
                 <x-table.th>{{__('common.name')}}</x-table.th>
                 <x-table.th>{{__('common.address')}}</x-table.th>
+                <x-table.th>{{ __('common.phone') }}</x-table.th>
                 <x-table.th>{{__('common.logo')}}</x-table.th>
                 <x-table.th>{{__('common.edit')}}</x-table.th>
             </x-slot:head>
@@ -56,6 +62,7 @@
                 <x-table.tr>
                     <x-table.td>{{$store->name}}</x-table.td>
                     <x-table.td>{{$store->address}}</x-table.td>
+                    <x-table.td>{{$store->phone ?: 'Nincs telefonszám'}}</x-table.td>
                     <x-table.td class="flex justify-center items-center">
                     @if($store->getFirstMediaUrl('logos'))
                         <img src="{{ $store->getFirstMediaUrl('logos') }}" class="h-12 w-12 object-cover rounded" />

@@ -28,11 +28,14 @@ return [
     'store' => 'Üzlet',
     'status' => 'Status',
     'search_placeholder' => 'Keresés...',
-    'disaptched_total' => 'Kiküldött darabszám',
+    'dispatched_total' => 'Kiküldött darabszám',
     'comment' => 'Megjegyzés',
     'date' => 'Dátum',
     'nofilter' => 'Összes',
     'status_pending' => 'Függőben',
     'status_partial' => 'Részben teljesítve',
     'status_completed' => 'Teljesítve',
+    'role' => 'Szerep',
+    'optional' => 'Opcionális',
+    'phone' => 'Telefonszám'
 ];

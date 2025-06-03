@@ -13,13 +13,17 @@ class UserForm extends Form
     public $name = '';
     public $email = '';
     public $password = '';
+    public $role = 'mobil';
+    public $phone = '';
 
     public function rules()
     {
         return [
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . optional($this->user)->id,
+            'email' => 'nullable|email|unique:users,email,' . optional($this->user)->id,
             'password' => $this->user ? 'nullable|min:6' : 'required|min:6',
+            'role' => 'required|in:admin,mobil',
+            'phone' => 'nullable|string|min:10',
         ];
     }
 
@@ -34,6 +38,8 @@ class UserForm extends Form
         $this->user = $user;
         $this->name = $user->name;
         $this->email = $user->email;
+        $this->role = $user->role;
+        $this->phone = $user->phone;
     }
 
     public function save()
@@ -43,6 +49,8 @@ class UserForm extends Form
         $data = [
             'name' => $this->name,
             'email' => $this->email,
+            'role' => $this->role,
+            'phone' => $this->phone,
         ];
 
         if ($this->password) {
