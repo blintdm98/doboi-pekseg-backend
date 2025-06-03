@@ -20,6 +20,8 @@ class OrderList extends Component
     public $statusFilter = '';
     public $storeFilter = '';
     public $userFilter = '';
+    public $dateStart = null;
+    public $dateEnd = null;
 
     public function getOrders()
     {
@@ -110,6 +112,14 @@ class OrderList extends Component
 
         if ($this->userFilter) {
             $query->where('user_id', $this->userFilter);
+        }
+
+        if ($this->dateStart) {
+            $query->whereDate('created_at', '>=', $this->dateStart);
+        }
+
+        if ($this->dateEnd) {
+            $query->whereDate('created_at', '<=', $this->dateEnd);
         }
 
         return view('livewire.admin.order.order-list', [

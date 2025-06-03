@@ -5,13 +5,10 @@
 
     <div class="space-y-4">
         <div class="flex items-center gap-4">
-                <x-input 
-                    placeholder="{{__('common.search_placeholder')}}" 
-                    wire:model.live.debounce.500ms="search"
-                    class="w-full md:w-1/3"
-                />
+                
 
                 <x-select
+                    label="{{ __('common.status') }}"
                     placeholder="{{ __('common.status') }}"
                     wire:model.live="statusFilter"
                     class="w-full md:w-1/3"
@@ -23,6 +20,7 @@
                 </x-select>
 
                 <x-select
+                    label="{{ __('common.store') }}"
                     placeholder="{{ __('common.store') }}"
                     wire:model.live="storeFilter"
                     class="w-full md:w-1/3"
@@ -34,6 +32,7 @@
                 </x-select>
 
                 <x-select
+                    label="{{ __('common.user') }}"
                     placeholder="{{ __('common.user') }}"
                     wire:model.live="userFilter"
                     class="w-full md:w-1/3"
@@ -43,6 +42,24 @@
                         <x-select.option value="{{ $user->id }}">{{ $user->name }}</x-select.option>
                     @endforeach
                 </x-select>
+
+                <x-datetime-picker
+                    label="{{ __('common.date_from') }}"
+                    placeholder="{{ __('common.select_date') }}"
+                    without-time
+                    icon="calendar"
+                    wire:model.live="dateStart"
+                    class="w-full md:w-1/4"
+                />
+
+                <x-datetime-picker
+                    label="{{ __('common.date_to') }}"
+                    placeholder="{{ __('common.select_date') }}"
+                    without-time
+                    icon="calendar"
+                    wire:model.live="dateEnd"
+                    class="w-full md:w-1/4"
+                />
 
 
         </div>

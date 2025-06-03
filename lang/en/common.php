@@ -37,5 +37,8 @@ return [
     'status_completed' => 'Teljesítve',
     'role' => 'Szerep',
     'optional' => 'Opcionális',
-    'phone' => 'Telefonszám'
+    'phone' => 'Telefonszám',
+    'date_from' => 'Dátumtól',
+    'date_to' => 'Dátumig',
+    'select_date' => 'Válassz dátumot...'
 ];
