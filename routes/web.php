@@ -26,5 +26,7 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/users', UserList::class)->name('users');
 
-    
+    Route::get('/migrate-db', function () {
+        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+    });
 });
