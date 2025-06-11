@@ -23,11 +23,14 @@ class ProductList extends Component
         $search = $this->search;
 
         return Product::with('media')
-            ->when($search, function ($query) use ($search) {
-                $query->where('name', 'like', '%' . $search . '%');
-            })
-            ->latest()
-            ->paginate(20);
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('price', 'like', '%' . $search . '%');
+            });
+        })
+        ->latest()
+        ->paginate(20);
     }
 
     public function openModal()
