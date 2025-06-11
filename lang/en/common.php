@@ -43,5 +43,6 @@ return [
     'select_date' => 'Válassz dátumot...',
     'product' => 'Termék',
     'delete_image' => 'Kép törlése',
-    'total' => 'Ár'
+    'total' => 'Ár',
+    'no_results_found' => 'Nincs találat a megadott feltételekre',
 ];

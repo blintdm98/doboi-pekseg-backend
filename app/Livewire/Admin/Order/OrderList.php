@@ -91,41 +91,41 @@ class OrderList extends Component
     }
 
     public function render()
-    {
-        $query = Order::with(['user', 'store', 'orderDetails']);
+{
+    $query = Order::with(['user', 'store', 'orderDetails']);
 
-        if ($this->search) {
-            $query->where(function ($q) {
-                $q->where('status', 'like', '%' . $this->search . '%')
-                ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
-                ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
-            });
-        }
-
-        if ($this->statusFilter !== '') {
-            $query->where('status', $this->statusFilter);
-        }
-
-        if ($this->storeFilter) {
-            $query->where('store_id', $this->storeFilter);
-        }
-
-        if ($this->userFilter) {
-            $query->where('user_id', $this->userFilter);
-        }
-
-        if ($this->dateStart) {
-            $query->whereDate('created_at', '>=', $this->dateStart);
-        }
-
-        if ($this->dateEnd) {
-            $query->whereDate('created_at', '<=', $this->dateEnd);
-        }
-
-        return view('livewire.admin.order.order-list', [
-            'orders' => $query->latest()->paginate(10),
-        ]);
+    if (!empty($this->search)) {
+        $query->where(function ($q) {
+            $q->where('status', 'like', '%' . $this->search . '%')
+              ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
+              ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
+        });
     }
+
+    if (!empty($this->statusFilter)) {
+        $query->where('status', $this->statusFilter);
+    }
+
+    if (!empty($this->storeFilter)) {
+        $query->where('store_id', $this->storeFilter);
+    }
+
+    if (!empty($this->userFilter)) {
+        $query->where('user_id', $this->userFilter);
+    }
+
+    if (!empty($this->dateStart)) {
+        $query->whereDate('created_at', '>=', $this->dateStart);
+    }
+
+    if (!empty($this->dateEnd)) {
+        $query->whereDate('created_at', '<=', $this->dateEnd);
+    }
+
+    return view('livewire.admin.order.order-list', [
+        'orders' => $query->latest()->paginate(50),
+    ]);
+}
 
     public function deleteOrder($orderId)
     {

@@ -75,7 +75,7 @@
                 <x-table.th>{{ __('common.actions') }}</x-table.th>
             </x-slot:head>
 
-            @foreach($orders as $order)
+            @forelse($orders as $order)
                 <x-table.tr>
                     <x-table.td>{{ $order->id }}</x-table.td>
                     <x-table.td>{{ $order->store->name ?? 'Törölt bolt' }}</x-table.td>
@@ -106,7 +106,13 @@
                         <x-button info label="{{ __('common.details') }}" wire:click="showOrder({{ $order->id }})"/>
                     </x-table.td>
                 </x-table.tr>
-            @endforeach
+            @empty
+                <tr>
+                    <td colspan="8" class="text-center text-sm text-gray-500 py-6">
+                        {{ __('common.no_results_found') }}
+                    </td>
+                </tr>
+            @endforelse
         </x-table>
     </div>                        
     {{ $orders->links() }}
@@ -132,7 +138,7 @@
                         });
                     @endphp
                     <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$selectedOrder->status] ?? 'bg-gray-100 text-gray-800' }}">
-                        {{ __('common.status_' . $order->status) }}
+                        {{ __('common.status_' . $selectedOrder->status) }}
                     </span>
                 </p>
                 <p><strong>{{ __('common.total') }}:</strong> {{ $total }} lej</p>
