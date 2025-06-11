@@ -40,5 +40,8 @@ return [
     'phone' => 'Telefonszám',
     'date_from' => 'Dátumtól',
     'date_to' => 'Dátumig',
-    'select_date' => 'Válassz dátumot...'
+    'select_date' => 'Válassz dátumot...',
+    'product' => 'Termék',
+    'delete_image' => 'Kép törlése',
+    'total' => 'Ár'
 ];

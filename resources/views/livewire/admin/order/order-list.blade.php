@@ -65,8 +65,9 @@
         </div>
         <x-table>
             <x-slot:head>
+                <x-table.th>#</x-table.th>
                 <x-table.th>{{ __('common.store') }}</x-table.th>
-                <x-table.th>{{ __('common.dispatched_total') }}</x-table.th>
+                <x-table.th>{{ __('common.total') }}</x-table.th>
                 <x-table.th>{{ __('common.comment') }}</x-table.th>
                 <x-table.th>{{ __('common.status') }}</x-table.th>
                 <x-table.th>{{ __('common.user') }}</x-table.th>
@@ -76,9 +77,14 @@
 
             @foreach($orders as $order)
                 <x-table.tr>
+                    <x-table.td>{{ $order->id }}</x-table.td>
                     <x-table.td>{{ $order->store->name ?? 'Törölt bolt' }}</x-table.td>
                     <x-table.td>
-                        {{ $order->orderDetails->sum('dispatched_quantity') }} db
+                        {{
+                            $order->orderDetails->sum(function($detail) {
+                                return $detail->quantity * ($detail->product->price ?? 0);
+                            })
+                        }} lej
                     </x-table.td>
                     <x-table.td>{{ $order->comment ?? 'Nincs megjegyzés' }}</x-table.td>
                     <x-table.td>

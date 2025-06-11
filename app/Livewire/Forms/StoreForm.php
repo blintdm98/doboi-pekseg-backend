@@ -12,6 +12,7 @@ class StoreForm extends Form
 
     use WithFileUploads; 
     public ?Store $store = null;
+    public $pendingLogoDelete = false;
 
     #[Validate(['required'])]
     public $name = '';
@@ -60,13 +61,18 @@ class StoreForm extends Form
             $store = $this->store;
         }
 
+        if ($this->pendingLogoDelete && !$this->logo) {
+            $store->clearMediaCollection('logos');
+        }
+
         if ($this->logo) {
             $store->clearMediaCollection('logos');
-
             $store->addMedia($this->logo->getRealPath())
                 ->usingFileName($this->logo->getClientOriginalName())
                 ->toMediaCollection('logos');
         }
+
+        $this->initForm();
     }
 
     public function delete()

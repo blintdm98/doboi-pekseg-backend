@@ -15,9 +15,7 @@ class ProductList extends Component
     use WithPagination, WireUiActions, WithFileUploads;
 
     public ProductForm $form;
-
     public $productModal = false;
-
     public $search = '';
 
     public function getProducts()
@@ -74,5 +72,13 @@ class ProductList extends Component
             'icon'  => 'success',
             'title' => __('common.deleted_successfully'),
         ]);
+    }
+
+    public function deleteImage()
+    {
+        if ($this->form->product) {
+            $this->form->product->clearMediaCollection('images');
+            $this->form->product->refresh();
+        }
     }
 }

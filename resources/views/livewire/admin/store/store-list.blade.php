@@ -1,3 +1,5 @@
+@php use Illuminate\Support\Str; @endphp
+
 <div>
     <div class="mb-8 flex justify-between">
         <div>
@@ -7,8 +9,8 @@
             <x-modal-card blur="md" wire:model="storeModal">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <x-input
-                        label="{{__('common.name')}}"
-                        placeholder="{{__('common.name')}}"
+                        label="{{__('common.store')}}"
+                        placeholder="{{__('common.store')}}"
                         wire:model="form.name"
                     />
                     <x-input
@@ -21,11 +23,60 @@
                         placeholder="{{ __('common.phone') }}"
                         wire:model="form.phone"
                     />
-                    <x-input
-                        type="file"
-                        label="{{ __('common.logo') }}"
-                        wire:model="form.logo"
-                    />
+                    <div class="w-full relative">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.logo') }}</label>
+
+                        <input
+                            type="file"
+                            id="logo-upload"
+                            wire:model="form.logo"
+                            class="w-full border rounded px-4 py-2 pr-20 hidden"
+                        >
+
+                        <label for="logo-upload" class="flex items-center gap-2 px-4 py-2 border rounded cursor-pointer w-full">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828L18 9.828M17 5a3 3 0 00-4.243 0l-7.07 7.07a5 5 0 007.07 7.07L19 13" />
+                            </svg>
+                            <span class="text-sm text-gray-600 truncate w-full">
+                                {{ Str::limit(optional($form->logo)?->getClientOriginalName(), 30) ?? __('common.noimg') }}
+                            </span>
+                        </label>
+
+                        @if ($form->logo)
+                            <div class="absolute top-[1.7rem] right-2 w-8 h-8 z-10">
+                                <div class="relative w-full h-full">
+                                    <img
+                                        src="{{ $form->logo->temporaryUrl() }}"
+                                        class="w-full h-full object-cover rounded border border-white shadow"
+                                    />
+                                    <button
+                                        type="button"
+                                        wire:click="$set('form.logo', null)"
+                                        class="absolute -top-2 -right-2 bg-white text-gray-600 rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-red-500 hover:text-white"
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                            </div>
+                        @elseif ($form->store && $form->store->getFirstMediaUrl('logos') && !$form->pendingLogoDelete)
+                            <div class="absolute top-[1.7rem] right-2 w-8 h-8 z-10">
+                                <div class="relative w-full h-full">
+                                    <img
+                                        src="{{ $form->store->getFirstMediaUrl('logos') }}"
+                                        class="w-full h-full object-cover rounded border border-white shadow"
+                                    />
+                                    <button
+                                        type="button"
+                                        wire:click="$set('form.pendingLogoDelete', true)"
+                                        class="absolute -top-2 -right-2 bg-white text-gray-600 rounded-full w-5 h-5 text-xs flex items-center justify-center hover:bg-red-500 hover:text-white"
+                                    >
+                                        &times;
+                                    </button>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+
                 </div>
                 <x-slot name="footer">
                     <div class="flex justify-between gap-x-4 w-full">
@@ -52,7 +103,7 @@
         </div>
         <x-table>
             <x-slot:head>
-                <x-table.th>{{__('common.name')}}</x-table.th>
+                <x-table.th>{{__('common.store')}}</x-table.th>
                 <x-table.th>{{__('common.address')}}</x-table.th>
                 <x-table.th>{{ __('common.phone') }}</x-table.th>
                 <x-table.th>{{__('common.logo')}}</x-table.th>

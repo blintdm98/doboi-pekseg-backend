@@ -11,6 +11,7 @@ class ProductForm extends Form
 {
     use WithFileUploads; 
     public ?Product $product = null;
+    public $pendingImageDelete = false;
 
     #[Validate(['required'])]
     public $name = '';
@@ -53,13 +54,23 @@ class ProductForm extends Form
             $product = $this->product;
         }
 
+        if ($this->pendingImageDelete && !$this->image) {
+            $product->clearMediaCollection('images');
+        }
+
         if ($this->image) {
             $product->clearMediaCollection('images');
-
             $product->addMedia($this->image->getRealPath())
                     ->usingFileName($this->image->getClientOriginalName())
                     ->toMediaCollection('images');
         }
+
+        $this->initForm();
+    }
+
+    public function updatedImage()
+    {
+        $this->pendingImageDelete = false;
     }
 
     public function delete()
