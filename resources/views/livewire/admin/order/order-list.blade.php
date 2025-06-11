@@ -154,12 +154,53 @@
                                 <x-input
                                     type="number"
                                     wire:model.defer="orderDetails.{{ $index }}.dispatched_quantity"
-                                    label="{{ __('common.dispatched') }}"
                                 />
                             </div>
                         </div>
                     @endforeach
                 </div>
+            </div>
+        @endif
+
+        @if (!$showAddProduct)
+            <x-button
+                primary
+                label="Termék hozzáadása"
+                wire:click="$set('showAddProduct', true)"
+            />
+        @else
+            <div class="flex gap-2 items-end">
+                <x-select
+                    label="Termék"
+                    wire:model="newProductId"
+                    placeholder="Válassz terméket"
+                    class="w-full"
+                >
+                    <x-select.option value="">--</x-select.option>
+                    @foreach(\App\Models\Product::orderBy('name')->get() as $product)
+                        <x-select.option value="{{ $product->id }}">{{ $product->name }}</x-select.option>
+                    @endforeach
+                </x-select>
+
+                <x-input
+                    type="number"
+                    label="Darab"
+                    wire:model="newProductQuantity"
+                    min="1"
+                    class="w-24"
+                />
+
+                <x-button
+                    primary
+                    label="Hozzáadás"
+                    wire:click="addProductToOrder"
+                />
+
+                <x-button
+                    flat
+                    label="Mégse"
+                    wire:click="$set('showAddProduct', false)"
+                />
             </div>
         @endif
 

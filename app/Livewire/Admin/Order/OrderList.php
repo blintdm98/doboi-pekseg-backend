@@ -22,6 +22,9 @@ class OrderList extends Component
     public $userFilter = '';
     public $dateStart = null;
     public $dateEnd = null;
+    public $newProductId = null;
+    public $newProductQuantity = 1;
+    public bool $showAddProduct = false;
 
     public function getOrders()
     {
@@ -91,42 +94,42 @@ class OrderList extends Component
     }
 
     public function render()
-{
-    $query = Order::with(['user', 'store', 'orderDetails', 'orderDetails.product']);
+    {
+        $query = Order::with(['user', 'store', 'orderDetails', 'orderDetails.product']);
 
-    if (!empty($this->search)) {
-        $query->where(function ($q) {
-            $q->where('status', 'like', '%' . $this->search . '%')
-              ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
-              ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
-              ->orWhereHas('orderDetails.product', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));;
-        });
+        if (!empty($this->search)) {
+            $query->where(function ($q) {
+                $q->where('status', 'like', '%' . $this->search . '%')
+                ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
+                ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
+                ->orWhereHas('orderDetails.product', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));;
+            });
+        }
+
+        if (!empty($this->statusFilter)) {
+            $query->where('status', $this->statusFilter);
+        }
+
+        if (!empty($this->storeFilter)) {
+            $query->where('store_id', $this->storeFilter);
+        }
+
+        if (!empty($this->userFilter)) {
+            $query->where('user_id', $this->userFilter);
+        }
+
+        if (!empty($this->dateStart)) {
+            $query->whereDate('created_at', '>=', $this->dateStart);
+        }
+
+        if (!empty($this->dateEnd)) {
+            $query->whereDate('created_at', '<=', $this->dateEnd);
+        }
+
+        return view('livewire.admin.order.order-list', [
+            'orders' => $query->latest()->paginate(50),
+        ]);
     }
-
-    if (!empty($this->statusFilter)) {
-        $query->where('status', $this->statusFilter);
-    }
-
-    if (!empty($this->storeFilter)) {
-        $query->where('store_id', $this->storeFilter);
-    }
-
-    if (!empty($this->userFilter)) {
-        $query->where('user_id', $this->userFilter);
-    }
-
-    if (!empty($this->dateStart)) {
-        $query->whereDate('created_at', '>=', $this->dateStart);
-    }
-
-    if (!empty($this->dateEnd)) {
-        $query->whereDate('created_at', '<=', $this->dateEnd);
-    }
-
-    return view('livewire.admin.order.order-list', [
-        'orders' => $query->latest()->paginate(50),
-    ]);
-}
 
     public function deleteOrder($orderId)
     {
@@ -151,6 +154,51 @@ class OrderList extends Component
 
         $this->notification()->send([
             'title' => __('common.deleted_successfully'),
+            'icon' => 'success',
+        ]);
+    }
+
+    public function addProductToOrder()
+    {
+        if (!$this->selectedOrder || !$this->newProductId || $this->newProductQuantity < 1) {
+            return;
+        }
+
+        $product = \App\Models\Product::find($this->newProductId);
+
+        if (!$product) {
+            return;
+        }
+
+        if (OrderDetail::where('order_id', $this->selectedOrder->id)
+            ->where('product_id', $product->id)
+            ->exists()) {
+            $this->notification()->send([
+                'title' => 'Ez a termék már hozzá van adva a rendeléshez.',
+                'icon' => 'warning',
+            ]);
+            return;
+        }
+
+        $detail = OrderDetail::create([
+            'order_id' => $this->selectedOrder->id,
+            'product_id' => $product->id,
+            'quantity' => $this->newProductQuantity,
+            'dispatched_quantity' => $this->newProductQuantity,
+        ]);
+
+        $this->orderDetails[] = [
+            'id' => $detail->id,
+            'product_name' => $product->name,
+            'quantity' => $detail->quantity,
+            'dispatched_quantity' => $detail->dispatched_quantity,
+        ];
+
+        $this->newProductId = null;
+        $this->newProductQuantity = 1;
+
+        $this->notification()->send([
+            'title' => 'Termék hozzáadva a rendeléshez',
             'icon' => 'success',
         ]);
     }
