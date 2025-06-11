@@ -92,13 +92,14 @@ class OrderList extends Component
 
     public function render()
 {
-    $query = Order::with(['user', 'store', 'orderDetails']);
+    $query = Order::with(['user', 'store', 'orderDetails', 'orderDetails.product']);
 
     if (!empty($this->search)) {
         $query->where(function ($q) {
             $q->where('status', 'like', '%' . $this->search . '%')
               ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
-              ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
+              ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
+              ->orWhereHas('orderDetails.product', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));;
         });
     }
 

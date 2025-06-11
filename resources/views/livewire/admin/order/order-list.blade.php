@@ -5,8 +5,12 @@
 
     <div class="space-y-4">
         <div class="flex items-center gap-4">
-                
-
+                <x-input
+                    label="{{ __('common.search_placeholder') }}"
+                    placeholder="{{ __('common.search_placeholder') }}"
+                    wire:model.live.debounce.500ms="search"
+                    class="w-full md:w-1/3"
+                />
                 <x-select
                     label="{{ __('common.status') }}"
                     placeholder="{{ __('common.status') }}"
