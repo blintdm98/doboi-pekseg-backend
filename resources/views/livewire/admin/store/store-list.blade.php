@@ -23,6 +23,11 @@
                         placeholder="{{ __('common.phone') }}"
                         wire:model="form.phone"
                     />
+                    <x-input
+                        label="{{ __('common.contact_person') }}"
+                        placeholder="{{ __('common.contact_person') }}"
+                        wire:model="form.contact_person"
+                    />
                     <div class="w-full relative">
                         <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.logo') }}</label>
 
@@ -106,6 +111,7 @@
                 <x-table.th>{{__('common.store')}}</x-table.th>
                 <x-table.th>{{__('common.address')}}</x-table.th>
                 <x-table.th>{{ __('common.phone') }}</x-table.th>
+                <x-table.th>{{ __('common.contact_person') }}</x-table.th>
                 <x-table.th>{{__('common.logo')}}</x-table.th>
                 <x-table.th>{{__('common.edit')}}</x-table.th>
             </x-slot:head>
@@ -114,6 +120,7 @@
                     <x-table.td>{{$store->name}}</x-table.td>
                     <x-table.td>{{$store->address}}</x-table.td>
                     <x-table.td>{{$store->phone ?: 'Nincs telefonszám'}}</x-table.td>
+                    <x-table.td>{{ $store->contact_person ?: 'Nincs megadva' }}</x-table.td>
                     <x-table.td class="flex justify-center items-center">
                     @if($store->getFirstMediaUrl('logos'))
                         <img src="{{ $store->getFirstMediaUrl('logos') }}" class="h-12 w-12 object-cover rounded" />

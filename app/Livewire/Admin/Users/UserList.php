@@ -18,6 +18,11 @@ class UserList extends Component
 
     public $search = '';
 
+    public $roles = [
+        'admin' => 'Admin',
+        'mobil' => 'Mobil',
+    ];
+
     public function openModal()
     {
         $this->form->initForm();

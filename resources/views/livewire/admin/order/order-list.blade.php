@@ -146,7 +146,7 @@
                     </span>
                 </p>
                 <p><strong>{{ __('common.total') }}:</strong> {{ $total }} lej</p>
-                <div class="space-y-2">
+                <div class="space-y-2 max-h-96 overflow-y-auto pr-2 bg-transparent">
                     @foreach($orderDetails as $index => $detail)
                         <div class="flex justify-between items-center gap-4">
                             <span>{{ $detail['product_name'] }} – {{ $detail['quantity'] }} db</span>

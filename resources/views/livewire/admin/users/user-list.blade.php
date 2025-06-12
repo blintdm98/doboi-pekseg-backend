@@ -30,8 +30,9 @@
                     wire:model="form.role"
                     placeholder="Válassz szerepet!"
                 >
-                    <x-select.option value="admin">Admin</x-select.option>
-                    <x-select.option value="mobil">Mobil</x-select.option>
+                    @foreach($roles as $value => $label)
+                        <x-select.option :value="$value">{{ $label }}</x-select.option>
+                    @endforeach
                 </x-select>
             </div>
             <x-slot name="footer">

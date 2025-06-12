@@ -26,6 +26,9 @@ class StoreForm extends Form
     #[Validate(['nullable', 'string', 'min:10'])]
     public $phone = '';
 
+    #[Validate(['nullable'])]
+    public $contact_person = '';
+
     public function initForm()
     {
         $this->reset();
@@ -40,6 +43,7 @@ class StoreForm extends Form
         $this->address = $store->address;
         // $this->logo = $store->logo;
         $this->phone = $store->phone;
+        $this->contact_person = $store->contact_person;
     }
 
     public function save()
@@ -51,12 +55,14 @@ class StoreForm extends Form
                 'name' => $this->name,
                 'address' => $this->address,
                 'phone' => $this->phone,
+                'contact_person' => $this->contact_person,
             ]);
         } else {
             $this->store->update([
                 'name' => $this->name,
                 'address' => $this->address,
                 'phone' => $this->phone,
+                'contact_person' => $this->contact_person,
             ]);
             $store = $this->store;
         }
