@@ -4,8 +4,22 @@
         <x-modal-card blur="md" wire:model="userModal">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <x-input label="{{ __('common.name') }}" placeholder="{{ __('common.name') }}" wire:model="form.name" />
-                <x-input label="{{ __('common.email') }} ({{ __('common.optional') }})" placeholder="{{ __('common.email') }}" wire:model="form.email" />
-                <x-input type="password" label="{{ __('common.password') }}" placeholder="{{ __('common.password') }}" wire:model="form.password" />
+                <x-input 
+                    label="{{ __('common.user_name') }}" 
+                    placeholder="{{ __('common.user_name') }}" 
+                    wire:model="form.user_name" 
+                />    
+                <x-input 
+                    label="{{ __('common.email') }} ({{ __('common.optional') }})" 
+                    placeholder="{{ __('common.email') }}" 
+                    wire:model="form.email" 
+                />
+                <x-password 
+                    label="{{ __('common.password') }}" 
+                    placeholder="{{ __('common.password') }}" 
+                    wire:model="form.password" 
+                    :reveal="false"
+                />
                 <x-input
                     label="{{ __('common.phone') }}"
                     placeholder="{{ __('common.phone') }}"
@@ -14,7 +28,7 @@
                 <x-select
                     label="{{ __('common.role') }}"
                     wire:model="form.role"
-                    placeholder="{{ __('common.select_role') }}"
+                    placeholder="Válassz szerepet!"
                 >
                     <x-select.option value="admin">Admin</x-select.option>
                     <x-select.option value="mobil">Mobil</x-select.option>
@@ -54,8 +68,8 @@
             @foreach ($users as $user)
                 <x-table.tr>
                     <x-table.td>{{ $user->name }}</x-table.td>
-                    <x-table.td>{{ $user->email }}</x-table.td>
-                    <x-table.td>{{ $user->phone ?: 'Nincs telefonszám' }}</x-table.td>
+                    <x-table.td>{{ $user->email ?: 'Nincs megadva e-mail!' }}</x-table.td>
+                    <x-table.td>{{ $user->phone ?: 'Nincs telefonszám!' }}</x-table.td>
                     <x-table.td>{{ ucfirst($user->role) }}</x-table.td>
                     <x-table.td>
                         <x-button info label="{{ __('common.edit') }}" wire:click="editUser({{ $user->id }})" />

@@ -28,6 +28,7 @@ class UserList extends Component
     {
         $this->form->setUser($user);
         $this->userModal = true;
+        $this->form->password = null;
     }
 
     public function save()

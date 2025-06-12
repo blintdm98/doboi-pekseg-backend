@@ -11,6 +11,7 @@ class UserForm extends Form
     public ?User $user = null;
 
     public $name = '';
+    public $user_name = '';
     public $email = '';
     public $password = '';
     public $role = 'mobil';
@@ -20,6 +21,7 @@ class UserForm extends Form
     {
         return [
             'name' => 'required|string|max:255',
+            'user_name' => 'required|string|max:255',
             'email' => 'nullable|email|unique:users,email,' . optional($this->user)->id,
             'password' => $this->user ? 'nullable|min:6' : 'required|min:6',
             'role' => 'required|in:admin,mobil',
@@ -37,6 +39,7 @@ class UserForm extends Form
     {
         $this->user = $user;
         $this->name = $user->name;
+        $this->user_name = $user->user_name;
         $this->email = $user->email;
         $this->role = $user->role;
         $this->phone = $user->phone;
@@ -48,6 +51,7 @@ class UserForm extends Form
 
         $data = [
             'name' => $this->name,
+            'user_name' => $this->user_name,
             'email' => $this->email,
             'role' => $this->role,
             'phone' => $this->phone,
