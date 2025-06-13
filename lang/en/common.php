@@ -46,5 +46,5 @@ return [
     'total' => 'Ár',
     'no_results_found' => 'Nincs találat a megadott feltételekre',
     'select_role' => 'Válassz szerepet!',
-    'contact_person' => 'Kapcsolattartó személy!',
+    'contact_person' => 'Kapcsolattartó személy',
 ];

@@ -177,7 +177,7 @@
                     class="w-full"
                 >
                     <x-select.option value="">--</x-select.option>
-                    @foreach(\App\Models\Product::orderBy('name')->get() as $product)
+                    @foreach($availableProducts as $product)
                         <x-select.option value="{{ $product->id }}">{{ $product->name }}</x-select.option>
                     @endforeach
                 </x-select>
@@ -186,7 +186,7 @@
                     type="number"
                     label="Darab"
                     wire:model="newProductQuantity"
-                    min="1"
+                    min="0"
                     class="w-24"
                 />
 

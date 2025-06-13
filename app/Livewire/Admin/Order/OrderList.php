@@ -25,6 +25,8 @@ class OrderList extends Component
     public $newProductId = null;
     public $newProductQuantity = 1;
     public bool $showAddProduct = false;
+    public $existingProductIds = [];
+    public $availableProducts = [];
 
     public function getOrders()
     {
@@ -55,9 +57,13 @@ class OrderList extends Component
                 'id' => $item->id,
                 'product_name' => $item->product?->name ?? 'Ez a termék már nem elérhető',
                 'quantity' => $item->quantity,
-                'dispatched_quantity' => $item->dispatched_quantity ?: $item->quantity,
+                'dispatched_quantity' => $item->dispatched_quantity ?? $item->quantity,
             ])
             ->toArray();
+
+        $existingProductIds = OrderDetail::where('order_id', $order->id)->pluck('product_id')->toArray();
+
+        $this->availableProducts = \App\Models\Product::whereNotIn('id', $existingProductIds)->orderBy('name')->get();
 
         $this->orderModal = true;
     }
@@ -201,6 +207,16 @@ class OrderList extends Component
             'title' => 'Termék hozzáadva a rendeléshez',
             'icon' => 'success',
         ]);
+
+        $this->notification()->send([
+            'title' => 'Termék hozzáadva a rendeléshez',
+            'icon' => 'success',
+        ]);
+
+        $this->availableProducts = \App\Models\Product::whereNotIn(
+            'id',
+            OrderDetail::where('order_id', $this->selectedOrder->id)->pluck('product_id')->toArray()
+        )->orderBy('name')->get();
     }
 }
 

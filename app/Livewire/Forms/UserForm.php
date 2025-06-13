@@ -21,7 +21,7 @@ class UserForm extends Form
     {
         return [
             'name' => 'required|string|max:255',
-            'user_name' => 'required|string|max:255',
+            'user_name' => 'required|string|max:255|unique:users,user_name,' . optional($this->user)->id,
             'email' => 'nullable|email|unique:users,email,' . optional($this->user)->id,
             'password' => $this->user ? 'nullable|min:6' : 'required|min:6',
             'role' => 'required|in:admin,mobil',

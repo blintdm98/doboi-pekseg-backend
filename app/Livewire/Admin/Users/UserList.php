@@ -27,6 +27,7 @@ class UserList extends Component
     {
         $this->form->initForm();
         $this->userModal = true;
+        $this->resetErrorBag();
     }
 
     public function editUser(User $user)
@@ -34,6 +35,7 @@ class UserList extends Component
         $this->form->setUser($user);
         $this->userModal = true;
         $this->form->password = null;
+        $this->resetErrorBag();
     }
 
     public function save()
