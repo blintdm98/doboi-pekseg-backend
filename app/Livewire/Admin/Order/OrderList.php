@@ -57,7 +57,9 @@ class OrderList extends Component
                 'id' => $item->id,
                 'product_name' => $item->product?->name ?? 'Ez a termék már nem elérhető',
                 'quantity' => $item->quantity,
-                'dispatched_quantity' => $item->dispatched_quantity ?? $item->quantity,
+                'dispatched_quantity' => ($order->status === 'pending' && $item->dispatched_quantity === 0)
+                    ? $item->quantity
+                    : $item->dispatched_quantity,
             ])
             ->toArray();
 
