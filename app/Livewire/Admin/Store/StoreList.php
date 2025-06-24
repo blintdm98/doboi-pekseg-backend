@@ -48,7 +48,8 @@ class StoreList extends Component
             ->when($this->search, function ($query) {
                 $query->where(function ($q) {
                     $q->where('name', 'like', '%' . $this->search . '%')
-                        ->orWhere('address', 'like', '%' . $this->search . '%');
+                        ->orWhere('address', 'like', '%' . $this->search . '%')
+                        ->orWhere('contact_person', 'like', '%' . $this->search . '%');
                 });
             })
             ->latest()
