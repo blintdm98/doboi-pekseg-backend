@@ -47,4 +47,5 @@ return [
     'no_results_found' => 'Nincs találat a megadott feltételekre',
     'select_role' => 'Válassz szerepet!',
     'contact_person' => 'Kapcsolattartó személy',
+    'your_credentials_invalid' => 'Hibás jelszó!',
 ];

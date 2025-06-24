@@ -28,13 +28,12 @@ class Login extends Component
             'user_name' => $this->user_name,
             'password'  => $this->password,
         ])) {
-            $this->addError('common', __('user.your_credentials_invalid'));
+            $this->addError('common', __('common.your_credentials_invalid'));
             return;
         }
 
-        // ⛔️ Role ellenőrzés itt
         if (auth()->user()->role !== 'admin') {
-            auth()->logout(); // kiléptetés, ha nem admin
+            auth()->logout();
             $this->addError('common', 'Csak admin felhasználók léphetnek be.');
             return;
         }
@@ -46,5 +45,10 @@ class Login extends Component
     public function render()
     {
         return view('livewire.users.login');
+    }
+
+    public function updated($propertyName)
+    {
+        $this->resetErrorBag('common');
     }
 }
