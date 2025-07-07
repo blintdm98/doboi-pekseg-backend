@@ -40,7 +40,7 @@
                         <div class="flex gap-x-2">
                             <x-button flat label="{{ __('common.cancel') }}" x-on:click="close"/>
                             @if($form->user)
-                                <x-button danger label="{{__('common.delete')}}" wire:click="delete"/>
+                                <x-button negative label="{{__('common.delete')}}" wire:click="delete"/>
                             @endif
                         </div>
                         <x-button primary label="{{ __('common.save') }}" wire:click="save"/>
@@ -70,7 +70,7 @@
                 <x-table.tr>
                     <x-table.td>{{ $user->name }}</x-table.td>
                     <x-table.td>{{ $user->email ?: 'Nincs megadva e-mail!' }}</x-table.td>
-                    <x-table.td>{{ $user->phone ?: 'Nincs telefonszám!' }}</x-table.td>
+                    <x-table.td>{{ $user->phone ?: 'Nincs telefonszám' }}</x-table.td>
                     <x-table.td>{{ ucfirst($user->role) }}</x-table.td>
                     <x-table.td>
                         <x-button info label="{{ __('common.edit') }}" wire:click="editUser({{ $user->id }})" />

@@ -39,7 +39,7 @@
             </div>
         </div>
         <!-- Kijelentkezés gomb a mobile sidebar alján -->
-        <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div class="mt-auto border-t border-gray-200 dark:border-gray-700">
             <a
                 href="{{route('logout')}}"
                 class="border-l-[3px] ease-in-out duration-200 flex items-center gap-2 border-transparent px-4 py-3 text-gray-500 hover:border-gray-100 hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:border-gray-700 dark:hover:bg-gray-700 dark:hover:text-gray-200"
