@@ -166,46 +166,48 @@
             </div>
         @endif
 
-        @if (!$showAddProduct)
-            <x-button
-                primary
-                label="Termék hozzáadása"
-                wire:click="$set('showAddProduct', true)"
-            />
-        @else
-            <div class="flex gap-2 items-end">
-                <x-select
-                    label="Termék"
-                    wire:model="newProductId"
-                    placeholder="Válassz terméket"
-                    class="w-full"
-                >
-                    <x-select.option value="">--</x-select.option>
-                    @foreach($availableProducts as $product)
-                        <x-select.option value="{{ $product->id }}">{{ $product->name }}</x-select.option>
-                    @endforeach
-                </x-select>
-
-                <x-input
-                    type="number"
-                    label="Darab"
-                    wire:model="newProductQuantity"
-                    min="0"
-                    class="w-24"
-                />
-
+        @if ($selectedOrder && $selectedOrder->status !== 'completed')
+            @if (!$showAddProduct)
                 <x-button
                     primary
-                    label="Hozzáadás"
-                    wire:click="addProductToOrder"
+                    label="Termék hozzáadása"
+                    wire:click="$set('showAddProduct', true)"
                 />
+            @else
+                <div class="flex gap-2 items-end">
+                    <x-select
+                        label="Termék"
+                        wire:model="newProductId"
+                        placeholder="Válassz terméket"
+                        class="w-full"
+                    >
+                        <x-select.option value="">--</x-select.option>
+                        @foreach($availableProducts as $product)
+                            <x-select.option value="{{ $product->id }}">{{ $product->name }}</x-select.option>
+                        @endforeach
+                    </x-select>
 
-                <x-button
-                    flat
-                    label="Mégse"
-                    wire:click="$set('showAddProduct', false)"
-                />
-            </div>
+                    <x-input
+                        type="number"
+                        label="Darab"
+                        wire:model="newProductQuantity"
+                        min="0"
+                        class="w-24"
+                    />
+
+                    <x-button
+                        primary
+                        label="Hozzáadás"
+                        wire:click="addProductToOrder"
+                    />
+
+                    <x-button
+                        flat
+                        label="Mégse"
+                        wire:click="$set('showAddProduct', false)"
+                    />
+                </div>
+            @endif
         @endif
 
         <x-slot name="footer">

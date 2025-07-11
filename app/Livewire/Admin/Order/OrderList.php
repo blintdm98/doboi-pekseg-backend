@@ -63,9 +63,16 @@ class OrderList extends Component
             ])
             ->toArray();
 
-        $existingProductIds = OrderDetail::where('order_id', $order->id)->pluck('product_id')->toArray();
+        // Csak akkor töltjük be a rendelkezésre álló termékeket, ha a rendelés nincs teljesítve
+        if ($order->status !== 'completed') {
+            $existingProductIds = OrderDetail::where('order_id', $order->id)->pluck('product_id')->toArray();
+            $this->availableProducts = \App\Models\Product::whereNotIn('id', $existingProductIds)->orderBy('name')->get();
+        } else {
+            $this->availableProducts = collect();
+        }
 
-        $this->availableProducts = \App\Models\Product::whereNotIn('id', $existingProductIds)->orderBy('name')->get();
+        // Reset the showAddProduct flag when opening a new order
+        $this->showAddProduct = false;
 
         $this->orderModal = true;
     }
@@ -91,6 +98,12 @@ class OrderList extends Component
             $this->selectedOrder->update([
                 'status' => $isComplete ? 'completed' : 'partial',
             ]);
+            
+            // Ha a rendelés teljesítve lett, kikapcsoljuk a termék hozzáadás felületet
+            if ($isComplete) {
+                $this->showAddProduct = false;
+                $this->availableProducts = collect();
+            }
         }
 
         $this->orderModal = false;
@@ -204,11 +217,6 @@ class OrderList extends Component
 
         $this->newProductId = null;
         $this->newProductQuantity = 1;
-
-        $this->notification()->send([
-            'title' => 'Termék hozzáadva a rendeléshez',
-            'icon' => 'success',
-        ]);
 
         $this->notification()->send([
             'title' => 'Termék hozzáadva a rendeléshez',
