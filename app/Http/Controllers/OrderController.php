@@ -17,7 +17,11 @@ class OrderController extends Controller
 
         $orders = Order::with(['orderDetails.product', 'user'])
             ->where('store_id', $storeId)
-            ->where('created_at', '>=', Carbon::now()->subMonth()) // csak az elmúlt 1 hónap
+            ->when($request->has('start_date'), function ($query) use ($request) {
+                $query->where('created_at', '>=', $request->query('start_date'));
+            }, function ($query) {
+                $query->where('created_at', '>=', \Carbon\Carbon::now()->subMonth());
+            })
             ->orderBy('created_at', 'desc')
             ->get()
             ->map(function ($order) {
