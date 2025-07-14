@@ -224,12 +224,20 @@
                     @endif
                 </div>
                 @if($selectedOrder)
-                    <x-button
-                        secondary
-                        label="PDF"
-                        icon="document-text"
-                        wire:click="generatePDF({{ $selectedOrder->id }})"
-                    />
+                    <div class="flex gap-2">
+                        <x-button
+                            secondary
+                            label="PDF (HU)"
+                            icon="document-text"
+                            wire:click="generatePDF({{ $selectedOrder->id }}, 'hu')"
+                        />
+                        <x-button
+                            secondary
+                            label="PDF (RO)"
+                            icon="document-text"
+                            wire:click="generatePDF({{ $selectedOrder->id }}, 'ro')"
+                        />
+                    </div>
                 @endif
             </div>
         </x-slot>

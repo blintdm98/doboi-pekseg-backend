@@ -86,6 +86,18 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | TVA Configuration
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the VAT (TVA) percentage used in the application.
+    | This is used for PDF generation and other calculations.
+    |
+    */
+
+    'tva_percentage' => env('TVA_PERCENTAGE', 19),
+
+    /*
+    |--------------------------------------------------------------------------
     | Encryption Key
     |--------------------------------------------------------------------------
     |

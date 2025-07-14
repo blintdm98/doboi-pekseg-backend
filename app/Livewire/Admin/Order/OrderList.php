@@ -107,7 +107,8 @@ class OrderList extends Component
             }
         }
 
-        $this->orderModal = false;
+        // Ne zárjuk be a modalt, csak frissítsük az adatokat
+        // $this->orderModal = false;
 
         $this->notification()->send([
             'title' => __('common.saved_successfully'),
@@ -230,7 +231,7 @@ class OrderList extends Component
         )->orderBy('name')->get();
     }
 
-    public function generatePDF($orderId)
+    public function generatePDF($orderId, $language = 'hu')
     {
         $order = Order::with(['orderDetails.product', 'store', 'user'])->find($orderId);
         
@@ -243,21 +244,34 @@ class OrderList extends Component
             return;
         }
 
-        // Számítsuk ki a teljes összeget
+        // Számítsuk ki a teljes összeget (csak a létező termékeket számolva, kiküldött mennyiségekkel)
         $total = $order->orderDetails->sum(function($detail) {
-            return $detail->quantity * ($detail->product->price ?? 0);
+            if ($detail->product) {
+                $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+                return $quantity * $detail->product->price;
+            }
+            return 0;
         });
 
+        // Válasszuk ki a megfelelő template-et a nyelv alapján
+        $template = $language === 'ro' ? 'pdf.order_ro' : 'pdf.order';
+
         // Generáljuk a PDF-t
-        $pdf = Pdf::loadView('pdf.order', [
+        $pdf = Pdf::loadView($template, [
             'order' => $order,
             'total' => $total
         ]);
 
+        // Beállítjuk a karakterkódolást
+        $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
+
+        // Fájlnév a nyelv alapján
+        $filename = $language === 'ro' ? 'comanda_' . $order->id . '.pdf' : 'rendeles_' . $order->id . '.pdf';
+
         // Töltsük le a PDF-t
         return response()->streamDownload(function() use ($pdf) {
             echo $pdf->output();
-        }, 'rendeles_' . $order->id . '.pdf');
+        }, $filename);
     }
 }
 

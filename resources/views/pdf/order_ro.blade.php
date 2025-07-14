@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Rendelés #{{ $order->id }}</title>
+    <title>Comandă #{{ $order->id }}</title>
     <style>
         body {
             font-family: DejaVu Sans, Arial, sans-serif;
@@ -68,7 +68,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Rendelés #{{ $order->id }}</h1>
+        <h1>Comandă #{{ $order->id }}</h1>
         <p style="text-align: center; margin-top: 10px; font-size: 14px; color: #666;">
             TVA: {{ config('app.tva_percentage') }}%
         </p>
@@ -77,33 +77,33 @@
     <div class="order-info">
         <table>
             <tr>
-                <td>Rendelés száma:</td>
+                <td>Numărul comenzii:</td>
                 <td>{{ $order->id }}</td>
             </tr>
             <tr>
-                <td>Üzlet neve:</td>
+                <td>Numele magazinului:</td>
                 <td>{{ $order->store->name ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <td>Rendelő neve:</td>
+                <td>Numele clientului:</td>
                 <td>{{ $order->user->name ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <td>Dátum:</td>
+                <td>Data:</td>
                 <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
             </tr>
             <tr>
-                <td>Státusz:</td>
+                <td>Status:</td>
                 <td>
                     @switch($order->status)
                         @case('pending')
-                            Függőben
+                            În așteptare
                             @break
                         @case('partial')
-                            Részben teljesítve
+                            Parțial finalizată
                             @break
                         @case('completed')
-                            Teljesítve
+                            Finalizată
                             @break
                         @default
                             {{ $order->status }}
@@ -112,7 +112,7 @@
             </tr>
             @if($order->comment)
             <tr>
-                <td>Megjegyzés:</td>
+                <td>Comentariu:</td>
                 <td>{{ $order->comment }}</td>
             </tr>
             @endif
@@ -122,12 +122,12 @@
     <table class="products-table">
         <thead>
             <tr>
-                <th>Termék</th>
-                <th>Mennyiség</th>
-                <th>Egységár</th>
-                <th>Ár</th>
+                <th>Produs</th>
+                <th>Cantitate</th>
+                <th>Preț unitar</th>
+                <th>Preț</th>
                 <th>TVA</th>
-                <th>TVA+Ár</th>
+                <th>TVA+Preț</th>
             </tr>
         </thead>
         <tbody>
@@ -142,11 +142,11 @@
                 @endphp
                 <tr>
                     <td>{{ $detail->product->name }}</td>
-                    <td>{{ $quantity }} db</td>
-                    <td>{{ number_format($price, 0, ',', ' ') }} lej</td>
-                    <td>{{ number_format($subtotal, 0, ',', ' ') }} lej</td>
-                    <td>{{ number_format($tvaAmount, 0, ',', ' ') }} lej</td>
-                    <td>{{ number_format($totalWithTva, 0, ',', ' ') }} lej</td>
+                    <td>{{ $quantity }} buc</td>
+                    <td>{{ number_format($price, 0, ',', ' ') }} lei</td>
+                    <td>{{ number_format($subtotal, 0, ',', ' ') }} lei</td>
+                    <td>{{ number_format($tvaAmount, 0, ',', ' ') }} lei</td>
+                    <td>{{ number_format($totalWithTva, 0, ',', ' ') }} lei</td>
                 </tr>
                 @endif
             @endforeach
@@ -155,16 +155,16 @@
                 $totalWithTva = $total + $totalTva;
             @endphp
             <tr class="total-row">
-                <td colspan="3" style="text-align: right;"><strong>Összesen:</strong></td>
-                <td><strong>{{ number_format($total, 0, ',', ' ') }} lej</strong></td>
-                <td><strong>{{ number_format($totalTva, 0, ',', ' ') }} lej</strong></td>
-                <td><strong>{{ number_format($totalWithTva, 0, ',', ' ') }} lej</strong></td>
+                <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                <td><strong>{{ number_format($total, 0, ',', ' ') }} lei</strong></td>
+                <td><strong>{{ number_format($totalTva, 0, ',', ' ') }} lei</strong></td>
+                <td><strong>{{ number_format($totalWithTva, 0, ',', ' ') }} lei</strong></td>
             </tr>
         </tbody>
     </table>
 
     <div class="footer">
-        <p>Dokumentum generálva: {{ now()->format('Y-m-d H:i:s') }}</p>
+        <p>Document generat: {{ now()->format('Y-m-d H:i:s') }}</p>
     </div>
 </body>
 </html> 
