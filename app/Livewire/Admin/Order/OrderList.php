@@ -7,6 +7,7 @@ use App\Models\OrderDetail;
 use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class OrderList extends Component
 {
@@ -242,14 +243,21 @@ class OrderList extends Component
             return;
         }
 
-        // Itt implementálhatod a PDF generálás logikáját
-        // Például: return response()->download($pdfPath);
-        
-        $this->notification()->send([
-            'title' => 'PDF generálás',
-            'description' => 'A PDF generálás funkció még fejlesztés alatt áll.',
-            'icon' => 'info',
+        // Számítsuk ki a teljes összeget
+        $total = $order->orderDetails->sum(function($detail) {
+            return $detail->quantity * ($detail->product->price ?? 0);
+        });
+
+        // Generáljuk a PDF-t
+        $pdf = Pdf::loadView('pdf.order', [
+            'order' => $order,
+            'total' => $total
         ]);
+
+        // Töltsük le a PDF-t
+        return response()->streamDownload(function() use ($pdf) {
+            echo $pdf->output();
+        }, 'rendeles_' . $order->id . '.pdf');
     }
 }
 
