@@ -211,16 +211,27 @@
         @endif
 
         <x-slot name="footer">
-            <x-button flat label="{{ __('common.cancel') }}" wire:click="$set('orderModal', false)"/>
-            <x-button primary label="{{ __('common.save') }}" wire:click="save"/>
-            @if($selectedOrder)
-                <x-button
-                    negative
-                    label="{{ __('common.delete') }}"
-                    wire:click="deleteOrder({{ $selectedOrder->id }})"
-                    class="mt-2"
-                />
-            @endif
+            <div class="flex justify-between items-center w-full">
+                <div class="flex gap-2">
+                    <x-button flat label="{{ __('common.cancel') }}" wire:click="$set('orderModal', false)"/>
+                    <x-button primary label="{{ __('common.save') }}" wire:click="save"/>
+                    @if($selectedOrder)
+                        <x-button
+                            negative
+                            label="{{ __('common.delete') }}"
+                            wire:click="deleteOrder({{ $selectedOrder->id }})"
+                        />
+                    @endif
+                </div>
+                @if($selectedOrder)
+                    <x-button
+                        secondary
+                        label="PDF"
+                        icon="document-text"
+                        wire:click="generatePDF({{ $selectedOrder->id }})"
+                    />
+                @endif
+            </div>
         </x-slot>
     </x-modal-card>
 </div>

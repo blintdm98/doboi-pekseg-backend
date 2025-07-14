@@ -228,5 +228,28 @@ class OrderList extends Component
             OrderDetail::where('order_id', $this->selectedOrder->id)->pluck('product_id')->toArray()
         )->orderBy('name')->get();
     }
+
+    public function generatePDF($orderId)
+    {
+        $order = Order::with(['orderDetails.product', 'store', 'user'])->find($orderId);
+        
+        if (!$order) {
+            $this->notification()->send([
+                'title' => 'Hiba',
+                'description' => 'A rendelés nem található.',
+                'icon' => 'error',
+            ]);
+            return;
+        }
+
+        // Itt implementálhatod a PDF generálás logikáját
+        // Például: return response()->download($pdfPath);
+        
+        $this->notification()->send([
+            'title' => 'PDF generálás',
+            'description' => 'A PDF generálás funkció még fejlesztés alatt áll.',
+            'icon' => 'info',
+        ]);
+    }
 }
 
