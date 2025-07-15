@@ -108,7 +108,15 @@
                     <x-table.td>{{ $order->user->name ?? 'N/A' }}</x-table.td>
                     <x-table.td>{{ $order->created_at->format('Y-m-d H:i') }}</x-table.td>
                     <x-table.td>
-                        <x-button info label="{{ __('common.details') }}" wire:click="showOrder({{ $order->id }})"/>
+                        <div class="flex gap-2">
+                            <x-button info label="{{ __('common.details') }}" wire:click="showOrder({{ $order->id }})"/>
+                            <x-button
+                                negative
+                                icon="trash"
+                                wire:click="permanentlyDeleteOrder({{ $order->id }})"
+                                wire:confirm="Biztosan törölni szeretnéd ezt a rendelést? Ez a művelet nem vonható vissza!"
+                            />
+                        </div>
                     </x-table.td>
                 </x-table.tr>
             @empty
@@ -218,11 +226,13 @@
                     <x-button flat label="{{ __('common.cancel') }}" wire:click="$set('orderModal', false)"/>
                     <x-button primary label="{{ __('common.save') }}" wire:click="save"/>
                     @if($selectedOrder)
-                        <x-button
-                            negative
-                            label="{{ __('common.delete') }}"
+                        <button
+                            type="button"
+                            class="px-4 py-2 bg-gray-100 text-gray-800 hover:bg-gray-200 rounded-lg font-medium transition-colors duration-200"
                             wire:click="deleteOrder({{ $selectedOrder->id }})"
-                        />
+                        >
+                            Visszamond
+                        </button>
                     @endif
                 </div>
                 @if($selectedOrder)

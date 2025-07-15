@@ -184,6 +184,29 @@ class OrderList extends Component
         ]);
     }
 
+    public function permanentlyDeleteOrder($orderId)
+    {
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            $this->notification()->send([
+                'title' => __('common.error'),
+                'description' => __('common.ordernotfound'),
+                'icon' => 'error',
+            ]);
+            return;
+        }
+
+        // Fizikai törlés
+        OrderDetail::where('order_id', $orderId)->delete();
+        $order->delete();
+
+        $this->notification()->send([
+            'title' => __('common.deleted_successfully'),
+            'icon' => 'success',
+        ]);
+    }
+
     public function addProductToOrder()
     {
         if (!$this->selectedOrder || !$this->newProductId || $this->newProductQuantity < 1) {
