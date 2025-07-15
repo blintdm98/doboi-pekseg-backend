@@ -105,6 +105,9 @@
                         @case('completed')
                             Teljesítve
                             @break
+                        @case('canceled')
+                            Visszamondva
+                            @break
                         @default
                             {{ $order->status }}
                     @endswitch

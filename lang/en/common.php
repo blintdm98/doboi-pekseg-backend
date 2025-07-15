@@ -35,6 +35,7 @@ return [
     'status_pending' => 'Függőben',
     'status_partial' => 'Részben teljesítve',
     'status_completed' => 'Teljesítve',
+    'status_canceled' => 'Visszamondva',
     'role' => 'Szerep',
     'optional' => 'Opcionális',
     'phone' => 'Telefonszám',

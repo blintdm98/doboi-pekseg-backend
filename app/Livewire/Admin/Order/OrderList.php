@@ -167,16 +167,19 @@ class OrderList extends Component
             return;
         }
 
-        OrderDetail::where('order_id', $orderId)->delete();
+        // Fizikai törlés helyett csak a státuszt állítjuk "Visszavonva" értékre
+        // OrderDetail::where('order_id', $orderId)->delete();
+        // $order->delete();
 
-        $order->delete();
+        // A rendelés státuszát "canceled" értékre állítjuk
+        $order->update(['status' => 'canceled']);
 
         $this->orderModal = false;
         $this->selectedOrder = null;
         $this->orderDetails = [];
 
         $this->notification()->send([
-            'title' => __('common.deleted_successfully'),
+            'title' => 'Rendelés visszavonva',
             'icon' => 'success',
         ]);
     }

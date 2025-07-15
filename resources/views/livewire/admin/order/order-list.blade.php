@@ -21,6 +21,7 @@
                     <x-select.option value="pending">{{ __('common.status_pending') }}</x-select.option>
                     <x-select.option value="partial">{{ __('common.status_partial') }}</x-select.option>
                     <x-select.option value="completed">{{ __('common.status_completed') }}</x-select.option>
+                    <x-select.option value="canceled">{{ __('common.status_canceled') }}</x-select.option>
                 </x-select>
 
                 <x-select
@@ -133,6 +134,7 @@
                             'pending' => 'bg-yellow-100 text-yellow-800',
                             'completed' => 'bg-green-100 text-green-800',
                             'partial' => 'bg-orange-100 text-orange-800',
+                            'canceled' => 'bg-red-100 text-red-800',
                         ];
                     @endphp
 

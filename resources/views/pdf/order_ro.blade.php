@@ -105,6 +105,9 @@
                         @case('completed')
                             Finalizată
                             @break
+                        @case('canceled')
+                            Anulată
+                            @break
                         @default
                             {{ $order->status }}
                     @endswitch
