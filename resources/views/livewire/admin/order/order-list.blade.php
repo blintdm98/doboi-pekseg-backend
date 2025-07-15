@@ -156,6 +156,9 @@
                     </span>
                 </p>
                 <p><strong>{{ __('common.total') }}:</strong> {{ $total }} lej</p>
+                @if($selectedOrder->comment)
+                    <p><strong>{{ __('common.comment') }}:</strong> {{ $selectedOrder->comment }}</p>
+                @endif
                 <div class="space-y-2 max-h-96 overflow-y-auto pr-2 bg-transparent">
                     <div class="flex justify-between items-center gap-4 font-semibold text-sm text-gray-600">
                         <span>Termék</span>
