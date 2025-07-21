@@ -242,7 +242,7 @@
                         </button>
                     @endif
                 </div>
-                @if($selectedOrder)
+                @if($selectedOrder && $selectedOrder->status !== 'canceled')
                     <div class="flex gap-2">
                         <x-button
                             secondary
