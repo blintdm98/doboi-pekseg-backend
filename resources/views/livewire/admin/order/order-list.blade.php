@@ -98,6 +98,7 @@
                                 'pending' => 'bg-yellow-100 text-yellow-800',
                                 'completed' => 'bg-green-100 text-green-800',
                                 'partial' => 'bg-orange-100 text-orange-800',
+                                'canceled' => 'bg-red-100 text-red-800',
                             ];
                         @endphp
 
@@ -171,6 +172,7 @@
                                 <x-input
                                     type="number"
                                     wire:model.defer="orderDetails.{{ $index }}.dispatched_quantity"
+                                    :disabled="$selectedOrder && ($selectedOrder->status === 'completed' || $selectedOrder->status === 'canceled')"
                                 />
                             </div>
                         </div>
@@ -179,7 +181,7 @@
             </div>
         @endif
 
-        @if ($selectedOrder && $selectedOrder->status !== 'completed')
+        @if ($selectedOrder && !in_array($selectedOrder->status, ['completed', 'canceled']))
             @if (!$showAddProduct)
                 <x-button
                     primary
@@ -226,12 +228,14 @@
         <x-slot name="footer">
             <div class="flex justify-between items-center w-full">
                 <div class="flex gap-2">
-                    <x-button flat label="{{ __('common.cancel') }}" wire:click="$set('orderModal', false)"/>
-                    <x-button primary label="{{ __('common.save') }}" wire:click="save"/>
-                    @if($selectedOrder)
+                    <x-button flat label="{{ __('common.cancel') }}" wire:click="$set('orderModal', false)"
+                        class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600"
+                    />
+                    @if($selectedOrder && !in_array($selectedOrder->status, ['completed', 'canceled']))
+                        <x-button primary label="{{ __('common.save') }}" wire:click="save"/>
                         <button
                             type="button"
-                            class="px-4 py-2 bg-gray-100 text-gray-800 hover:bg-gray-200 rounded-lg font-medium transition-colors duration-200"
+                            class="px-4 py-2 bg-red-100 text-red-800 hover:bg-red-200 rounded-lg font-medium transition-colors duration-200"
                             wire:click="deleteOrder({{ $selectedOrder->id }})"
                         >
                             Visszamond
