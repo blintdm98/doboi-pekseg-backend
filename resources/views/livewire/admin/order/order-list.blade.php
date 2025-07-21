@@ -91,7 +91,7 @@
                             })
                         }} lej
                     </x-table.td>
-                    <x-table.td>{{ $order->comment ?? 'Nincs megjegyzés' }}</x-table.td>
+                    <x-table.td>{{ $order->comment }}</x-table.td>
                     <x-table.td>
                     @php
                             $statusColors = [

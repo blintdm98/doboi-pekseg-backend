@@ -119,13 +119,13 @@
                 <x-table.tr>
                     <x-table.td>{{$store->name}}</x-table.td>
                     <x-table.td>{{$store->address}}</x-table.td>
-                    <x-table.td>{{$store->phone ?: 'Nincs telefonszám'}}</x-table.td>
-                    <x-table.td>{{ $store->contact_person ?: 'Nincs megadva' }}</x-table.td>
+                    <x-table.td>{{$store->phone}}</x-table.td>
+                    <x-table.td>{{ $store->contact_person }}</x-table.td>
                     <x-table.td class="flex justify-center items-center">
                     @if($store->getFirstMediaUrl('logos'))
                         <img src="{{ $store->getFirstMediaUrl('logos') }}" class="h-12 w-12 object-cover rounded" />
                     @else
-                        <span class="text-sm text-gray-400">Nincs logó</span>
+                        <span class="text-sm text-gray-400"></span>
                     @endif
                     </x-table.td>
                     <x-table.td>

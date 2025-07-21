@@ -69,8 +69,8 @@
             @foreach ($users as $user)
                 <x-table.tr>
                     <x-table.td>{{ $user->name }}</x-table.td>
-                    <x-table.td>{{ $user->email ?: 'Nincs megadva e-mail!' }}</x-table.td>
-                    <x-table.td>{{ $user->phone ?: 'Nincs telefonszám' }}</x-table.td>
+                    <x-table.td>{{ $user->email }}</x-table.td>
+                    <x-table.td>{{ $user->phone }}</x-table.td>
                     <x-table.td>{{ ucfirst($user->role) }}</x-table.td>
                     <x-table.td>
                         <x-button info label="{{ __('common.edit') }}" wire:click="editUser({{ $user->id }})" />
