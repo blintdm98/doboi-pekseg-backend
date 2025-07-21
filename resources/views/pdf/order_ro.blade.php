@@ -85,6 +85,10 @@
                 <td>{{ $order->store->name ?? 'N/A' }}</td>
             </tr>
             <tr>
+                <td>Telefon magazinului:</td>
+                <td>{{ $order->store->phone ?? '-' }}</td>
+            </tr>
+            <tr>
                 <td>Numele clientului:</td>
                 <td>{{ $order->user->name ?? 'N/A' }}</td>
             </tr>
