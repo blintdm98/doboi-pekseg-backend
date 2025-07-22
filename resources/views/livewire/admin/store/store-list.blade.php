@@ -2,6 +2,9 @@
 
 <div>
     <div class="mb-8 flex justify-between">
+        <h2 class="text-gray-800 dark:text-gray-200">{{ __('common.stores') }}</h2>
+    </div>
+    <div class="mb-8 flex justify-between">
         <div>
             <x-button secondary icon="plus" label="{{__('common.add-new')}}"
                       wire:click="openModal"

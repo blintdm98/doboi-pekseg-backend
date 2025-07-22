@@ -47,7 +47,7 @@
                 <td>{{ $order->id }}</td>
                 <td>{{ $order->store->name ?? (($language ?? 'hu') === 'ro' ? 'Magazin șters' : 'Törölt bolt') }}</td>
                 <td>{{ ($language ?? 'hu') === 'ro' ? __('common.status_' . $order->status, [], 'ro') : __('common.status_' . $order->status) }}</td>
-                <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
+                <td>{{ $order->created_at->format('Y-m-d') }}</td>
                 <td>{{ number_format($total, 2) }} lej</td>
                 <td>{{ number_format($tva, 2) }} lej</td>
                 <td>{{ number_format($totalWithTva, 2) }} lej</td>

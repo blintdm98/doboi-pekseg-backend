@@ -1,5 +1,8 @@
 <div>
     <div class="mb-8 flex justify-between">
+        <h2 class="text-gray-800 dark:text-gray-200">{{ __('common.users') }}</h2>
+    </div>
+    <div class="mb-8 flex justify-between">
         <x-button secondary icon="plus" label="{{ __('common.add-new') }}" wire:click="openModal" />
         <x-modal-card blur="md" wire:model="userModal">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

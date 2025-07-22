@@ -281,6 +281,12 @@ class OrderList extends Component
                     ->orWhereHas('orderDetails.product', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
                 });
             }
+            if (!empty($this->statusFilter)) {
+                $query->where('status', $this->statusFilter);
+            } else {
+                // Csak a teljesített vagy részben teljesített rendelések, ha nincs státusz szűrő
+                $query->whereIn('status', ['completed', 'partial']);
+            }
             if (!empty($this->storeFilter)) {
                 $query->where('store_id', $this->storeFilter);
             }
@@ -293,8 +299,6 @@ class OrderList extends Component
             if (!empty($this->dateEnd)) {
                 $query->whereDate('created_at', '<=', $this->dateEnd);
             }
-            // Csak a teljesített vagy részben teljesített rendelések
-            $query->whereIn('status', ['completed', 'partial']);
             $orders = $query->get();
             if ($orders->isEmpty()) {
                 $this->notification()->send([

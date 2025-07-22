@@ -49,4 +49,8 @@ return [
     'select_role' => 'Válassz szerepet!',
     'contact_person' => 'Kapcsolattartó személy',
     'your_credentials_invalid' => 'Hibás jelszó!',
+    'dashboard' => 'Dashboard',
+    'users' => 'Felhasználók',
+    'products' => 'Termékek',
+    'stores' => 'Üzletek',
 ];

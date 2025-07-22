@@ -1,5 +1,10 @@
 <!-- resources/views/livewire/admin/dashboard.blade.php -->
 <div class="space-y-6">
+
+    <div class="mb-8 flex justify-between">
+        <h2 class="text-gray-800 dark:text-gray-200">{{ __('common.dashboard') }}</h2>
+    </div>
+
     {{-- Statisztikai kártyák --}}
     {{--
     <div class="p-4 rounded shadow">
