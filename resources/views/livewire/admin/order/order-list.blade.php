@@ -68,6 +68,10 @@
 
 
         </div>
+        <div class="flex gap-2 mb-2">
+            <x-button secondary label="PDF (HU)" icon="document-text" wire:click="generatePDF(null, 'hu')" />
+            <x-button secondary label="PDF (RO)" icon="document-text" wire:click="generatePDF(null, 'ro')" />
+        </div>
         <x-table>
             <x-slot:head>
                 <x-table.th>#</x-table.th>

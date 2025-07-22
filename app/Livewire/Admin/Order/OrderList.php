@@ -259,42 +259,61 @@ class OrderList extends Component
 
     public function generatePDF($orderId, $language = 'hu')
     {
-        $order = Order::with(['orderDetails.product', 'store', 'user'])->find($orderId);
-        
-        if (!$order) {
-            $this->notification()->send([
-                'title' => 'Hiba',
-                'description' => 'A rendelés nem található.',
-                'icon' => 'error',
-            ]);
-            return;
+        if ($orderId) {
+            $order = Order::with(['orderDetails.product', 'store', 'user'])->find($orderId);
+            if (!$order) {
+                $this->notification()->send([
+                    'title' => 'Hiba',
+                    'description' => 'A rendelés nem található.',
+                    'icon' => 'error',
+                ]);
+                return;
+            }
+            $orders = collect([$order]);
+        } else {
+            // Szűrt rendelések lekérése
+            $query = Order::with(['orderDetails.product', 'store', 'user']);
+            if (!empty($this->search)) {
+                $query->where(function ($q) {
+                    $q->where('status', 'like', '%' . $this->search . '%')
+                    ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
+                    ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
+                    ->orWhereHas('orderDetails.product', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
+                });
+            }
+            if (!empty($this->storeFilter)) {
+                $query->where('store_id', $this->storeFilter);
+            }
+            if (!empty($this->userFilter)) {
+                $query->where('user_id', $this->userFilter);
+            }
+            if (!empty($this->dateStart)) {
+                $query->whereDate('created_at', '>=', $this->dateStart);
+            }
+            if (!empty($this->dateEnd)) {
+                $query->whereDate('created_at', '<=', $this->dateEnd);
+            }
+            // Csak a teljesített vagy részben teljesített rendelések
+            $query->whereIn('status', ['completed', 'partial']);
+            $orders = $query->get();
+            if ($orders->isEmpty()) {
+                $this->notification()->send([
+                    'title' => 'Nincs találat',
+                    'description' => 'Nincs rendelés a szűrési feltételeknek megfelelően.',
+                    'icon' => 'warning',
+                ]);
+                return;
+            }
         }
 
-        // Számítsuk ki a teljes összeget (csak a létező termékeket számolva, kiküldött mennyiségekkel)
-        $total = $order->orderDetails->sum(function($detail) {
-            if ($detail->product) {
-                $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
-                return $quantity * $detail->product->price;
-            }
-            return 0;
-        });
-
-        // Válasszuk ki a megfelelő template-et a nyelv alapján
+        // Több rendelés PDF generálása
         $template = $language === 'ro' ? 'pdf.order_ro' : 'pdf.order';
-
-        // Generáljuk a PDF-t
-        $pdf = Pdf::loadView($template, [
-            'order' => $order,
-            'total' => $total
+        $pdf = Pdf::loadView('pdf.orders_bulk', [
+            'orders' => $orders,
+            'language' => $language
         ]);
-
-        // Beállítjuk a karakterkódolást
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
-
-        // Fájlnév a nyelv alapján
-        $filename = $language === 'ro' ? 'comanda_' . $order->id . '.pdf' : 'rendeles_' . $order->id . '.pdf';
-
-        // Töltsük le a PDF-t
+        $filename = $language === 'ro' ? 'comenzi.pdf' : 'rendelesek.pdf';
         return response()->streamDownload(function() use ($pdf) {
             echo $pdf->output();
         }, $filename);

@@ -1,6 +1,7 @@
 <!-- resources/views/livewire/admin/dashboard.blade.php -->
 <div class="space-y-6">
     {{-- Statisztikai kártyák --}}
+    {{--
     <div class="p-4 rounded shadow">
         <x-card title="Top 3 bolt" icon="store">
             <ul class="space-y-1 text-xl">
@@ -19,6 +20,7 @@
             </ul>
         </x-card>
     </div>
+    --}}
 
     {{-- Grafikon --}}
     <div class="p-4 rounded shadow">
@@ -29,6 +31,7 @@
     </div>
 
     {{-- Top 5 termék táblázat --}}
+    {{--
     <div class="p-4 rounded shadow">
         <x-card>
             <h3 class="text-xl font-bold mb-2">Legnépszerűbb termékek</h3>
@@ -52,6 +55,7 @@
             </table>
         </x-card>
     </div>
+    --}}
 </div>    
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
