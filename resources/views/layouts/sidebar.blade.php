@@ -1,5 +1,5 @@
 <div
-    class="flex h-screen bg-gray-50 dark:bg-gray-900"
+    class="flex min-h-screen h-full bg-gray-50 dark:bg-gray-900"
     :class="{ 'overflow-hidden': isSideMenuOpen}"
 >
     <!-- Desktop sidebar -->
