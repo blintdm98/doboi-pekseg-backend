@@ -4,75 +4,75 @@
     </div>
 
     <div class="space-y-4" x-data="{ showFilters: window.innerWidth >= 768 }" x-init="window.addEventListener('resize', () => { showFilters = window.innerWidth >= 768 })">
-        <div class="flex flex-col gap-4 md:flex-row md:items-center md:gap-4">
+        <div class="flex flex-col gap-4">
             <x-input
                 label="{{ __('common.search_placeholder') }}"
                 placeholder="{{ __('common.search_placeholder') }}"
                 wire:model.live.debounce.500ms="search"
-                class="w-full md:w-1/6"
+                class="w-full md:w-1/4"
             />
             <!-- Szűrők lenyitó gomb csak mobilon -->
             <button type="button" class="md:hidden px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-200 text-sm" @click="showFilters = !showFilters">
                 <span x-show="!showFilters">Szűrők mutatása</span>
                 <span x-show="showFilters">Szűrők elrejtése</span>
             </button>
-            <!-- Szűrők: csak ha showFilters -->
-            <div class="flex flex-col gap-4 md:flex-row md:items-center md:gap-4 flex-1" x-show="showFilters" x-transition>
-                <x-select
-                    label="{{ __('common.status') }}"
-                    placeholder="{{ __('common.status') }}"
-                    wire:model.live="statusFilter"
-                    class="w-full md:flex-1"
-                >
-                    <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
-                    <x-select.option value="pending">{{ __('common.status_pending') }}</x-select.option>
-                    <x-select.option value="partial">{{ __('common.status_partial') }}</x-select.option>
-                    <x-select.option value="completed">{{ __('common.status_completed') }}</x-select.option>
-                    <x-select.option value="canceled">{{ __('common.status_canceled') }}</x-select.option>
-                </x-select>
+        </div>
+        <!-- Szűrők: csak ha showFilters -->
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:gap-4" x-show="showFilters" x-transition>
+            <x-select
+                label="{{ __('common.status') }}"
+                placeholder="{{ __('common.status') }}"
+                wire:model.live="statusFilter"
+                class="w-full md:flex-1"
+            >
+                <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
+                <x-select.option value="pending">{{ __('common.status_pending') }}</x-select.option>
+                <x-select.option value="partial">{{ __('common.status_partial') }}</x-select.option>
+                <x-select.option value="completed">{{ __('common.status_completed') }}</x-select.option>
+                <x-select.option value="canceled">{{ __('common.status_canceled') }}</x-select.option>
+            </x-select>
 
-                <x-select
-                    label="{{ __('common.store') }}"
-                    placeholder="{{ __('common.store') }}"
-                    wire:model.live="storeFilter"
-                    class="w-full md:flex-1"
-                >
-                    <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
-                    @foreach(\App\Models\Store::orderBy('name')->get() as $store)
-                        <x-select.option value="{{ $store->id }}">{{ $store->name }}</x-select.option>
-                    @endforeach
-                </x-select>
+            <x-select
+                label="{{ __('common.store') }}"
+                placeholder="{{ __('common.store') }}"
+                wire:model.live="storeFilter"
+                class="w-full md:flex-1"
+            >
+                <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
+                @foreach(\App\Models\Store::orderBy('name')->get() as $store)
+                    <x-select.option value="{{ $store->id }}">{{ $store->name }}</x-select.option>
+                @endforeach
+            </x-select>
 
-                <x-select
-                    label="{{ __('common.user') }}"
-                    placeholder="{{ __('common.user') }}"
-                    wire:model.live="userFilter"
-                    class="w-full md:flex-1"
-                >
-                    <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
-                    @foreach(\App\Models\User::orderBy('name')->get() as $user)
-                        <x-select.option value="{{ $user->id }}">{{ $user->name }}</x-select.option>
-                    @endforeach
-                </x-select>
+            <x-select
+                label="{{ __('common.user') }}"
+                placeholder="{{ __('common.user') }}"
+                wire:model.live="userFilter"
+                class="w-full md:flex-1"
+            >
+                <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
+                @foreach(\App\Models\User::orderBy('name')->get() as $user)
+                    <x-select.option value="{{ $user->id }}">{{ $user->name }}</x-select.option>
+                @endforeach
+            </x-select>
 
-                <x-datetime-picker
-                    label="{{ __('common.date_from') }}"
-                    placeholder="{{ __('common.select_date') }}"
-                    without-time
-                    icon="calendar"
-                    wire:model.live="dateStart"
-                    class="w-full md:flex-1"
-                />
+            <x-datetime-picker
+                label="{{ __('common.date_from') }}"
+                placeholder="{{ __('common.select_date') }}"
+                without-time
+                icon="calendar"
+                wire:model.live="dateStart"
+                class="w-full md:flex-1"
+            />
 
-                <x-datetime-picker
-                    label="{{ __('common.date_to') }}"
-                    placeholder="{{ __('common.select_date') }}"
-                    without-time
-                    icon="calendar"
-                    wire:model.live="dateEnd"
-                    class="w-full md:flex-1"
-                />
-            </div>
+            <x-datetime-picker
+                label="{{ __('common.date_to') }}"
+                placeholder="{{ __('common.select_date') }}"
+                without-time
+                icon="calendar"
+                wire:model.live="dateEnd"
+                class="w-full md:flex-1"
+            />
         </div>
         <div class="flex gap-2 mb-2">
             <x-button secondary label="PDF (HU)" icon="document-text" wire:click="generatePDF(null, 'hu')" />
