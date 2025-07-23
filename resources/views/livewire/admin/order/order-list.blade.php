@@ -4,7 +4,7 @@
     </div>
 
     <div class="space-y-4">
-        <div class="flex items-center gap-4">
+        <div class="flex flex-col gap-4 md:flex-row md:items-center">
                 <x-input
                     label="{{ __('common.search_placeholder') }}"
                     placeholder="{{ __('common.search_placeholder') }}"
@@ -65,8 +65,6 @@
                     wire:model.live="dateEnd"
                     class="w-full md:w-1/4"
                 />
-
-
         </div>
         <div class="flex gap-2 mb-2">
             <x-button secondary label="PDF (HU)" icon="document-text" wire:click="generatePDF(null, 'hu')" />
