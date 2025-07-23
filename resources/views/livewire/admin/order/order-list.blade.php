@@ -230,8 +230,8 @@
         @endif
 
         <x-slot name="footer">
-            <div class="flex justify-between items-center w-full">
-                <div class="flex gap-2">
+            <div class="flex flex-col sm:flex-row flex-wrap gap-2 items-stretch w-full">
+                <div class="flex gap-2 flex-1">
                     <x-button flat label="{{ __('common.cancel') }}" wire:click="$set('orderModal', false)"
                         class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600"
                     />
@@ -247,7 +247,7 @@
                     @endif
                 </div>
                 @if($selectedOrder && $selectedOrder->status !== 'canceled')
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 flex-1 sm:justify-end">
                         <x-button
                             secondary
                             label="PDF (HU)"
