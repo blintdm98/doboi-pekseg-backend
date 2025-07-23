@@ -133,7 +133,9 @@
             @endforelse
         </x-table>
     </div>                        
-    {{ $orders->links() }}
+    <div class="mt-4 flex justify-center">
+        {{ $orders->links() }}
+    </div>
 
     {{-- Modal --}}
     <x-modal-card blur="md" wire:model="orderModal">

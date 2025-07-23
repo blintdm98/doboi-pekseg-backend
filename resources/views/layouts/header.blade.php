@@ -1,11 +1,11 @@
 <div class="flex flex-col flex-1">
-    <header class="z-10 py-4 {{ session()->has('t_session')?'bg-red-500':'bg-white dark:bg-gray-800'}}  shadow-md ">
+    <header class="z-10 py-4 {{ session()->has('t_session')?'bg-red-500':'bg-white dark:bg-gray-800'}} shadow-md ">
         <div
-            class="container flex items-center justify-between h-full px-6 mx-auto text-blue-600 dark:text-blue-300"
+            class="container flex items-center justify-between h-full px-2 sm:px-6 mx-auto text-blue-600 dark:text-blue-300"
         >
             <!-- Mobile hamburger -->
             <button
-                class="p-1 -ml-1 mr-5 rounded-md lg:hidden focus:outline-hidden focus:shadow-outline-blue"
+                class="p-1 -ml-1 mr-3 rounded-md lg:hidden focus:outline-hidden focus:shadow-outline-blue"
                 @click="toggleSideMenu"
                 aria-label="Menu"
             >
@@ -23,8 +23,9 @@
                 </svg>
             </button>
             <div class="flex justify-center flex-1 lg:mr-32">
+                <!-- Ide jöhet logó vagy cím, ha kell -->
             </div>
-            <ul class="flex items-center shrink-0 space-x-6">
+            <ul class="flex items-center shrink-0 space-x-4">
                 <!-- Felhasználónév megjelenítése -->
                 <li class="flex items-center">
                     <div class="flex items-center">
@@ -33,7 +34,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                   d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"/>
                         </svg>
-                        <span class="text-sm font-medium">{{auth()->user()->user_name}}</span>
+                        <span class="text-sm font-medium hidden xs:inline">{{auth()->user()->user_name}}</span>
                     </div>
                 </li>
                 <!-- Theme toggler -->
