@@ -112,7 +112,7 @@
                     <x-table.td>{{$product->price}}</x-table.td>
                     <x-table.td class="flex justify-center items-center">
                     @if($product->getFirstMediaUrl('images'))
-                        <img src="{{ $product->getFirstMediaUrl('images') }}" class="h-12 w-12 object-cover rounded" />
+                        <img src="{{ $product->getFirstMediaUrl('images') }}" class="h-8 w-8 md:h-12 md:w-12 object-cover rounded mx-auto" />
                     @else
                         <span class="text-sm text-gray-400"></span>
                     @endif

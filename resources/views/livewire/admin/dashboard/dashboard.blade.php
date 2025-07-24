@@ -61,26 +61,24 @@
         </x-card>
     </div>
     --}}
-</div>    
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('ordersChart').getContext('2d');
-
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: @json($chartLabels), // pl. ['2024-04-27', '2024-04-28']
-                datasets: [{
-                    label: 'Rendelések száma',
-                    data: @json($chartData), // pl. [4, 9]
-                    backgroundColor: 'rgba(75, 192, 192, 0.3)',
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    borderWidth: 1
-                }]
-            },
-            options: {
+    <style>
+        @media (max-width: 640px) {
+            #ordersChart {
+                width: 100% !important;
+                display: block;
+                height: 220px !important;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function renderOrdersChart() {
+            const canvas = document.getElementById('ordersChart');
+            if (window.ordersChartInstance) {
+                window.ordersChartInstance.destroy();
+            }
+            let chartOptions = {
                 responsive: true,
                 scales: {
                     y: {
@@ -90,8 +88,42 @@
                         }
                     }
                 }
+            };
+
+            if (window.innerWidth <= 640) {
+                canvas.height = 220;
+                chartOptions.scales.x = {
+                    ticks: {
+                        font: {
+                            size: 6
+                        }
+                    }
+                };
+            } else {
+                canvas.height = 100;
             }
+            const ctx = canvas.getContext('2d');
+            window.ordersChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: @json($chartLabels),
+                    datasets: [{
+                        label: 'Rendelések száma',
+                        data: @json($chartData),
+                        backgroundColor: 'rgba(75, 192, 192, 0.3)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: chartOptions
+            });
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            renderOrdersChart();
+            window.addEventListener('resize', function () {
+                renderOrdersChart();
+            });
         });
-    });
-</script>
+    </script>
+</div>    
 
