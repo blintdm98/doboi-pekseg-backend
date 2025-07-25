@@ -12,7 +12,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens;
 
-    protected $fillable = ['name', 'user_name', 'email', 'phone', 'role', 'password'];
+    protected $fillable = ['name', 'user_name', 'email', 'phone', 'role', 'password', 'can_add_store'];
 
     /**
      * The attributes that should be hidden for serialization.

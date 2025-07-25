@@ -37,6 +37,10 @@
                         <x-select.option :value="$value">{{ $label }}</x-select.option>
                     @endforeach
                 </x-select>
+                <div class="flex items-center mt-2">
+                    <x-checkbox id="can_add_store" wire:model="form.can_add_store" />
+                    <label for="can_add_store" class="ml-2">Üzlet hozzáadás joga</label>
+                </div>
             </div>
             <x-slot name="footer">
                     <div class="flex justify-between gap-x-4 w-full">

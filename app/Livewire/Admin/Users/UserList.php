@@ -47,6 +47,7 @@ class UserList extends Component
             'icon'  => 'success',
             'title' => __('common.saved_successfully'),
         ]);
+        $this->resetPage();
     }
 
     public function getUsers()

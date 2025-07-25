@@ -16,6 +16,7 @@ class UserForm extends Form
     public $password = '';
     public $role = 'mobil';
     public $phone = '';
+    public $can_add_store = false;
 
     public function rules()
     {
@@ -26,6 +27,7 @@ class UserForm extends Form
             'password' => $this->user ? 'nullable|min:6' : 'required|min:6',
             'role' => 'required|in:admin,mobil',
             'phone' => 'nullable|string|min:10',
+            'can_add_store' => 'boolean',
         ];
     }
 
@@ -33,6 +35,7 @@ class UserForm extends Form
     {
         $this->reset();
         $this->user = null;
+        $this->can_add_store = false;
     }
 
     public function setUser(User $user)
@@ -43,11 +46,15 @@ class UserForm extends Form
         $this->email = $user->email;
         $this->role = $user->role;
         $this->phone = $user->phone;
+        $this->can_add_store = (bool) $user->can_add_store;
     }
 
     public function save()
     {
         $this->validate();
+
+        // Ha admin, mindig true, ha mobil, mindig false
+        $canAddStore = $this->role === 'admin' ? true : false;
 
         $data = [
             'name' => $this->name,
@@ -55,6 +62,7 @@ class UserForm extends Form
             'email' => $this->email,
             'role' => $this->role,
             'phone' => $this->phone,
+            'can_add_store' => $canAddStore,
         ];
 
         if ($this->password) {
