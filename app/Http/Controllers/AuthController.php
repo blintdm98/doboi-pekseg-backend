@@ -23,7 +23,15 @@ class AuthController extends Controller
         $token = $user->createToken('mobile-token')->plainTextToken;
 
         return response()->json([
-            'user' => $user,
+            'user' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'user_name' => $user->user_name,
+                'email' => $user->email,
+                'phone' => $user->phone,
+                'role' => $user->role,
+                'can_add_store' => $user->can_add_store,
+            ],
             'token' => $token,
         ]);
     }
