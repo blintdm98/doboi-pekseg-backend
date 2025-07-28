@@ -53,8 +53,8 @@ class UserForm extends Form
     {
         $this->validate();
 
-        // Ha admin, mindig true, ha mobil, mindig false
-        $canAddStore = $this->role === 'admin' ? true : false;
+        // Ha admin, mindig true, egyébként a checkbox értéke
+        $canAddStore = $this->role === 'admin' ? true : $this->can_add_store;
 
         $data = [
             'name' => $this->name,
