@@ -6,7 +6,7 @@
         <x-button secondary icon="plus" label="{{ __('common.add-new') }}" wire:click="openModal" />
         <x-modal-card blur="md" wire:model="userModal">
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <x-input label="{{ __('common.name') }}" placeholder="{{ __('common.name') }}" wire:model="form.name" />
+                <x-input label="Név" placeholder="Név" wire:model="form.name" />
                 <x-input 
                     label="{{ __('common.user_name') }}" 
                     placeholder="{{ __('common.user_name') }}" 
