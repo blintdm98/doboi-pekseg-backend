@@ -2,8 +2,12 @@
 
 namespace App\Livewire\Admin\Order;
 
+use App\Enums\OrderStatuses;
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Models\Store;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\App;
 use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
@@ -35,7 +39,7 @@ class OrderList extends Component
             return 0;
         }
 
-        return $this->selectedOrder->orderDetails->sum(function($detail) {
+        return $this->selectedOrder->orderDetails->sum(function ($detail) {
             $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
             return $quantity * ($detail->product->price ?? 0);
         });
@@ -43,22 +47,29 @@ class OrderList extends Component
 
     public function getOrders()
     {
-        $search = trim($this->search);
+        $query = Order::query()
+            ->with(['user', 'store', 'orderDetails', 'orderDetails.product'])
+            ->search($this->search)
+            ->filterStatus($this->statusFilter);
 
-        return Order::query()
-            ->with(['store', 'user'])
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('status', 'like', "%{$search}%")
-                        ->orWhereHas('store', fn($q) => $q->where('name', 'like', "%{$search}%"))
-                        ->orWhereHas('user', fn($q) => $q->where('name', 'like', "%{$search}%"));
-                });
-            })
-            ->latest()
-            ->paginate(20);
+
+        if (!empty($this->storeFilter)) {
+            $query->where('store_id', $this->storeFilter);
+        }
+
+        if (!empty($this->userFilter)) {
+            $query->where('user_id', $this->userFilter);
+        }
+
+        if (!empty($this->dateStart)) {
+            $query->whereDate('created_at', '>=', $this->dateStart);
+        }
+
+        if (!empty($this->dateEnd)) {
+            $query->whereDate('created_at', '<=', $this->dateEnd);
+        }
+        return $query->latest()->paginate(50);
     }
-
-
 
     public function showOrder(Order $order)
     {
@@ -109,9 +120,9 @@ class OrderList extends Component
 
         if ($this->selectedOrder) {
             $this->selectedOrder->update([
-                'status' => $isComplete ? 'completed' : 'partial',
+                'status' => $isComplete ? OrderStatuses::COMPLETED->value : OrderStatuses::PARTIAL->value ,
             ]);
-            
+
             // Ha a rendelés teljesítve lett, kikapcsoljuk a termék hozzáadás felületet
             if ($isComplete) {
                 $this->showAddProduct = false;
@@ -125,44 +136,6 @@ class OrderList extends Component
         $this->notification()->send([
             'title' => __('common.saved_successfully'),
             'icon' => 'success',
-        ]);
-    }
-
-    public function render()
-    {
-        $query = Order::with(['user', 'store', 'orderDetails', 'orderDetails.product']);
-
-        if (!empty($this->search)) {
-            $query->where(function ($q) {
-                $q->where('status', 'like', '%' . $this->search . '%')
-                ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
-                ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
-                ->orWhereHas('orderDetails.product', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));;
-            });
-        }
-
-        if (!empty($this->statusFilter)) {
-            $query->where('status', $this->statusFilter);
-        }
-
-        if (!empty($this->storeFilter)) {
-            $query->where('store_id', $this->storeFilter);
-        }
-
-        if (!empty($this->userFilter)) {
-            $query->where('user_id', $this->userFilter);
-        }
-
-        if (!empty($this->dateStart)) {
-            $query->whereDate('created_at', '>=', $this->dateStart);
-        }
-
-        if (!empty($this->dateEnd)) {
-            $query->whereDate('created_at', '<=', $this->dateEnd);
-        }
-
-        return view('livewire.admin.order.order-list', [
-            'orders' => $query->latest()->paginate(50),
         ]);
     }
 
@@ -295,20 +268,14 @@ class OrderList extends Component
             $orders = collect([$order]);
         } else {
             // Szűrt rendelések lekérése
-            $query = Order::with(['orderDetails.product', 'store', 'user']);
-            if (!empty($this->search)) {
-                $query->where(function ($q) {
-                    $q->where('status', 'like', '%' . $this->search . '%')
-                    ->orWhereHas('user', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
-                    ->orWhereHas('store', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'))
-                    ->orWhereHas('orderDetails.product', fn($q) => $q->where('name', 'like', '%' . $this->search . '%'));
-                });
-            }
+            $query = Order::with(['orderDetails.product', 'store', 'user'])
+                ->search($this->search);
+
             if (!empty($this->statusFilter)) {
-                $query->where('status', $this->statusFilter);
+                $query->filterStatus($this->statusFilter);
             } else {
                 // Csak a teljesített vagy részben teljesített rendelések, ha nincs státusz szűrő
-                $query->whereIn('status', ['completed', 'partial']);
+                $query->whereIn('status', [OrderStatuses::COMPLETED->value , OrderStatuses::PARTIAL->value ]);
             }
             if (!empty($this->storeFilter)) {
                 $query->where('store_id', $this->storeFilter);
@@ -335,15 +302,32 @@ class OrderList extends Component
 
         // Több rendelés PDF generálása
         $template = $language === 'ro' ? 'pdf.order_ro' : 'pdf.order';
+
+        App::setLocale($language);
+
         $pdf = Pdf::loadView('pdf.orders_bulk', [
             'orders' => $orders,
             'language' => $language
         ]);
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
         $filename = $language === 'ro' ? 'comenzi.pdf' : 'rendelesek.pdf';
-        return response()->streamDownload(function() use ($pdf) {
+        return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
         }, $filename);
+    }
+
+    public function getStores()
+    {
+        return Store::orderBy('name')->get();
+    }
+
+    public function render()
+    {
+        return view('livewire.admin.order.order-list', [
+            'orders'   => $this->getOrders(),
+            'statuses' => OrderStatuses::toArray(),
+            'stores'   => $this->getStores(),
+        ]);
     }
 }
 

@@ -1,3 +1,4 @@
+@use(App\Enums\OrderStatuses)
 <div>
     <div class="mb-8 flex justify-between">
         <h2 class="text-gray-800 dark:text-gray-200">{{ __('common.orders') }}</h2>
@@ -22,27 +23,21 @@
             <x-select
                 label="{{ __('common.status') }}"
                 placeholder="{{ __('common.status') }}"
+                :options="$statuses"
+                option-value="value"
+                option-label="label"
                 wire:model.live="statusFilter"
                 class="w-full md:flex-1"
-            >
-                <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
-                <x-select.option value="pending">{{ __('common.status_pending') }}</x-select.option>
-                <x-select.option value="partial">{{ __('common.status_partial') }}</x-select.option>
-                <x-select.option value="completed">{{ __('common.status_completed') }}</x-select.option>
-                <x-select.option value="canceled">{{ __('common.status_canceled') }}</x-select.option>
-            </x-select>
-
+            />
             <x-select
                 label="{{ __('common.store') }}"
                 placeholder="{{ __('common.store') }}"
+                :options="$stores"
+                option-value="id"
+                option-label="name"
                 wire:model.live="storeFilter"
                 class="w-full md:flex-1"
-            >
-                <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
-                @foreach(\App\Models\Store::orderBy('name')->get() as $store)
-                    <x-select.option value="{{ $store->id }}">{{ $store->name }}</x-select.option>
-                @endforeach
-            </x-select>
+            />
 
             <x-select
                 label="{{ __('common.user') }}"
@@ -104,18 +99,12 @@
                     </x-table.td>
                     <x-table.td>{{ $order->comment }}</x-table.td>
                     <x-table.td>
-                    @php
-                            $statusColors = [
-                                'pending' => 'bg-yellow-100 text-yellow-800',
-                                'completed' => 'bg-green-100 text-green-800',
-                                'partial' => 'bg-orange-100 text-orange-800',
-                                'canceled' => 'bg-red-100 text-red-800',
-                            ];
-                        @endphp
+                        @if(OrderStatuses::tryFrom($order->status))
+                            <x-badge flat color="{{OrderStatuses::tryFrom($order->status)->color()}}" label="{{OrderStatuses::tryFrom($order->status)->label()}}"/>
+                        @else
+                            {{$order->status}}
+                        @endif
 
-                        <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$order->status] ?? 'bg-gray-100 text-gray-800' }}">
-                            {{ __('common.status_' . $order->status) }}
-                        </span>
                     </x-table.td>
                     <x-table.td>{{ $order->user->name ?? 'N/A' }}</x-table.td>
                     <x-table.td>{{ $order->created_at->format('Y-m-d H:i') }}</x-table.td>

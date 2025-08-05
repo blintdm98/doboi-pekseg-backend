@@ -4,4 +4,5 @@ return [
     'status_partial' => 'Parțial livrat',
     'status_completed' => 'Livrat',
     'status_canceled' => 'Anulat',
+    'currency' => 'lei',
 ]; 

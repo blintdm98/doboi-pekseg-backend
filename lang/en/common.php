@@ -53,4 +53,5 @@ return [
     'users' => 'Felhasználók',
     'products' => 'Termékek',
     'stores' => 'Üzletek',
+    'currency' => 'lej',
 ];

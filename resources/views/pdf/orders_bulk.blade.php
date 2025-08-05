@@ -1,5 +1,7 @@
 @php
     use Illuminate\Support\Arr;
+    use App\Enums\OrderStatuses;
+    use App\Helpers\GeneralHelper;
 @endphp
 
 <!DOCTYPE html>
@@ -46,20 +48,26 @@
             <tr>
                 <td>{{ $order->id }}</td>
                 <td>{{ $order->store->name ?? (($language ?? 'hu') === 'ro' ? 'Magazin șters' : 'Törölt bolt') }}</td>
-                <td>{{ ($language ?? 'hu') === 'ro' ? __('common.status_' . $order->status, [], 'ro') : __('common.status_' . $order->status) }}</td>
+                <td>
+                    @if(OrderStatuses::tryFrom($order->status))
+                        {{OrderStatuses::tryFrom($order->status)->label()}}
+                    @else
+                        {{$order->status}}
+                    @endif
+                </td>
                 <td>{{ $order->created_at->format('Y-m-d') }}</td>
-                <td>{{ number_format($total, 2) }} lej</td>
-                <td>{{ number_format($tva, 2) }} lej</td>
-                <td>{{ number_format($totalWithTva, 2) }} lej</td>
+                <td>{{ GeneralHelper::displayPrice($total) }} </td>
+                <td>{{ GeneralHelper::displayPrice($tva) }} </td>
+                <td>{{ GeneralHelper::displayPrice($totalWithTva) }}</td>
             </tr>
         @endforeach
         </tbody>
         <tfoot>
             <tr>
                 <td colspan="4" style="text-align:left;font-weight:bold;">{{ ($language ?? 'hu') === 'ro' ? 'Total' : 'Összeg' }}</td>
-                <td style="font-weight:bold;">{{ number_format($sumTotal, 2) }} lej</td>
-                <td style="font-weight:bold;">{{ number_format($sumTva, 2) }} lej</td>
-                <td style="font-weight:bold;">{{ number_format($sumTotalWithTva, 2) }} lej</td>
+                <td style="font-weight:bold;">{{ GeneralHelper::displayPrice($sumTotal) }}</td>
+                <td style="font-weight:bold;">{{ GeneralHelper::displayPrice($sumTva) }}</td>
+                <td style="font-weight:bold;">{{ GeneralHelper::displayPrice($sumTotalWithTva) }}</td>
             </tr>
         </tfoot>
     </table>

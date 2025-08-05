@@ -1,3 +1,5 @@
+@use(\App\Enums\OrderStatuses)
+@use(App\Helpers\GeneralHelper)
 <!DOCTYPE html>
 <html>
 <head>
@@ -75,8 +77,8 @@
     </div>
 
     @php
-        $total = $order->orderDetails->sum(function($detail) { 
-            return ($detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity) * ($detail->product->price ?? 0); 
+        $total = $order->orderDetails->sum(function($detail) {
+            return ($detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity) * ($detail->product->price ?? 0);
         });
     @endphp
 
@@ -105,22 +107,11 @@
             <tr>
                 <td>Státusz:</td>
                 <td>
-                    @switch($order->status)
-                        @case('pending')
-                            Függőben
-                            @break
-                        @case('partial')
-                            Részben teljesítve
-                            @break
-                        @case('completed')
-                            Teljesítve
-                            @break
-                        @case('canceled')
-                            Visszamondva
-                            @break
-                        @default
-                            {{ $order->status }}
-                    @endswitch
+                    @if(OrderStatuses::tryFrom($order->status))
+                        {{OrderStatuses::tryFrom($order->status)->label()}}
+                    @else
+                        {{$order->status}}
+                    @endif
                 </td>
             </tr>
             @if($order->comment)
@@ -156,8 +147,8 @@
                 <tr>
                     <td>{{ $detail->product->name }}</td>
                     <td>{{ $quantity }} db</td>
-                    <td>{{ number_format($price, 0, ',', ' ') }} lej</td>
-                    <td>{{ number_format($subtotal, 0, ',', ' ') }} lej</td>
+                    <td>{{ GeneralHelper::displayPrice($price ,0) }}</td>
+                    <td>{{ GeneralHelper::displayPrice($subtotal, 0) }}</td>
                     <td>{{ number_format($tvaAmount, 0, ',', ' ') }} lej</td>
                     <td>{{ number_format($totalWithTva, 0, ',', ' ') }} lej</td>
                 </tr>
