@@ -97,7 +97,8 @@
                     <x-table.td>
                         {{
                             $order->orderDetails->sum(function($detail) {
-                                return $detail->quantity * ($detail->product->price ?? 0);
+                                $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+                                return $quantity * ($detail->product->price ?? 0);
                             })
                         }} lej
                     </x-table.td>
@@ -161,7 +162,8 @@
 
                     @php
                         $total = $selectedOrder->orderDetails->sum(function($detail) {
-                            return $detail->quantity * ($detail->product->price ?? 0);
+                            $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+                            return $quantity * ($detail->product->price ?? 0);
                         });
                     @endphp
                     <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$selectedOrder->status] ?? 'bg-gray-100 text-gray-800' }}">

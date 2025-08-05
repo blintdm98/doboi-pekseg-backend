@@ -74,6 +74,12 @@
         </p>
     </div>
 
+    @php
+        $total = $order->orderDetails->sum(function($detail) { 
+            return ($detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity) * ($detail->product->price ?? 0); 
+        });
+    @endphp
+
     <div class="order-info">
         <table>
             <tr>

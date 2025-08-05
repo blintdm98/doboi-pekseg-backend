@@ -24,7 +24,7 @@ class Dashboard extends Component
         $this->totalProductsOrdered = OrderDetail::sum('quantity');
         $this->totalRevenue = DB::table('order_details')
             ->join('products', 'order_details.product_id', '=', 'products.id')
-            ->select(DB::raw('SUM(order_details.quantity * products.price) as total'))
+            ->select(DB::raw('SUM(CASE WHEN order_details.dispatched_quantity > 0 THEN order_details.dispatched_quantity ELSE order_details.quantity END * products.price) as total'))
             ->value('total');
 
         $this->topStoreName = Order::select('store_id', DB::raw('COUNT(*) as total'))

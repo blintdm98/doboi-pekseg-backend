@@ -31,7 +31,10 @@ class OrderController extends Controller
                     'status' => $order->status,
                     'created_at' => $order->created_at,
                     'comment' => $order->comment,
-                    'total' => $order->orderDetails->sum(fn($detail) => $detail->quantity * ($detail->product->price ?? 0)),
+                    'total' => $order->orderDetails->sum(fn($detail) => {
+                        $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+                        return $quantity * ($detail->product->price ?? 0);
+                    }),
                     'details' => $order->orderDetails->map(function ($detail) {
                         return [
                             'product_name' => $detail->product->name ?? 'N/A',
