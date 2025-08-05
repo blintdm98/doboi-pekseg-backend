@@ -29,6 +29,18 @@ class OrderList extends Component
     public $existingProductIds = [];
     public $availableProducts = [];
 
+    public function getTotalProperty()
+    {
+        if (!$this->selectedOrder) {
+            return 0;
+        }
+
+        return $this->selectedOrder->orderDetails->sum(function($detail) {
+            $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+            return $quantity * ($detail->product->price ?? 0);
+        });
+    }
+
     public function getOrders()
     {
         $search = trim($this->search);
@@ -255,6 +267,17 @@ class OrderList extends Component
             'id',
             OrderDetail::where('order_id', $this->selectedOrder->id)->pluck('product_id')->toArray()
         )->orderBy('name')->get();
+
+        // Frissítjük a selectedOrder-t, hogy a total automatikusan frissüljön
+        $this->selectedOrder = $this->selectedOrder->fresh(['orderDetails.product']);
+    }
+
+    public function updatedOrderDetails($value, $key)
+    {
+        // Frissítjük a selectedOrder-t, amikor a dispatched_quantity változik
+        if (str_contains($key, 'dispatched_quantity')) {
+            $this->selectedOrder = $this->selectedOrder->fresh(['orderDetails.product']);
+        }
     }
 
     public function generatePDF($orderId, $language = 'hu')
