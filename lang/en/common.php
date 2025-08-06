@@ -54,4 +54,9 @@ return [
     'products' => 'Termékek',
     'stores' => 'Üzletek',
     'currency' => 'lej',
+    'product' => 'Termék',
+    'orders_timeline' => 'Rendelések időbeli alakulása',
+    'orders' => 'rendelései',
+    'today' => 'ma',
+    'from_beginning' => 'a kezdetektől',
 ];

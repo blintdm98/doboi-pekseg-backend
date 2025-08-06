@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\OrderDetail;
+use App\Enums\OrderStatuses;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -52,7 +53,7 @@ class OrderController extends Controller
         $order = Order::create([
             'store_id' => $request->store_id,
             'user_id' => $request->user_id,
-            'status' => 'pending',
+            'status' => OrderStatuses::PENDING->value,
             'comment' => $request->comment,
         ]);
         logger($request->items);

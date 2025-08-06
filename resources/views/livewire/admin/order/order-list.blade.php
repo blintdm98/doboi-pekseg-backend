@@ -142,10 +142,10 @@
                 <p><strong>{{ __('common.status') }}:</strong>
                     @php
                         $statusColors = [
-                            'pending' => 'bg-yellow-100 text-yellow-800',
-                            'completed' => 'bg-green-100 text-green-800',
-                            'partial' => 'bg-orange-100 text-orange-800',
-                            'canceled' => 'bg-red-100 text-red-800',
+                            OrderStatuses::PENDING->value => 'bg-yellow-100 text-yellow-800',
+                            OrderStatuses::COMPLETED->value => 'bg-green-100 text-green-800',
+                            OrderStatuses::PARTIAL->value => 'bg-orange-100 text-orange-800',
+                            OrderStatuses::CANCELED->value => 'bg-red-100 text-red-800',
                         ];
                     @endphp
 
@@ -169,7 +169,7 @@
                                 <x-input
                                     type="number"
                                     wire:model.live="orderDetails.{{ $index }}.dispatched_quantity"
-                                    :disabled="$selectedOrder && ($selectedOrder->status === 'completed' || $selectedOrder->status === 'canceled')"
+                                    :disabled="$selectedOrder && ($selectedOrder->status === OrderStatuses::COMPLETED->value || $selectedOrder->status === OrderStatuses::CANCELED->value)"
                                 />
                             </div>
                         </div>
@@ -178,7 +178,7 @@
             </div>
         @endif
 
-        @if ($selectedOrder && !in_array($selectedOrder->status, ['completed', 'canceled']))
+        @if ($selectedOrder && !in_array($selectedOrder->status, [OrderStatuses::COMPLETED->value, OrderStatuses::CANCELED->value]))
             @if (!$showAddProduct)
                 <x-button
                     primary
@@ -228,7 +228,7 @@
                     <x-button flat label="{{ __('common.cancel') }}" wire:click="$set('orderModal', false)"
                         class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600"
                     />
-                    @if($selectedOrder && !in_array($selectedOrder->status, ['completed', 'canceled']))
+                    @if($selectedOrder && !in_array($selectedOrder->status, [OrderStatuses::COMPLETED->value, OrderStatuses::CANCELED->value]))
                         <x-button primary label="{{ __('common.save') }}" wire:click="save"/>
                         <button
                             type="button"

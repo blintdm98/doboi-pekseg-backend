@@ -81,14 +81,14 @@ class OrderList extends Component
                 'id' => $item->id,
                 'product_name' => $item->product?->name ?? 'Ez a termék már nem elérhető',
                 'quantity' => $item->quantity,
-                'dispatched_quantity' => ($order->status === 'pending' && $item->dispatched_quantity === 0)
+                'dispatched_quantity' => ($order->status === OrderStatuses::PENDING->value && $item->dispatched_quantity === 0)
                     ? $item->quantity
                     : $item->dispatched_quantity,
             ])
             ->toArray();
 
         // Csak akkor töltjük be a rendelkezésre álló termékeket, ha a rendelés nincs teljesítve
-        if ($order->status !== 'completed') {
+        if ($order->status !== OrderStatuses::COMPLETED->value) {
             $existingProductIds = OrderDetail::where('order_id', $order->id)->pluck('product_id')->toArray();
             $this->availableProducts = \App\Models\Product::whereNotIn('id', $existingProductIds)->orderBy('name')->get();
         } else {
@@ -157,7 +157,7 @@ class OrderList extends Component
         // $order->delete();
 
         // A rendelés státuszát "canceled" értékre állítjuk
-        $order->update(['status' => 'canceled']);
+        $order->update(['status' => OrderStatuses::CANCELED->value]);
 
         $this->orderModal = false;
         $this->selectedOrder = null;

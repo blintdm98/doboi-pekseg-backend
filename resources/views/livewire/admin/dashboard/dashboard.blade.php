@@ -5,62 +5,80 @@
         <h2 class="text-gray-800 dark:text-gray-200">{{ __('common.dashboard') }}</h2>
     </div>
 
-    {{-- Statisztikai kártyák --}}
-    {{--
-    <div class="p-4 rounded shadow">
-        <x-card title="Top 3 bolt" icon="store">
-            <ul class="space-y-1 text-xl">
-            @php
-            $emojis = ['🥇', '🥈', '🥉'];
-            @endphp
+    {{-- Szűrők --}}
+    <div class="space-y-4" x-data="{ showFilters: window.innerWidth >= 768 }" x-init="window.addEventListener('resize', () => { showFilters = window.innerWidth >= 768 })">
+        <div class="flex flex-col gap-4">
+            <!-- Szűrők lenyitó gomb csak mobilon -->
+            <button type="button" class="md:hidden px-4 py-2 bg-gray-200 dark:bg-gray-700 rounded text-gray-700 dark:text-gray-200 text-sm" @click="showFilters = !showFilters">
+                <span x-show="!showFilters">Szűrők mutatása</span>
+                <span x-show="showFilters">Szűrők elrejtése</span>
+            </button>
+        </div>
+        <!-- Szűrők: csak ha showFilters -->
+        <div class="flex flex-col gap-4 md:flex-row md:items-center md:gap-4" x-show="showFilters" x-transition>
+            <x-datetime-picker
+                label="{{ __('common.date_from') }}"
+                placeholder="{{ __('common.select_date') }}"
+                without-time
+                icon="calendar"
+                wire:model.live="dateStart"
+                class="w-full md:flex-1"
+            />
 
-            @forelse($topStores as $index => $store)
-                <li class="flex justify-between items-center">
-                    <span class="text-xl">{{ $emojis[$index] ?? '🏅' }} {{ $store->name }}</span>
-                    <span class="text-xl text-gray-500">{{ $store->total }} rendelés</span>
-                </li>
-            @empty
-                <li class="text-gray-400">Nincs adat</li>
-            @endforelse
-            </ul>
-        </x-card>
+            <x-datetime-picker
+                label="{{ __('common.date_to') }}"
+                placeholder="{{ __('common.select_date') }}"
+                without-time
+                icon="calendar"
+                wire:model.live="dateEnd"
+                class="w-full md:flex-1"
+            />
+
+            <x-select
+                label="{{ __('common.store') }}"
+                placeholder="{{ __('common.store') }}"
+                wire:model.live="storeFilter"
+                class="w-full md:flex-1"
+            >
+                <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
+                @foreach($stores as $store)
+                    <x-select.option value="{{ $store->id }}">{{ $store->name }}</x-select.option>
+                @endforeach
+            </x-select>
+
+            <x-select
+                label="{{ __('common.user') }}"
+                placeholder="{{ __('common.user') }}"
+                wire:model.live="userFilter"
+                class="w-full md:flex-1"
+            >
+                <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
+                @foreach($users as $user)
+                    <x-select.option value="{{ $user->id }}">{{ $user->name }}</x-select.option>
+                @endforeach
+            </x-select>
+
+            <x-select
+                label="{{ __('common.product') }}"
+                placeholder="{{ __('common.product') }}"
+                wire:model.live="productFilter"
+                class="w-full md:flex-1"
+            >
+                <x-select.option value="">{{ __('common.nofilter') }}</x-select.option>
+                @foreach($products as $product)
+                    <x-select.option value="{{ $product->id }}">{{ $product->name }}</x-select.option>
+                @endforeach
+            </x-select>
+        </div>
     </div>
-    --}}
 
     {{-- Grafikon --}}
     <div class="p-4 rounded shadow">
         <x-card>
-            <h3 class="text-xl font-bold mb-2">Rendelések időbeli alakulása</h3>
+            <h3 class="text-xl font-bold mb-2">{{ $this->getChartTitle() }}</h3>
             <canvas id="ordersChart" height="100"></canvas>
         </x-card>
     </div>
-
-    {{-- Top 5 termék táblázat --}}
-    {{--
-    <div class="p-4 rounded shadow">
-        <x-card>
-            <h3 class="text-xl font-bold mb-2">Legnépszerűbb termékek</h3>
-            <table class="w-full table-auto">
-                <thead>
-                    <tr class="text-left">
-                        <th>#</th>
-                        <th>Termék</th>
-                        <th>Rendelt mennyiség</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($topProducts as $i => $product)
-                        <tr>
-                            <td>{{ $i + 1 }}</td>
-                            <td>{{ $product->name }}</td>
-                            <td>{{ $product->total }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </x-card>
-    </div>
-    --}}
 
     <style>
         @media (max-width: 640px) {
@@ -70,14 +88,55 @@
                 height: 220px !important;
             }
         }
+
+        .flatpickr-calendar {
+            z-index: 99999 !important;
+            position: fixed !important;
+        }
+
+        @media (max-width: 768px) {
+            .flatpickr-calendar {
+                top: 50% !important;
+                left: 50% !important;
+                transform: translate(-50%, -50%) !important;
+                max-width: 90vw !important;
+                max-height: 90vh !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .flatpickr-calendar {
+                position: fixed !important;
+                z-index: 99999 !important;
+                right: 20px !important;
+                left: auto !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+            }
+        }
+
+        .flatpickr-calendar.open {
+            z-index: 99999 !important;
+        }
     </style>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        function renderOrdersChart() {
+        let ordersChartInstance = null;
+
+        function renderOrdersChart(labels = null, data = null) {
             const canvas = document.getElementById('ordersChart');
-            if (window.ordersChartInstance) {
-                window.ordersChartInstance.destroy();
+            if (!canvas) return;
+
+            if (ordersChartInstance) {
+                ordersChartInstance.destroy();
             }
+
+            const chartLabels = labels || @json($chartLabels);
+            const chartData = data || @json($chartData);
+
+            console.log('renderOrdersChart called with:', { labels, data });
+            console.log('Final chart data:', { chartLabels, chartData });
+
             let chartOptions = {
                 responsive: true,
                 scales: {
@@ -102,14 +161,15 @@
             } else {
                 canvas.height = 100;
             }
+
             const ctx = canvas.getContext('2d');
-            window.ordersChartInstance = new Chart(ctx, {
+            ordersChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
-                    labels: @json($chartLabels),
+                    labels: chartLabels,
                     datasets: [{
                         label: 'Rendelések száma',
-                        data: @json($chartData),
+                        data: chartData,
                         backgroundColor: 'rgba(75, 192, 192, 0.3)',
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1
@@ -118,12 +178,34 @@
                 options: chartOptions
             });
         }
+
         document.addEventListener('DOMContentLoaded', function () {
             renderOrdersChart();
+
             window.addEventListener('resize', function () {
                 renderOrdersChart();
             });
+
+            Livewire.hook('message.processed', () => {
+                console.log('Livewire message processed - re-rendering chart');
+                setTimeout(() => {
+                    renderOrdersChart();
+                }, 100);
+            });
+
+            document.addEventListener('chartDataUpdated', (event) => {
+                console.log('Chart data updated event received:', event.detail);
+                const chartData = event.detail[0];
+                console.log('Using labels:', chartData.labels);
+                console.log('Using data:', chartData.data);
+                renderOrdersChart(chartData.labels, chartData.data);
+            });
+
+            // Debug üzenetek
+            console.log('Dashboard component loaded');
+            console.log('Initial chart data:', @json($chartData));
         });
     </script>
+
 </div>    
 

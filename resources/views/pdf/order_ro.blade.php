@@ -1,14 +1,14 @@
+@use(App\Enums\OrderStatuses)
 <!DOCTYPE html>
-<html>
+<html lang="ro">
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comandă #{{ $order->id }}</title>
     <style>
         body {
-            font-family: DejaVu Sans, Arial, sans-serif;
-            font-size: 12px;
-            line-height: 1.4;
+            font-family: Arial, sans-serif;
+            margin: 20px;
             color: #333;
         }
         .header {
@@ -30,49 +30,53 @@
             border-collapse: collapse;
         }
         .order-info td {
-            padding: 5px 10px;
-            border: 1px solid #ddd;
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
         }
         .order-info td:first-child {
             font-weight: bold;
-            background-color: #f5f5f5;
             width: 30%;
         }
         .products-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+        .products-table th,
+        .products-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
         }
         .products-table th {
             background-color: #f5f5f5;
-            padding: 10px;
-            border: 1px solid #ddd;
-            text-align: left;
             font-weight: bold;
-        }
-        .products-table td {
-            padding: 10px;
-            border: 1px solid #ddd;
         }
         .total-row {
             background-color: #f9f9f9;
             font-weight: bold;
         }
         .footer {
-            margin-top: 50px;
+            margin-top: 30px;
             text-align: center;
-            font-size: 10px;
+            font-size: 12px;
             color: #666;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>Comandă #{{ $order->id }}</h1>
-        <p style="text-align: center; margin-top: 10px; font-size: 14px; color: #666;">
+        <h1>Comandă</h1>
+        <p>
             TVA: {{ config('app.tva_percentage') }}%
         </p>
     </div>
+
+    @php
+        $total = $order->orderDetails->sum(function($detail) {
+            return ($detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity) * ($detail->product->price ?? 0);
+        });
+    @endphp
 
     <div class="order-info">
         <table>
@@ -99,22 +103,11 @@
             <tr>
                 <td>Status:</td>
                 <td>
-                    @switch($order->status)
-                        @case('pending')
-                            În așteptare
-                            @break
-                        @case('partial')
-                            Parțial finalizată
-                            @break
-                        @case('completed')
-                            Finalizată
-                            @break
-                        @case('canceled')
-                            Anulată
-                            @break
-                        @default
-                            {{ $order->status }}
-                    @endswitch
+                    @if(OrderStatuses::tryFrom($order->status))
+                        {{OrderStatuses::tryFrom($order->status)->label()}}
+                    @else
+                        {{$order->status}}
+                    @endif
                 </td>
             </tr>
             @if($order->comment)
