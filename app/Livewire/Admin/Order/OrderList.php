@@ -81,7 +81,7 @@ class OrderList extends Component
                 'id' => $item->id,
                 'product_name' => $item->product?->name ?? 'Ez a termék már nem elérhető',
                 'quantity' => $item->quantity,
-                'dispatched_quantity' => ($order->status === OrderStatuses::PENDING->value && $item->dispatched_quantity === 0)
+                'dispatched_quantity' => (($order->status === OrderStatuses::PENDING->value || $order->status === OrderStatuses::RETURNED->value) && $item->dispatched_quantity === 0)
                     ? $item->quantity
                     : $item->dispatched_quantity,
             ])
@@ -188,6 +188,58 @@ class OrderList extends Component
 
         $this->notification()->send([
             'title' => __('common.deleted_successfully'),
+            'icon' => 'success',
+        ]);
+    }
+
+    public function markAsPending($orderId)
+    {
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            $this->notification()->send([
+                'title' => __('common.error'),
+                'description' => __('common.ordernotfound'),
+                'icon' => 'error',
+            ]);
+            return;
+        }
+
+        // Visszaküldött rendelés átállítása függőben státuszra
+        $order->update(['status' => OrderStatuses::PENDING->value]);
+
+        $this->orderModal = false;
+        $this->selectedOrder = null;
+        $this->orderDetails = [];
+
+        $this->notification()->send([
+            'title' => 'Rendelés átállítva függőben státuszra',
+            'icon' => 'success',
+        ]);
+    }
+
+    public function confirmReturn($orderId)
+    {
+        $order = Order::find($orderId);
+
+        if (!$order) {
+            $this->notification()->send([
+                'title' => __('common.error'),
+                'description' => __('common.ordernotfound'),
+                'icon' => 'error',
+            ]);
+            return;
+        }
+
+        // Visszaküldött rendelés megerősítése - marad RETURNED státuszban, de nem módosítható
+        $order->update(['confirmed_return' => true]);
+
+        $this->orderModal = false;
+        $this->selectedOrder = null;
+        $this->orderDetails = [];
+
+        $this->notification()->send([
+            'title' => 'Visszaküldött rendelés megerősítve',
             'icon' => 'success',
         ]);
     }

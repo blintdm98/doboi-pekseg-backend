@@ -8,6 +8,7 @@ enum OrderStatuses: string
     case PARTIAL = 'partial';
     case COMPLETED = 'completed';
     case CANCELED = 'canceled';
+    case RETURNED = 'returned';
 
     public function label(): string
     {
@@ -16,6 +17,7 @@ enum OrderStatuses: string
             self::PARTIAL => __('common.status_partial'),
             self::COMPLETED => __('common.status_completed'),
             self::CANCELED => __('common.status_canceled'),
+            self::RETURNED => __('common.status_returned'),
         };
     }
 
@@ -34,6 +36,7 @@ enum OrderStatuses: string
             self::PARTIAL => 'orange',
             self::COMPLETED => 'green',
             self::CANCELED => 'red',
+            self::RETURNED => 'purple',
         };
     }
 }

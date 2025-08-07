@@ -50,14 +50,34 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
+        // Ellenőrizzük, hogy van-e termék a rendelésben
+        if (empty($request->items) || !is_array($request->items)) {
+            return response()->json([
+                'error' => 'A rendelésnek tartalmaznia kell legalább egy terméket'
+            ], 400);
+        }
+
+        // Ha van is_returned paraméter, akkor visszaküldött rendelés
+        $status = $request->has('is_returned') && $request->is_returned
+            ? OrderStatuses::RETURNED->value 
+            : OrderStatuses::PENDING->value;
+        
         $order = Order::create([
             'store_id' => $request->store_id,
             'user_id' => $request->user_id,
-            'status' => OrderStatuses::PENDING->value,
+            'status' => $status,
             'comment' => $request->comment,
         ]);
+        
         logger($request->items);
         foreach ($request->items as $item) {
+            // Ellenőrizzük, hogy a termék létezik és a mennyiség pozitív
+            if (!isset($item['product_id']) || !isset($item['quantity']) || $item['quantity'] <= 0) {
+                return response()->json([
+                    'error' => 'Érvénytelen termék adatok'
+                ], 400);
+            }
+            
             OrderDetail::create([
                 'order_id' => $order->id,
                 'product_id' => $item['product_id'],

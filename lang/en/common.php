@@ -36,6 +36,7 @@ return [
     'status_partial' => 'Részben teljesítve',
     'status_completed' => 'Teljesítve',
     'status_canceled' => 'Visszamondva',
+    'status_returned' => 'Visszaküldött',
     'role' => 'Szerep',
     'optional' => 'Opcionális',
     'phone' => 'Telefonszám',
@@ -59,4 +60,6 @@ return [
     'orders' => 'rendelései',
     'today' => 'ma',
     'from_beginning' => 'a kezdetektől',
+    'confirm' => 'Megerősít',
+    'error' => 'Hibás visszaküldés',
 ];

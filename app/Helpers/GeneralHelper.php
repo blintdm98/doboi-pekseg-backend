@@ -18,6 +18,7 @@ class GeneralHelper
             OrderStatuses::COMPLETED->value => 'bg-green-100 dark:bg-green-100 text-green-800 dark:text-green-800',
             OrderStatuses::PARTIAL->value => 'bg-orange-100 dark:bg-orange-100 text-orange-800 dark:text-orange-800',
             OrderStatuses::CANCELED->value => 'bg-red-100 dark:bg-red-100 text-red-800 dark:text-red-800',
+            OrderStatuses::RETURNED->value => 'bg-purple-100 dark:bg-purple-100 text-purple-800 dark:text-purple-800',
         ];
     }
 }

@@ -101,8 +101,15 @@
                     <x-table.td>{{ $order->comment }}</x-table.td>
                     <x-table.td>
                         @if(OrderStatuses::tryFrom($order->status))
-                            <span class="px-2 py-1 rounded text-sm font-medium {{ GeneralHelper::getStatusColors()[$order->status] ?? 'bg-gray-100 dark:bg-gray-100 text-gray-800 dark:text-gray-800' }}">
+                            <span class="px-2 py-1 rounded text-sm font-medium {{ GeneralHelper::getStatusColors()[$order->status] ?? 'bg-gray-100 dark:bg-gray-100 text-gray-800 dark:text-gray-800' }} inline-flex items-center">
                                 {{OrderStatuses::tryFrom($order->status)->label()}}
+                                @if($order->status === OrderStatuses::RETURNED->value)
+                                    @if($order->confirmed_return)
+                                        <span class="ml-1 text-green-600">✓</span>
+                                    @else
+                                        <span class="ml-1 text-red-600">✗</span>
+                                    @endif
+                                @endif
                             </span>
                         @else
                             {{$order->status}}
@@ -147,10 +154,12 @@
                         {{ __('common.status_' . $selectedOrder->status) }}
                     </span>
                 </p>
+
                 <p><strong>{{ __('common.total') }}:</strong> {{ $this->total }} lej</p>
                 @if($selectedOrder->comment)
                     <p><strong>{{ __('common.comment') }}:</strong> {{ $selectedOrder->comment }}</p>
                 @endif
+
                 <div class="space-y-2 max-h-96 overflow-y-auto pr-2 bg-transparent">
                     <div class="flex justify-between items-center gap-4 font-semibold text-sm text-gray-600">
                         <span>Termék</span>
@@ -163,7 +172,7 @@
                                 <x-input
                                     type="number"
                                     wire:model.live="orderDetails.{{ $index }}.dispatched_quantity"
-                                    :disabled="$selectedOrder && ($selectedOrder->status === OrderStatuses::COMPLETED->value || $selectedOrder->status === OrderStatuses::CANCELED->value)"
+                                    :disabled="$selectedOrder && ($selectedOrder->status === OrderStatuses::COMPLETED->value || $selectedOrder->status === OrderStatuses::CANCELED->value || $selectedOrder->status === OrderStatuses::RETURNED->value)"
                                 />
                             </div>
                         </div>
@@ -172,7 +181,7 @@
             </div>
         @endif
 
-        @if ($selectedOrder && !in_array($selectedOrder->status, [OrderStatuses::COMPLETED->value, OrderStatuses::CANCELED->value]))
+        @if ($selectedOrder && !in_array($selectedOrder->status, [OrderStatuses::COMPLETED->value, OrderStatuses::CANCELED->value, OrderStatuses::RETURNED->value]))
             @if (!$showAddProduct)
                 <x-button
                     primary
@@ -222,7 +231,7 @@
                     <x-button flat label="{{ __('common.cancel') }}" wire:click="$set('orderModal', false)"
                         class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600"
                     />
-                    @if($selectedOrder && !in_array($selectedOrder->status, [OrderStatuses::COMPLETED->value, OrderStatuses::CANCELED->value]))
+                    @if($selectedOrder && !in_array($selectedOrder->status, [OrderStatuses::COMPLETED->value, OrderStatuses::CANCELED->value, OrderStatuses::RETURNED->value]))
                         <x-button primary label="{{ __('common.save') }}" wire:click="save"/>
                         <button
                             type="button"
@@ -231,6 +240,19 @@
                         >
                             Visszamond
                         </button>
+                    @endif
+                    @if($selectedOrder && $selectedOrder->status === OrderStatuses::RETURNED->value && !$selectedOrder->confirmed_return)
+                        <x-button 
+                            negative
+                            label="{{ __('common.error') }}" 
+                            wire:click="markAsPending({{ $selectedOrder->id }})"
+                            class="whitespace-nowrap"
+                        />
+                        <x-button 
+                            primary 
+                            label="{{ __('common.confirm') }}" 
+                            wire:click="confirmReturn({{ $selectedOrder->id }})"
+                        />
                     @endif
                 </div>
                 @if($selectedOrder && $selectedOrder->status !== 'canceled')

@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
 {
-    protected $fillable = ['store_id', 'user_id', 'status', 'comment'];
+    protected $fillable = ['store_id', 'user_id', 'status', 'comment', 'confirmed_return'];
 
     public function store()
     {
@@ -23,6 +23,7 @@ class Order extends Model
     {
         return $this->hasMany(OrderDetail::class);
     }
+
 
     public function scopeSearch(Builder $query, string|null $search): Builder
     {
