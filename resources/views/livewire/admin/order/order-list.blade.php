@@ -1,4 +1,5 @@
 @use(App\Enums\OrderStatuses)
+@use(App\Helpers\GeneralHelper)
 <div>
     <div class="mb-8 flex justify-between">
         <h2 class="text-gray-800 dark:text-gray-200">{{ __('common.orders') }}</h2>
@@ -100,7 +101,9 @@
                     <x-table.td>{{ $order->comment }}</x-table.td>
                     <x-table.td>
                         @if(OrderStatuses::tryFrom($order->status))
-                            <x-badge flat color="{{OrderStatuses::tryFrom($order->status)->color()}}" label="{{OrderStatuses::tryFrom($order->status)->label()}}"/>
+                            <span class="px-2 py-1 rounded text-sm font-medium {{ GeneralHelper::getStatusColors()[$order->status] ?? 'bg-gray-100 dark:bg-gray-100 text-gray-800 dark:text-gray-800' }}">
+                                {{OrderStatuses::tryFrom($order->status)->label()}}
+                            </span>
                         @else
                             {{$order->status}}
                         @endif
@@ -140,16 +143,7 @@
                 <p><strong>{{ __('common.order') }} #{{ $selectedOrder->id }}</strong></p>
                 <p><strong>{{ __('common.store') }}:</strong> {{ $selectedOrder->store->name ?? 'Törölt bolt' }}</p>
                 <p><strong>{{ __('common.status') }}:</strong>
-                    @php
-                        $statusColors = [
-                            OrderStatuses::PENDING->value => 'bg-yellow-100 text-yellow-800',
-                            OrderStatuses::COMPLETED->value => 'bg-green-100 text-green-800',
-                            OrderStatuses::PARTIAL->value => 'bg-orange-100 text-orange-800',
-                            OrderStatuses::CANCELED->value => 'bg-red-100 text-red-800',
-                        ];
-                    @endphp
-
-                    <span class="px-2 py-1 rounded text-sm font-medium {{ $statusColors[$selectedOrder->status] ?? 'bg-gray-100 text-gray-800' }}">
+                    <span class="px-2 py-1 rounded text-sm font-medium {{ GeneralHelper::getStatusColors()[$selectedOrder->status] ?? 'bg-gray-100 dark:bg-gray-100 text-gray-800 dark:text-gray-800' }}">
                         {{ __('common.status_' . $selectedOrder->status) }}
                     </span>
                 </p>
