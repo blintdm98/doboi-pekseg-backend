@@ -355,6 +355,10 @@ class OrderList extends Component
         // Több rendelés PDF generálása
         $template = $language === 'ro' ? 'pdf.order_ro' : 'pdf.order';
 
+        // Mentjük az eredeti nyelvet
+        $originalLocale = App::getLocale();
+        
+        // Beállítjuk a PDF nyelvét
         App::setLocale($language);
 
         $pdf = Pdf::loadView('pdf.orders_bulk', [
@@ -363,6 +367,10 @@ class OrderList extends Component
         ]);
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
         $filename = $language === 'ro' ? 'comenzi.pdf' : 'rendelesek.pdf';
+        
+        // Visszaállítjuk az eredeti nyelvet
+        App::setLocale($originalLocale);
+        
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();
         }, $filename);

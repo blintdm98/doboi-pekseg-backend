@@ -101,7 +101,7 @@
                     <x-table.td>{{ $order->comment }}</x-table.td>
                     <x-table.td>
                         @if(OrderStatuses::tryFrom($order->status))
-                            <span class="px-2 py-1 rounded text-sm font-medium {{ GeneralHelper::getStatusColors()[$order->status] ?? 'bg-gray-100 dark:bg-gray-100 text-gray-800 dark:text-gray-800' }} inline-flex items-center">
+                            <span class="px-2 py-1 rounded text-sm font-medium {{ GeneralHelper::getStatusColors()[$order->status] ?? 'bg-gray-100 dark:bg-gray-100 text-gray-800 dark:text-gray-800' }} inline-flex items-center whitespace-nowrap">
                                 {{OrderStatuses::tryFrom($order->status)->label()}}
                                 @if($order->status === OrderStatuses::RETURNED->value)
                                     @if($order->confirmed_return)
@@ -150,7 +150,7 @@
                 <p><strong>{{ __('common.order') }} #{{ $selectedOrder->id }}</strong></p>
                 <p><strong>{{ __('common.store') }}:</strong> {{ $selectedOrder->store->name ?? 'Törölt bolt' }}</p>
                 <p><strong>{{ __('common.status') }}:</strong>
-                    <span class="px-2 py-1 rounded text-sm font-medium {{ GeneralHelper::getStatusColors()[$selectedOrder->status] ?? 'bg-gray-100 dark:bg-gray-100 text-gray-800 dark:text-gray-800' }}">
+                    <span class="px-2 py-1 rounded text-sm font-medium {{ GeneralHelper::getStatusColors()[$selectedOrder->status] ?? 'bg-gray-100 dark:bg-gray-100 text-gray-800 dark:text-gray-800' }} whitespace-nowrap">
                         {{ __('common.status_' . $selectedOrder->status) }}
                     </span>
                 </p>
