@@ -22,6 +22,11 @@
                         placeholder="{{__('common.price')}}"
                         wire:model="form.price"
                     />
+                    <x-input
+                        label="{{ __('common.accounting_code') }}"
+                        placeholder="{{ __('common.accounting_code') }} (opcionális)"
+                        wire:model="form.accounting_code"
+                    />
                     <div class="w-full relative">
                         <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.image') }}</label>
 
@@ -108,7 +113,12 @@
             </x-slot:head>
             @foreach($products as $product)
                 <x-table.tr>
-                    <x-table.td>{{$product->name}}</x-table.td>
+                    <x-table.td>
+                        {{$product->name}}
+                        @if($product->accounting_code)
+                            <span class="text-sm text-gray-500 ml-2">({{$product->accounting_code}})</span>
+                        @endif
+                    </x-table.td>
                     <x-table.td>{{$product->price}}</x-table.td>
                     <x-table.td class="flex justify-center items-center">
                     @if($product->getFirstMediaUrl('images'))

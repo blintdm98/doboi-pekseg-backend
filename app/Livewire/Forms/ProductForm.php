@@ -19,6 +19,9 @@ class ProductForm extends Form
     #[Validate(['required', 'numeric'])]
     public $price = '';
 
+    #[Validate(['nullable'])]
+    public $accounting_code = '';
+
     #[Validate(['nullable', 'image', 'max:2048'])]
     public $image;
 
@@ -34,6 +37,7 @@ class ProductForm extends Form
         $this->product = $product;
         $this->name = $product->name;
         $this->price = $product->price;
+        $this->accounting_code = $product->accounting_code;
     }
 
     public function save()
@@ -44,11 +48,13 @@ class ProductForm extends Form
             $product = Product::create([
                 'name' => $this->name,
                 'price' => $this->price,
+                'accounting_code' => $this->accounting_code,
             ]);
         } else {
             $this->product->update([
                 'name' => $this->name,
                 'price' => $this->price,
+                'accounting_code' => $this->accounting_code,
             ]);
 
             $product = $this->product;

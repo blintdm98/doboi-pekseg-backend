@@ -11,10 +11,12 @@ class Product extends Model implements HasMedia
 
     use InteractsWithMedia;
 
-    protected $fillable = ['name', 'price'];
+    protected $fillable = ['name', 'price', 'accounting_code'];
 
     public function orderDetails()
     {
         return $this->hasMany(OrderDetail::class);
     }
+
+
 }

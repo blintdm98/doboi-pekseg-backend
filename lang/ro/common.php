@@ -8,4 +8,5 @@ return [
     'currency' => 'lei',
     'confirm' => 'Confirmă',
     'error' => 'Greșit',
+    'accounting_code' => 'Cod contabil',
 ]; 

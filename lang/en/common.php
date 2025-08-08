@@ -62,4 +62,5 @@ return [
     'from_beginning' => 'a kezdetektől',
     'confirm' => 'Megerősít',
     'error' => 'Hibás visszaküldés',
+    'accounting_code' => 'Könyvelési kód',
 ];
