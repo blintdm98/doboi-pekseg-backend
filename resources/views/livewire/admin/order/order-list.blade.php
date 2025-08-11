@@ -73,6 +73,8 @@
         <div class="flex gap-2 mb-2">
             <x-button secondary label="PDF (HU)" icon="document-text" wire:click="generatePDF(null, 'hu')" />
             <x-button secondary label="PDF (RO)" icon="document-text" wire:click="generatePDF(null, 'ro')" />
+            <x-button secondary label="Termékek Összesítés (HU)" icon="document-text" wire:click="generateProductsSummaryPDF('hu')" />
+            <x-button secondary label="Termékek Összesítés (RO)" icon="document-text" wire:click="generateProductsSummaryPDF('ro')" />
         </div>
         <x-table>
             <x-slot:head>
@@ -261,13 +263,13 @@
                             secondary
                             label="PDF (HU)"
                             icon="document-text"
-                            wire:click="generatePDF({{ $selectedOrder->id }}, 'hu')"
+                            wire:click="generateOrderProductsSummaryPDF({{ $selectedOrder->id }}, 'hu')"
                         />
                         <x-button
                             secondary
                             label="PDF (RO)"
                             icon="document-text"
-                            wire:click="generatePDF({{ $selectedOrder->id }}, 'ro')"
+                            wire:click="generateOrderProductsSummaryPDF({{ $selectedOrder->id }}, 'ro')"
                         />
                     </div>
                 @endif

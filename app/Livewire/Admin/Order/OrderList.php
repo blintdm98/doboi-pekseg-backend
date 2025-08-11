@@ -376,6 +376,206 @@ class OrderList extends Component
         }, $filename);
     }
 
+    public function generateProductsSummaryPDF($language = 'hu')
+    {
+        // Szűrt rendelések lekérése - minden rendelést figyelembe veszünk, nem csak a teljesítetteket
+        $query = Order::with(['orderDetails.product', 'store', 'user'])
+            ->search($this->search);
+
+        if (!empty($this->statusFilter)) {
+            $query->filterStatus($this->statusFilter);
+        }
+        if (!empty($this->storeFilter)) {
+            $query->where('store_id', $this->storeFilter);
+        }
+        if (!empty($this->userFilter)) {
+            $query->where('user_id', $this->userFilter);
+        }
+        if (!empty($this->dateStart)) {
+            $query->whereDate('created_at', '>=', $this->dateStart);
+        }
+        if (!empty($this->dateEnd)) {
+            $query->whereDate('created_at', '<=', $this->dateEnd);
+        }
+        
+        $orders = $query->get();
+        
+        if ($orders->isEmpty()) {
+            $this->notification()->send([
+                'title' => 'Nincs találat',
+                'description' => 'Nincs rendelés a szűrési feltételeknek megfelelően.',
+                'icon' => 'warning',
+            ]);
+            return;
+        }
+
+        // Termékek összesítése
+        $productsSummary = [];
+        
+        foreach ($orders as $order) {
+            foreach ($order->orderDetails as $detail) {
+                if ($detail->product) {
+                    $productId = $detail->product->id;
+                    $productName = $detail->product->name;
+                    $accountingCode = $detail->product->accounting_code;
+                    
+                    // Mennyiség számítása - mindig a megfelelő mennyiséget használjuk
+                    $quantity = 0;
+                    
+                    // Ha van dispatched_quantity és nagyobb mint 0, akkor azt használjuk
+                    if ($detail->dispatched_quantity > 0) {
+                        $quantity = $detail->dispatched_quantity;
+                    } 
+                    // Egyébként a quantity-t használjuk
+                    else {
+                        $quantity = $detail->quantity;
+                    }
+                    
+                    // Csak akkor adjuk hozzá, ha a mennyiség nagyobb mint 0
+                    if ($quantity > 0) {
+                        if (!isset($productsSummary[$productId])) {
+                            $productsSummary[$productId] = [
+                                'name' => $productName,
+                                'accounting_code' => $accountingCode,
+                                'total_quantity' => 0
+                            ];
+                        }
+                        
+                        $productsSummary[$productId]['total_quantity'] += $quantity;
+                    }
+                }
+            }
+        }
+
+        // Rendezés név szerint - átalakítjuk indexelt array-vé
+        $productsSummary = array_values($productsSummary);
+        usort($productsSummary, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        // Mentjük az eredeti nyelvet
+        $originalLocale = App::getLocale();
+        
+        // Beállítjuk a PDF nyelvét
+        App::setLocale($language);
+
+        // Szűrők neveinek lekérése
+        $statusName = '';
+        if (!empty($this->statusFilter)) {
+            $statusEnum = OrderStatuses::tryFrom($this->statusFilter);
+            $statusName = $statusEnum ? $statusEnum->label() : $this->statusFilter;
+        }
+        
+        $storeName = '';
+        if (!empty($this->storeFilter)) {
+            $store = Store::find($this->storeFilter);
+            $storeName = $store ? $store->name : '';
+        }
+        
+        $userName = '';
+        if (!empty($this->userFilter)) {
+            $user = \App\Models\User::find($this->userFilter);
+            $userName = $user ? $user->name : '';
+        }
+
+        $pdf = Pdf::loadView('pdf.products_summary', [
+            'products' => $productsSummary,
+            'language' => $language,
+            'filters' => [
+                'search' => $this->search,
+                'status' => $statusName,
+                'store' => $storeName,
+                'user' => $userName,
+                'dateStart' => $this->dateStart,
+                'dateEnd' => $this->dateEnd
+            ]
+        ]);
+        $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
+        $filename = $language === 'ro' ? 'produse_sumar.pdf' : 'termekek_osszesites.pdf';
+        
+        // Visszaállítjuk az eredeti nyelvet
+        App::setLocale($originalLocale);
+        
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $filename);
+    }
+
+    public function generateOrderProductsSummaryPDF($orderId, $language = 'hu')
+    {
+        $order = Order::with(['orderDetails.product', 'store', 'user'])->find($orderId);
+        if (!$order) {
+            $this->notification()->send([
+                'title' => 'Hiba',
+                'description' => 'A rendelés nem található.',
+                'icon' => 'error',
+            ]);
+            return;
+        }
+
+        // Termékek összesítése az adott rendeléshez
+        $productsSummary = [];
+        
+        foreach ($order->orderDetails as $detail) {
+            if ($detail->product) {
+                $productId = $detail->product->id;
+                $productName = $detail->product->name;
+                $accountingCode = $detail->product->accounting_code;
+                
+                // Mennyiség számítása - mindig a megfelelő mennyiséget használjuk
+                $quantity = 0;
+                
+                // Ha van dispatched_quantity és nagyobb mint 0, akkor azt használjuk
+                if ($detail->dispatched_quantity > 0) {
+                    $quantity = $detail->dispatched_quantity;
+                } 
+                // Egyébként a quantity-t használjuk
+                else {
+                    $quantity = $detail->quantity;
+                }
+                
+                // Csak akkor adjuk hozzá, ha a mennyiség nagyobb mint 0
+                if ($quantity > 0) {
+                    if (!isset($productsSummary[$productId])) {
+                        $productsSummary[$productId] = [
+                            'name' => $productName,
+                            'accounting_code' => $accountingCode,
+                            'total_quantity' => 0
+                        ];
+                    }
+                    
+                    $productsSummary[$productId]['total_quantity'] += $quantity;
+                }
+            }
+        }
+
+        // Rendezés név szerint - átalakítjuk indexelt array-vé
+        $productsSummary = array_values($productsSummary);
+        usort($productsSummary, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        // Mentjük az eredeti nyelvet
+        $originalLocale = App::getLocale();
+        
+        // Beállítjuk a PDF nyelvét
+        App::setLocale($language);
+
+        $pdf = Pdf::loadView('pdf.order_products_summary', [
+            'order' => $order,
+            'language' => $language
+        ]);
+        $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
+        $filename = $language === 'ro' ? 'produse_sumar_comanda_' . $orderId . '.pdf' : 'termekek_osszesites_rendeles_' . $orderId . '.pdf';
+        
+        // Visszaállítjuk az eredeti nyelvet
+        App::setLocale($originalLocale);
+        
+        return response()->streamDownload(function () use ($pdf) {
+            echo $pdf->output();
+        }, $filename);
+    }
+
     public function getStores()
     {
         return Store::orderBy('name')->get();
