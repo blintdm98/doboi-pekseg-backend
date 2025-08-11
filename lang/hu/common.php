@@ -1,0 +1,20 @@
+<?php
+return [
+    'order' => 'Rendelés',
+    'order_number' => 'Rendelés száma',
+    'store_name' => 'Üzlet neve',
+    'store_phone' => 'Üzlet telefonszáma',
+    'customer_name' => 'Rendelő neve',
+    'status' => 'Státusz',
+    'comment' => 'Megjegyzés',
+    'product' => 'Termék',
+    'quantity' => 'Mennyiség',
+    'unit_price' => 'Egységár',
+    'price' => 'Ár',
+    'price_with_tva' => 'TVA+Ár',
+    'pieces' => 'db',
+    'total' => 'Összesen',
+    'date' => 'Dátum',
+    'currency' => 'lej',
+    'document_generated' => 'Dokumentum generálva',
+];

@@ -372,6 +372,10 @@ class OrderList extends Component
                 return;
             }
         }
+        
+        $originalLocale = App::getLocale();
+        
+        App::setLocale($language);
 
         // Több rendelés PDF generálása
         $pdf = Pdf::loadView('pdf.orders_bulk', [
@@ -380,6 +384,9 @@ class OrderList extends Component
         ]);
         $pdf->getDomPDF()->set_option('defaultFont', 'DejaVu Sans');
         $filename = $language === 'ro' ? 'comenzi.pdf' : 'rendelesek.pdf';
+        
+        // Visszaállítjuk az eredeti nyelvet
+        App::setLocale($originalLocale);
         
         return response()->streamDownload(function () use ($pdf) {
             echo $pdf->output();

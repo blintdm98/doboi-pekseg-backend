@@ -63,4 +63,13 @@ return [
     'confirm' => 'Megerősít',
     'error' => 'Hibás visszaküldés',
     'accounting_code' => 'Könyvelési kód',
+    'order_number' => 'Rendelés száma',
+    'store_name' => 'Üzlet neve',
+    'store_phone' => 'Üzlet telefonszáma',
+    'customer_name' => 'Rendelő neve',
+    'quantity' => 'Mennyiség',
+    'unit_price' => 'Egységár',
+    'price_with_tva' => 'TVA+Ár',
+    'pieces' => 'db',
+    'document_generated' => 'Dokumentum generálva',
 ];
