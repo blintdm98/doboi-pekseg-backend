@@ -2,7 +2,7 @@
 @use(App\Helpers\GeneralHelper)
 <div>
     <div class="mb-8 flex justify-between">
-        <h2 class="text-gray-800 dark:text-gray-200">{{ __('common.orders') }}</h2>
+        <h2 class="text-gray-800 dark:text-gray-200">{{ __('menu.orders') }}</h2>
     </div>
 
     <div class="space-y-4" x-data="{ showFilters: window.innerWidth >= 768 }" x-init="window.addEventListener('resize', () => { showFilters = window.innerWidth >= 768 })">
