@@ -276,4 +276,57 @@
             </div>
         </x-slot>
     </x-modal-card>
+
+    {{-- Megerősítő popup a hibás visszaküldéshez --}}
+    <x-modal-card blur="md" wire:model="confirmationModal">
+        <div class="space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="flex-shrink-0">
+                    <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                        <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                        </svg>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                        Hibás visszaküldés megerősítése
+                    </h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">
+                        Biztosan hibásnak jelöli ezt a visszaküldést?
+                    </p>
+                </div>
+            </div>
+
+            @if($orderToConfirm)
+            <div class="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    <strong>Rendelés #{{ $orderToConfirm->id }}</strong><br>
+                    <span class="text-gray-500">Üzlet: {{ $orderToConfirm->store->name ?? 'N/A' }}</span><br>
+                    <span class="text-gray-500">Rendelő: {{ $orderToConfirm->user->name ?? 'N/A' }}</span>
+                </p>
+            </div>
+            @endif
+
+            <p class="text-sm text-gray-600 dark:text-gray-400">
+                Ez a művelet visszaállítja a rendelést "Függőben" státuszra, és újra módosíthatóvá teszi.
+            </p>
+        </div>
+
+        <x-slot name="footer">
+            <div class="flex gap-2 justify-end">
+                <x-button
+                    flat
+                    label="Mégse"
+                    wire:click="cancelMarkAsPending"
+                    class="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-gray-100 hover:bg-gray-300 dark:hover:bg-gray-600"
+                />
+                <x-button
+                    negative
+                    label="Megerősítem, hibás visszaküldés"
+                    wire:click="confirmMarkAsPending"
+                />
+            </div>
+        </x-slot>
+    </x-modal-card>
 </div>

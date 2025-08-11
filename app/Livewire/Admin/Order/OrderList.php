@@ -18,6 +18,8 @@ class OrderList extends Component
     use WithPagination, WireUiActions;
 
     public $orderModal = false;
+    public $confirmationModal = false;
+    public $orderToConfirm = null;
 
     public $selectedOrder;
     public $orderDetails = [];
@@ -205,9 +207,22 @@ class OrderList extends Component
             return;
         }
 
-        // Visszaküldött rendelés átállítása függőben státuszra
-        $order->update(['status' => OrderStatuses::PENDING->value]);
+        // Megnyitjuk a megerősítő popup-ot
+        $this->orderToConfirm = $order;
+        $this->confirmationModal = true;
+    }
 
+    public function confirmMarkAsPending()
+    {
+        if (!$this->orderToConfirm) {
+            return;
+        }
+
+        // Visszaküldött rendelés átállítása függőben státuszra
+        $this->orderToConfirm->update(['status' => OrderStatuses::PENDING->value]);
+
+        $this->confirmationModal = false;
+        $this->orderToConfirm = null;
         $this->orderModal = false;
         $this->selectedOrder = null;
         $this->orderDetails = [];
@@ -216,6 +231,12 @@ class OrderList extends Component
             'title' => 'Rendelés átállítva függőben státuszra',
             'icon' => 'success',
         ]);
+    }
+
+    public function cancelMarkAsPending()
+    {
+        $this->confirmationModal = false;
+        $this->orderToConfirm = null;
     }
 
     public function confirmReturn($orderId)
