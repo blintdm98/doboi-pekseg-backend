@@ -1,11 +1,11 @@
 @use(\App\Enums\OrderStatuses)
 @use(App\Helpers\GeneralHelper)
 <!DOCTYPE html>
-<html>
+<html lang="{{ $language ?? 'hu' }}">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <title>Rendelés #{{ $order->id }}</title>
+    <title>{{ ($language ?? 'hu') === 'ro' ? 'Comandă' : 'Rendelés' }} #{{ $order->id }}</title>
     <style>
         body {
             font-family: DejaVu Sans, Arial, sans-serif;
@@ -70,7 +70,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>Rendelés #{{ $order->id }}</h1>
+        <h1>{{ ($language ?? 'hu') === 'ro' ? 'Comandă' : 'Rendelés' }} #{{ $order->id }}</h1>
         <p style="text-align: center; margin-top: 10px; font-size: 14px; color: #666;">
             TVA: {{ config('app.tva_percentage') }}%
         </p>
@@ -85,27 +85,27 @@
     <div class="order-info">
         <table>
             <tr>
-                <td>Rendelés száma:</td>
+                <td>{{ ($language ?? 'hu') === 'ro' ? 'Numărul comenzii:' : 'Rendelés száma:' }}</td>
                 <td>{{ $order->id }}</td>
             </tr>
             <tr>
-                <td>Üzlet neve:</td>
+                <td>{{ ($language ?? 'hu') === 'ro' ? 'Numele magazinului:' : 'Üzlet neve:' }}</td>
                 <td>{{ $order->store->name ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <td>Üzlet telefonszáma:</td>
+                <td>{{ ($language ?? 'hu') === 'ro' ? 'Telefon magazinului:' : 'Üzlet telefonszáma:' }}</td>
                 <td>{{ $order->store->phone ?? '-' }}</td>
             </tr>
             <tr>
-                <td>Rendelő neve:</td>
+                <td>{{ ($language ?? 'hu') === 'ro' ? 'Numele clientului:' : 'Rendelő neve:' }}</td>
                 <td>{{ $order->user->name ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <td>Dátum:</td>
+                <td>{{ ($language ?? 'hu') === 'ro' ? 'Data:' : 'Dátum:' }}</td>
                 <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
             </tr>
             <tr>
-                <td>Státusz:</td>
+                <td>{{ ($language ?? 'hu') === 'ro' ? 'Status:' : 'Státusz:' }}</td>
                 <td>
                     @if(OrderStatuses::tryFrom($order->status))
                         {{OrderStatuses::tryFrom($order->status)->label()}}
@@ -116,7 +116,7 @@
             </tr>
             @if($order->comment)
             <tr>
-                <td>Megjegyzés:</td>
+                <td>{{ ($language ?? 'hu') === 'ro' ? 'Comentariu:' : 'Megjegyzés:' }}</td>
                 <td>{{ $order->comment }}</td>
             </tr>
             @endif
@@ -126,12 +126,12 @@
     <table class="products-table">
         <thead>
             <tr>
-                <th>Termék</th>
-                <th>Mennyiség</th>
-                <th>Egységár</th>
-                <th>Ár</th>
+                <th>{{ ($language ?? 'hu') === 'ro' ? 'Produs' : 'Termék' }}</th>
+                <th>{{ ($language ?? 'hu') === 'ro' ? 'Cantitate' : 'Mennyiség' }}</th>
+                <th>{{ ($language ?? 'hu') === 'ro' ? 'Preț unitar' : 'Egységár' }}</th>
+                <th>{{ ($language ?? 'hu') === 'ro' ? 'Preț' : 'Ár' }}</th>
                 <th>TVA</th>
-                <th>TVA+Ár</th>
+                <th>{{ ($language ?? 'hu') === 'ro' ? 'TVA+Preț' : 'TVA+Ár' }}</th>
             </tr>
         </thead>
         <tbody>
@@ -145,12 +145,19 @@
                     $totalWithTva = $subtotal + $tvaAmount;
                 @endphp
                 <tr>
-                    <td>{{ $detail->product->name }}</td>
-                    <td>{{ $quantity }} db</td>
+                    <td>
+                        <div>
+                            {{ $detail->product->name }}
+                            @if($detail->product->accounting_code)
+                                <br><span style="font-size: 11px; color: #666;">({{ $detail->product->accounting_code }})</span>
+                            @endif
+                        </div>
+                    </td>
+                    <td>{{ $quantity }} {{ ($language ?? 'hu') === 'ro' ? 'buc' : 'db' }}</td>
                     <td>{{ GeneralHelper::displayPrice($price ,0) }}</td>
                     <td>{{ GeneralHelper::displayPrice($subtotal, 0) }}</td>
-                    <td>{{ number_format($tvaAmount, 0, ',', ' ') }} lej</td>
-                    <td>{{ number_format($totalWithTva, 0, ',', ' ') }} lej</td>
+                    <td>{{ number_format($tvaAmount, 0, ',', ' ') }} {{ ($language ?? 'hu') === 'ro' ? 'lei' : 'lej' }}</td>
+                    <td>{{ number_format($totalWithTva, 0, ',', ' ') }} {{ ($language ?? 'hu') === 'ro' ? 'lei' : 'lej' }}</td>
                 </tr>
                 @endif
             @endforeach
@@ -159,16 +166,16 @@
                 $totalWithTva = $total + $totalTva;
             @endphp
             <tr class="total-row">
-                <td colspan="3" style="text-align: right;"><strong>Összesen:</strong></td>
-                <td><strong>{{ number_format($total, 0, ',', ' ') }} lej</strong></td>
-                <td><strong>{{ number_format($totalTva, 0, ',', ' ') }} lej</strong></td>
-                <td><strong>{{ number_format($totalWithTva, 0, ',', ' ') }} lej</strong></td>
+                <td colspan="3" style="text-align: right;"><strong>{{ ($language ?? 'hu') === 'ro' ? 'Total:' : 'Összesen:' }}</strong></td>
+                <td><strong>{{ number_format($total, 0, ',', ' ') }} {{ ($language ?? 'hu') === 'ro' ? 'lei' : 'lej' }}</strong></td>
+                <td><strong>{{ number_format($totalTva, 0, ',', ' ') }} {{ ($language ?? 'hu') === 'ro' ? 'lei' : 'lej' }}</strong></td>
+                <td><strong>{{ number_format($totalWithTva, 0, ',', ' ') }} {{ ($language ?? 'hu') === 'ro' ? 'lei' : 'lej' }}</strong></td>
             </tr>
         </tbody>
     </table>
 
     <div class="footer">
-        <p>Dokumentum generálva: {{ now()->format('Y-m-d H:i:s') }}</p>
+        <p>{{ ($language ?? 'hu') === 'ro' ? 'Document generat:' : 'Dokumentum generálva:' }} {{ now()->format('Y-m-d H:i:s') }}</td>
     </div>
 </body>
 </html> 
