@@ -1,6 +1,6 @@
 <?php
 return [
-    'dashboard' => 'Vezérlőpult',
+    'dashboard' => 'Dashboard',
     'products'  => 'Termékek',
     'stores'    => 'Üzletek',
     'orders'    => 'Rendelések',
