@@ -75,7 +75,7 @@ return [
     'orders' => 'Rendelések',
     'orders_count' => 'Rendelések száma',
     'orders_total_value' => 'Rendelések összértéke',
-    'products_total_value' => 'Rendelt termékek mennyisége',
+    'products_total_value' => 'Termékek mennyisége',
     'chart_label_orders_count' => 'Rendelések száma',
     'chart_label_orders_total_value' => 'Összérték (lej)',
     'chart_label_products_total_value' => 'Mennyiség (db)',
