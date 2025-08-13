@@ -10,9 +10,6 @@ class MenuViewComposer
 {
     public function compose(View $view)
     {
-        // Explicit módon beállítjuk a magyar nyelvet
-        App::setLocale('hu');
-        
         $navbarItems = [
             'dashboard' => [
                 'name'  => __('menu.dashboard'),

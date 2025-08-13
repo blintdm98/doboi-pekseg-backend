@@ -23,10 +23,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         View::composer(['layouts.sidebar', 'layouts.sidebar-mobile'], MenuViewComposer::class);
-        
-        // Minden oldal betöltésekor magyar nyelvet állítunk be
-        View::composer('*', function ($view) {
-            App::setLocale('hu');
-        });
     }
 }
