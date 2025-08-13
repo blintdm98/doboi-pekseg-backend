@@ -25,4 +25,11 @@ return [
     'total' => 'Total',
     'date' => 'Data',
     'document_generated' => 'Document generat',
+    'orders' => 'Comenzi',
+    'orders_count' => 'Numărul comenzilor',
+    'orders_total_value' => 'Valoarea totală a comenzilor',
+    'products_total_value' => 'Cantitatea totală a produselor comandate',
+    'chart_label_orders_count' => 'Numărul comenzilor',
+    'chart_label_orders_total_value' => 'Valoarea totală (lei)',
+    'chart_label_products_total_value' => 'Cantitatea (buc)',
 ]; 

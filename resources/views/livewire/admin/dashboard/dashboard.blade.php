@@ -16,6 +16,17 @@
         </div>
         <!-- Szűrők: csak ha showFilters -->
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:gap-4" x-show="showFilters" x-transition>
+            <x-select
+                label="Diagram típusa"
+                placeholder="Válassz diagram típust"
+                wire:model.live="chartTypeFilter"
+                class="w-full md:flex-1"
+            >
+                <x-select.option value="orders_count">{{ __('common.orders_count') }}</x-select.option>
+                <x-select.option value="orders_total_value">{{ __('common.orders_total_value') }}</x-select.option>
+                <x-select.option value="products_total_value">{{ __('common.products_total_value') }}</x-select.option>
+            </x-select>
+
             <x-datetime-picker
                 label="{{ __('common.date_from') }}"
                 placeholder="{{ __('common.select_date') }}"
@@ -163,23 +174,51 @@
             }
 
             const ctx = canvas.getContext('2d');
+            
+            // Diagram címke meghatározása a típus szerint
+            let chartLabel = '{{ __("common.chart_label_orders_count") }}';
+            let yAxisStepSize = 1;
+            
+            // Diagram típus szerint beállítások
+            if (window.chartTypeFilter === 'orders_total_value') {
+                chartLabel = '{{ __("common.chart_label_orders_total_value") }}';
+                yAxisStepSize = 'auto';
+            } else if (window.chartTypeFilter === 'products_total_value') {
+                chartLabel = '{{ __("common.chart_label_products_total_value") }}';
+                yAxisStepSize = 1;
+            }
+            
             ordersChartInstance = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: chartLabels,
                     datasets: [{
-                        label: 'Rendelések száma',
+                        label: chartLabel,
                         data: chartData,
                         backgroundColor: 'rgba(75, 192, 192, 0.3)',
                         borderColor: 'rgba(75, 192, 192, 1)',
                         borderWidth: 1
                     }]
                 },
-                options: chartOptions
+                options: {
+                    ...chartOptions,
+                    scales: {
+                        ...chartOptions.scales,
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: yAxisStepSize
+                            }
+                        }
+                    }
+                }
             });
         }
 
         document.addEventListener('DOMContentLoaded', function () {
+            // Diagram típus szűrő értékének beállítása a JavaScript számára
+            window.chartTypeFilter = @json($chartTypeFilter);
+            
             renderOrdersChart();
 
             window.addEventListener('resize', function () {
@@ -188,6 +227,8 @@
 
             Livewire.hook('message.processed', () => {
                 console.log('Livewire message processed - re-rendering chart');
+                // Diagram típus szűrő értékének frissítése
+                window.chartTypeFilter = @json($chartTypeFilter);
                 setTimeout(() => {
                     renderOrdersChart();
                 }, 100);

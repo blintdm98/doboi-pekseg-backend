@@ -14,6 +14,7 @@ class Dashboard extends Component
 {
     public $chartLabels = [];
     public $chartData = [];
+    public $chartType = 'orders_count'; // Új property a diagram típusához
 
     // Szűrők
     public $dateStart = null;
@@ -21,6 +22,7 @@ class Dashboard extends Component
     public $storeFilter = '';
     public $userFilter = '';
     public $productFilter = '';
+    public $chartTypeFilter = 'orders_count'; // Új szűrő a diagram típusához
 
     public function mount()
     {
@@ -66,13 +68,73 @@ class Dashboard extends Component
             $chartQuery->whereDate('created_at', '<=', $this->dateEnd);
         }
 
-        $orders = $chartQuery->selectRaw('DATE(created_at) as date, COUNT(*) as count')
-            ->groupBy('date')
-            ->orderBy('date')
-            ->get();
-
-        $this->chartLabels = $orders->pluck('date')->toArray();
-        $this->chartData = $orders->pluck('count')->toArray();
+        // Diagram típus szerint különböző adatok lekérése
+        switch ($this->chartTypeFilter) {
+            case 'orders_count':
+                // Rendelések száma
+                $orders = $chartQuery->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                    ->groupBy('date')
+                    ->orderBy('date')
+                    ->get();
+                
+                $this->chartLabels = $orders->pluck('date')->toArray();
+                $this->chartData = $orders->pluck('count')->toArray();
+                break;
+                
+            case 'orders_total_value':
+                // Rendelések összértéke
+                $orders = $chartQuery->with('orderDetails.product')
+                    ->get()
+                    ->groupBy(function($order) {
+                        return $order->created_at->format('Y-m-d');
+                    })
+                    ->map(function($dayOrders) {
+                        return $dayOrders->sum(function($order) {
+                            return $order->orderDetails->sum(function($detail) {
+                                $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+                                return $quantity * ($detail->product->price ?? 0);
+                            });
+                        });
+                    })
+                    ->sortKeys();
+                
+                $this->chartLabels = $orders->keys()->toArray();
+                $this->chartData = $orders->values()->toArray();
+                break;
+                
+            case 'products_total_value':
+                // Rendelt termékek mennyisége (kiküldött mennyiség alapján)
+                $orders = $chartQuery->with('orderDetails.product')
+                    ->get()
+                    ->groupBy(function($order) {
+                        return $order->created_at->format('Y-m-d');
+                    })
+                    ->map(function($dayOrders) {
+                        return $dayOrders->sum(function($order) {
+                            return $order->orderDetails->sum(function($detail) {
+                                // Kiküldött mennyiség alapján számolunk, ha van, egyébként a rendelt mennyiség
+                                $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+                                return $quantity; // Csak a mennyiség, nem szorozzuk az árral
+                            });
+                        });
+                    })
+                    ->sortKeys();
+                
+                $this->chartLabels = $orders->keys()->toArray();
+                $this->chartData = $orders->values()->toArray();
+                break;
+                
+            default:
+                // Alapértelmezett: rendelések száma
+                $orders = $chartQuery->selectRaw('DATE(created_at) as date, COUNT(*) as count')
+                    ->groupBy('date')
+                    ->orderBy('date')
+                    ->get();
+                
+                $this->chartLabels = $orders->pluck('date')->toArray();
+                $this->chartData = $orders->pluck('count')->toArray();
+                break;
+        }
 
         \Log::info('Chart data updated.', [
             'labels' => $this->chartLabels,
@@ -113,6 +175,12 @@ class Dashboard extends Component
     public function updatedProductFilter($value)
     {
         \Log::info('ProductFilter Updated', ['value' => $value]);
+        $this->loadChartData();
+    }
+
+    public function updatedChartTypeFilter($value)
+    {
+        \Log::info('ChartTypeFilter Updated', ['value' => $value]);
         $this->loadChartData();
     }
 
@@ -159,12 +227,29 @@ class Dashboard extends Component
             }
         }
         
-        // Ha nincsenek szűrők, alapértelmezett cím
-        if (empty($filters)) {
-            return __('common.orders_timeline');
+        // Diagram típus alapján cím
+        $chartTypeTitle = '';
+        switch ($this->chartTypeFilter) {
+            case 'orders_count':
+                $chartTypeTitle = __('common.orders_count');
+                break;
+            case 'orders_total_value':
+                $chartTypeTitle = __('common.orders_total_value');
+                break;
+            case 'products_total_value':
+                $chartTypeTitle = __('common.products_total_value');
+                break;
+            default:
+                $chartTypeTitle = __('common.orders_count');
+                break;
         }
         
-        return implode(', ', $filters) . ' ' . __('common.orders');
+        // Ha nincsenek szűrők, alapértelmezett cím
+        if (empty($filters)) {
+            return $chartTypeTitle;
+        }
+        
+        return implode(', ', $filters) . ' - ' . $chartTypeTitle;
     }
 
     public function render()
