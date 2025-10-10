@@ -11,7 +11,7 @@ class Product extends Model implements HasMedia
 
     use InteractsWithMedia;
 
-    protected $fillable = ['name', 'price', 'accounting_code'];
+    protected $fillable = ['name', 'price', 'tva', 'unit', 'unit_value', 'accounting_code'];
 
     public function orderDetails()
     {

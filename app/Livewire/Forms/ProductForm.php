@@ -19,6 +19,15 @@ class ProductForm extends Form
     #[Validate(['required', 'numeric'])]
     public $price = '';
 
+    #[Validate(['required', 'in:11,21'])]
+    public $tva = 11;
+
+    #[Validate(['required', 'in:kg,db'])]
+    public $unit = 'db';
+
+    #[Validate(['nullable', 'numeric', 'min:0', 'regex:/^\d+(\.\d{1,2})?$/'])]
+    public $unit_value = null;
+
     #[Validate(['nullable'])]
     public $accounting_code = '';
 
@@ -37,6 +46,9 @@ class ProductForm extends Form
         $this->product = $product;
         $this->name = $product->name;
         $this->price = $product->price;
+        $this->tva = $product->tva;
+        $this->unit = $product->unit;
+        $this->unit_value = $product->unit_value;
         $this->accounting_code = $product->accounting_code;
     }
 
@@ -48,12 +60,18 @@ class ProductForm extends Form
             $product = Product::create([
                 'name' => $this->name,
                 'price' => $this->price,
+                'tva' => $this->tva,
+                'unit' => $this->unit,
+                'unit_value' => $this->unit === 'kg' ? $this->unit_value : null,
                 'accounting_code' => $this->accounting_code,
             ]);
         } else {
             $this->product->update([
                 'name' => $this->name,
                 'price' => $this->price,
+                'tva' => $this->tva,
+                'unit' => $this->unit,
+                'unit_value' => $this->unit === 'kg' ? $this->unit_value : null,
                 'accounting_code' => $this->accounting_code,
             ]);
 

@@ -22,6 +22,36 @@
                         placeholder="{{__('common.price')}}"
                         wire:model="form.price"
                     />
+                    <x-select
+                        label="{{__('common.tva')}}"
+                        wire:model="form.tva"
+                    >
+                        <x-select.option value="11">11%</x-select.option>
+                        <x-select.option value="21">21%</x-select.option>
+                    </x-select>
+                    <div class="flex gap-2">
+                        <div class="flex-1">
+                            <x-select
+                                label="{{__('common.unit')}}"
+                                wire:model.live="form.unit"
+                            >
+                                <x-select.option value="db">{{__('common.unit_db')}}</x-select.option>
+                                <x-select.option value="kg">{{__('common.unit_kg')}}</x-select.option>
+                            </x-select>
+                        </div>
+                        @if($form->unit === 'kg')
+                        <div class="flex-1">
+                            <x-input
+                                type="text"
+                                inputmode="decimal"
+                                pattern="^\d+(\.\d{0,2})?$"
+                                label="{{__('common.unit_value')}}"
+                                placeholder="0.00"
+                                wire:model="form.unit_value"
+                            />
+                        </div>
+                        @endif
+                    </div>
                     <x-input
                         label="{{ __('common.accounting_code') }}"
                         placeholder="{{ __('common.accounting_code') }} (opcionális)"
@@ -108,6 +138,8 @@
             <x-slot:head>
                 <x-table.th>{{__('common.product')}}</x-table.th>
                 <x-table.th>{{__('common.price')}}</x-table.th>
+                <x-table.th>{{__('common.tva')}}</x-table.th>
+                <x-table.th>{{__('common.unit')}}</x-table.th>
                 <x-table.th>{{__('common.image')}}</x-table.th>
                 <x-table.th>{{__('common.edit')}}</x-table.th>
             </x-slot:head>
@@ -120,6 +152,13 @@
                         @endif
                     </x-table.td>
                     <x-table.td>{{$product->price}}</x-table.td>
+                    <x-table.td>{{$product->tva}}%</x-table.td>
+                    <x-table.td>
+                        {{$product->unit}}
+                        @if($product->unit === 'kg' && $product->unit_value)
+                            <span class="text-sm text-gray-500">({{$product->unit_value}})</span>
+                        @endif
+                    </x-table.td>
                     <x-table.td class="flex justify-center items-center">
                     @if($product->getFirstMediaUrl('images'))
                         <img src="{{ $product->getFirstMediaUrl('images') }}" class="h-8 w-8 md:h-12 md:w-12 object-cover rounded mx-auto" />
