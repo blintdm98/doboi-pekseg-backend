@@ -8,13 +8,23 @@ use Illuminate\Http\Request;
 
 class StoreController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $stores = Store::all()->map(function ($store) {
+        $user = $request->user();
+        
+        if ($user->role === 'admin') {
+            $stores = Store::all();
+        } else {
+            $stores = $user->stores;
+        }
+        
+        $stores = $stores->map(function ($store) {
             return [
                 'id' => $store->id,
                 'name' => $store->name,
                 'address' => $store->address,
+                'phone' => $store->phone,
+                'contact_person' => $store->contact_person,
                 'logo' => $store->getFirstMediaUrl('logos') ?: null,
             ];
         });

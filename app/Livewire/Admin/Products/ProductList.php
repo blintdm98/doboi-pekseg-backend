@@ -49,6 +49,10 @@ class ProductList extends Component
     {
         $this->form->price = str_replace(',', '.', $this->form->price);
         
+        if ($this->form->unit_value) {
+            $this->form->unit_value = str_replace(',', '.', $this->form->unit_value);
+        }
+        
         $this->form->save();
         $this->productModal = false;
 

@@ -11,4 +11,9 @@ class Store extends Model implements HasMedia
     use InteractsWithMedia;
 
     protected $fillable = ['name', 'address', 'phone', 'contact_person'];
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class, 'user_store');
+    }
 }

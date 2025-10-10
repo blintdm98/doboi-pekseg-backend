@@ -16,7 +16,7 @@ class ProductForm extends Form
     #[Validate(['required'])]
     public $name = '';
 
-    #[Validate(['required', 'numeric'])]
+    #[Validate(['required', 'numeric', 'min:0', 'regex:/^\d+(\.\d{1,2})?$/'])]
     public $price = '';
 
     #[Validate(['required', 'in:11,21'])]

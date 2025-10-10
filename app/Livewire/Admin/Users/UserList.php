@@ -4,6 +4,8 @@ namespace App\Livewire\Admin\Users;
 
 use App\Livewire\Forms\UserForm;
 use App\Models\User;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
@@ -14,23 +16,31 @@ class UserList extends Component
 
     public UserForm $form;
 
-    public $userModal = false;
+    public bool $userModal = false;
 
-    public $search = '';
+    public ?string $search = null;
+
+    public bool $showStoresModal = false;
+
+    public ?int $storesUserId = null;
+
+    public array $storeSelection = [];
+
+    public bool $selectAllStores = false;
 
     public $roles = [
         'admin' => 'Admin',
         'mobil' => 'Mobil',
     ];
 
-    public function openModal()
+    public function openModal(): void
     {
         $this->form->initForm();
         $this->userModal = true;
         $this->resetErrorBag();
     }
 
-    public function editUser(User $user)
+    public function editUser(User $user): void
     {
         $this->form->setUser($user);
         $this->userModal = true;
@@ -38,7 +48,7 @@ class UserList extends Component
         $this->resetErrorBag();
     }
 
-    public function save()
+    public function save(): void
     {
         $this->form->save();
         $this->userModal = false;
@@ -50,26 +60,26 @@ class UserList extends Component
         $this->resetPage();
     }
 
-    public function getUsers()
+    public function getUsers(): LengthAwarePaginator
     {
         return User::query()
-            ->when($this->search, function ($query) {
-                $query->where('name', 'like', '%' . $this->search . '%')
-                      ->orWhere('phone', 'like', '%' . $this->search . '%')
-                      ->orWhere('email', 'like', '%' . $this->search . '%');
+            ->when($this->search, function ($query): void {
+                $query->where('name', 'like', '%'.$this->search.'%')
+                    ->orWhere('phone', 'like', '%'.$this->search.'%')
+                    ->orWhere('email', 'like', '%'.$this->search.'%');
             })
             ->latest()
             ->paginate(20);
     }
 
-    public function render()
+    public function render(): View
     {
         return view('livewire.admin.users.user-list', [
             'users' => $this->getUsers(),
         ]);
     }
 
-    public function delete()
+    public function delete(): void
     {
         $this->form->delete();
 
@@ -78,6 +88,101 @@ class UserList extends Component
         $this->notification()->send([
             'icon'  => 'success',
             'title' => __('common.deleted_successfully'),
+        ]);
+    }
+
+    public function updated(): void
+    {
+        $this->gotoPage(1);
+    }
+
+    public function openStoresModal(int $userId): void
+    {
+        $user = User::find($userId);
+        if (!$user) {
+            return;
+        }
+
+        $this->storesUserId = $userId;
+
+        $stores = \App\Models\Store::orderBy('name')->get();
+        $userStoreIds = $user->stores()->pluck('stores.id')->toArray();
+
+        $this->storeSelection = $stores->map(function ($store) use ($userStoreIds) {
+            return [
+                'id'              => $store->id,
+                'name'            => $store->name,
+                'address'         => $store->address,
+                'phone'           => $store->phone,
+                'contact_person'  => $store->contact_person,
+                'checked'         => in_array($store->id, $userStoreIds),
+            ];
+        })->toArray();
+
+        $this->selectAllStores = count($userStoreIds) === count($stores) && count($stores) > 0;
+        $this->showStoresModal = true;
+    }
+
+    public function updatedSelectAllStores($value): void
+    {
+        foreach ($this->storeSelection as $idx => $store) {
+            $this->storeSelection[$idx]['checked'] = $value;
+        }
+    }
+
+    public function updatedStoreSelection(): void
+    {
+        $allChecked = true;
+        foreach ($this->storeSelection as $store) {
+            if (empty($store['checked'])) {
+                $allChecked = false;
+                break;
+            }
+        }
+        $this->selectAllStores = $allChecked;
+    }
+
+    public function saveStores(): void
+    {
+        $userId = $this->storesUserId ?? 0;
+        if ($userId === 0) {
+            $this->showStoresModal = false;
+
+            return;
+        }
+
+        try {
+            $user = User::find($userId);
+            if (!$user) {
+                $this->showStoresModal = false;
+
+                return;
+            }
+
+            $selectedStoreIds = collect($this->storeSelection)
+                ->filter(fn ($store): bool => !empty($store['checked']))
+                ->pluck('id')
+                ->toArray();
+
+            $user->stores()->sync($selectedStoreIds);
+        } catch (\Throwable) {
+            $this->showStoresModal = false;
+            $this->notification()->send([
+                'icon'  => 'error',
+                'title' => __('common.save-failed'),
+            ]);
+
+            return;
+        }
+
+        $this->showStoresModal = false;
+        $this->storesUserId = null;
+        $this->storeSelection = [];
+        $this->selectAllStores = false;
+
+        $this->notification()->send([
+            'icon'  => 'success',
+            'title' => __('common.saved_successfully'),
         ]);
     }
 }

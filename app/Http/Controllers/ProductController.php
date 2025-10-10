@@ -14,7 +14,11 @@ class ProductController extends Controller
             return [
                 'id' => $product->id,
                 'name' => $product->name,
-                'price' => $product->price,
+                'price' => number_format((float)$product->price, 2, '.', ''),
+                'tva' => $product->tva,
+                'unit' => $product->unit,
+                'unit_value' => $product->unit_value ? number_format((float)$product->unit_value, 2, '.', '') : null,
+                'accounting_code' => $product->accounting_code,
                 'image' => $product->getFirstMediaUrl('images') ?: null,
             ];
         });
@@ -24,7 +28,16 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        $product = Product::create($request->all());
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',
+            'tva' => 'nullable|in:11,21',
+            'unit' => 'nullable|in:kg,db',
+            'unit_value' => 'nullable|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',
+            'accounting_code' => 'nullable|string|max:255',
+        ]);
+
+        $product = Product::create($validated);
         return response()->json($product, 201);
     }
 
@@ -38,7 +51,16 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product)
     {
-        $product->update($request->only(['name', 'price']));
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',
+            'tva' => 'nullable|in:11,21',
+            'unit' => 'nullable|in:kg,db',
+            'unit_value' => 'nullable|numeric|min:0|regex:/^\d+(\.\d{1,2})?$/',
+            'accounting_code' => 'nullable|string|max:255',
+        ]);
+
+        $product->update($validated);
         return response()->json($product);
     }
 }

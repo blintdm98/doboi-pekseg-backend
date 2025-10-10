@@ -44,7 +44,7 @@
                             <x-input
                                 type="text"
                                 inputmode="decimal"
-                                pattern="^\d+(\.\d{0,2})?$"
+                                pattern="^\d+([.,]\d{0,2})?$"
                                 label="{{__('common.unit_value')}}"
                                 placeholder="0.00"
                                 wire:model="form.unit_value"

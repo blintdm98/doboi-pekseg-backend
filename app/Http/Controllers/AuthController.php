@@ -22,6 +22,12 @@ class AuthController extends Controller
 
         $token = $user->createToken('mobile-token')->plainTextToken;
 
+        if ($user->role === 'admin') {
+            $stores = \App\Models\Store::select('id', 'name', 'address', 'phone', 'contact_person')->get();
+        } else {
+            $stores = $user->stores()->select('stores.id', 'stores.name', 'stores.address', 'stores.phone', 'stores.contact_person')->get();
+        }
+
         return response()->json([
             'user' => [
                 'id' => $user->id,
@@ -32,6 +38,7 @@ class AuthController extends Controller
                 'role' => $user->role,
                 'can_add_store' => $user->can_add_store,
             ],
+            'stores' => $stores,
             'token' => $token,
         ]);
     }
