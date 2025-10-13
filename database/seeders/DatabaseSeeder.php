@@ -3,9 +3,9 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use Illuminate\Database\Seeder;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             [
                 'name'      => 'Dev',
                 'user_name' => 'dev',
+                'role' => 'admin',
+                'can_add_store' => 1,
             ],
             [
                 'email'    => 'dev@leadingsoft.eu',
