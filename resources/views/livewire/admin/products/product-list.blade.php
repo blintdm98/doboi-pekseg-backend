@@ -15,9 +15,9 @@
                         wire:model="form.name"
                     />
                     <x-input
-                        type="text"
-                        inputmode="decimal"
-                        pattern="^\d+([.,]\d{0,2})?$"
+                        type="number"
+                        step="0.01"
+                        min="0"
                         label="{{__('common.price')}}"
                         placeholder="{{__('common.price')}}"
                         wire:model="form.price"
@@ -44,8 +44,8 @@
                         <div class="flex-1">
                             <x-input
                                 type="number"
-                                inputmode="decimal"
-                                pattern="^\d+([.,]\d{0,2})?$"
+                                step="0.01"
+                                min="0"
                                 label="{{__('common.unit_value')}}"
                                 placeholder="1.00"
                                 wire:model="form.unit_value"
