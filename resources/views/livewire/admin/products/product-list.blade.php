@@ -25,6 +25,7 @@
                     <x-select
                         label="{{__('common.tva')}}"
                         wire:model="form.tva"
+                        placeholder="11%"
                     >
                         <x-select.option value="11">11%</x-select.option>
                         <x-select.option value="21">21%</x-select.option>
@@ -46,7 +47,7 @@
                                 inputmode="decimal"
                                 pattern="^\d+([.,]\d{0,2})?$"
                                 label="{{__('common.unit_value')}}"
-                                placeholder="0.00"
+                                placeholder="1.00"
                                 wire:model="form.unit_value"
                             />
                         </div>

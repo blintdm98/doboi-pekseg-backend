@@ -36,7 +36,15 @@ class ProductForm extends Form
 
     public function initForm()
     {
-        $this->reset();
+        $this->product = null;
+        $this->pendingImageDelete = false;
+        $this->name = '';
+        $this->price = '';
+        $this->tva = 11;
+        $this->unit = 'db';
+        $this->unit_value = null;
+        $this->accounting_code = '';
+        $this->image = null;
         $this->resetErrorBag();
     }
 
@@ -62,7 +70,7 @@ class ProductForm extends Form
                 'price' => $this->price,
                 'tva' => $this->tva,
                 'unit' => $this->unit,
-                'unit_value' => $this->unit === 'kg' ? $this->unit_value : null,
+                'unit_value' => $this->unit === 'kg' ? ($this->unit_value ?: '1.00') : null,
                 'accounting_code' => $this->accounting_code,
             ]);
         } else {
@@ -71,7 +79,7 @@ class ProductForm extends Form
                 'price' => $this->price,
                 'tva' => $this->tva,
                 'unit' => $this->unit,
-                'unit_value' => $this->unit === 'kg' ? $this->unit_value : null,
+                'unit_value' => $this->unit === 'kg' ? ($this->unit_value ?: '1.00') : null,
                 'accounting_code' => $this->accounting_code,
             ]);
 
@@ -95,6 +103,15 @@ class ProductForm extends Form
     public function updatedImage()
     {
         $this->pendingImageDelete = false;
+    }
+
+    public function updatedUnit($value)
+    {
+        if ($value === 'kg') {
+            $this->unit_value = '1.00';
+        } else {
+            $this->unit_value = null;
+        }
     }
 
     public function delete()
