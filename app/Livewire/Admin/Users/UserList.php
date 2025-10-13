@@ -147,33 +147,21 @@ class UserList extends Component
         $userId = $this->storesUserId ?? 0;
         if ($userId === 0) {
             $this->showStoresModal = false;
-
             return;
         }
 
-        try {
-            $user = User::find($userId);
-            if (!$user) {
-                $this->showStoresModal = false;
-
-                return;
-            }
-
-            $selectedStoreIds = collect($this->storeSelection)
-                ->filter(fn ($store): bool => !empty($store['checked']))
-                ->pluck('id')
-                ->toArray();
-
-            $user->stores()->sync($selectedStoreIds);
-        } catch (\Throwable) {
+        $user = User::find($userId);
+        if (!$user) {
             $this->showStoresModal = false;
-            $this->notification()->send([
-                'icon'  => 'error',
-                'title' => __('common.save-failed'),
-            ]);
-
             return;
         }
+
+        $selectedStoreIds = collect($this->storeSelection)
+            ->filter(fn ($store): bool => !empty($store['checked']))
+            ->pluck('id')
+            ->toArray();
+
+        $user->stores()->sync($selectedStoreIds);
 
         $this->showStoresModal = false;
         $this->storesUserId = null;

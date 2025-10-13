@@ -43,7 +43,7 @@
                         @if($form->unit === 'kg')
                         <div class="flex-1">
                             <x-input
-                                type="text"
+                                type="number"
                                 inputmode="decimal"
                                 pattern="^\d+([.,]\d{0,2})?$"
                                 label="{{__('common.unit_value')}}"
