@@ -38,8 +38,22 @@
         <tbody>
         @foreach($orders as $order)
             @php
-                $total = $order->orderDetails->sum(function($detail) { return ($detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity) * ($detail->product->price ?? 0); });
-                $tva = $total * 0.19;
+                $total = 0;
+                $tva = 0;
+                
+                foreach($order->orderDetails as $detail) {
+                    if($detail->product) {
+                        $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+                        $price = $detail->price ?? $detail->product->price;
+                        $tvaRate = $detail->tva ?? $detail->product->tva ?? 11;
+                        $subtotal = $quantity * $price;
+                        $tvaAmount = $subtotal * ($tvaRate / 100);
+                        
+                        $total += $subtotal;
+                        $tva += $tvaAmount;
+                    }
+                }
+                
                 $totalWithTva = $total + $tva;
                 $sumTotal += $total;
                 $sumTva += $tva;

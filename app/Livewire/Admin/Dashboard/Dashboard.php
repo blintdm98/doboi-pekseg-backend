@@ -92,7 +92,8 @@ class Dashboard extends Component
                         return $dayOrders->sum(function($order) {
                             return $order->orderDetails->sum(function($detail) {
                                 $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
-                                return $quantity * ($detail->product->price ?? 0);
+                                $price = $detail->price ?? $detail->product->price ?? 0;
+                                return $quantity * $price;
                             });
                         });
                     })

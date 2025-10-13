@@ -94,7 +94,7 @@ return [
     |
     */
 
-    'tva_percentage' => env('TVA_PERCENTAGE', 19),
+    'tva_percentage' => env('TVA_PERCENTAGE', 11),
 
     /*
     |--------------------------------------------------------------------------

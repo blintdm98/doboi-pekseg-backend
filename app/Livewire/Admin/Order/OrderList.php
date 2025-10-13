@@ -43,7 +43,8 @@ class OrderList extends Component
 
         return $this->selectedOrder->orderDetails->sum(function ($detail) {
             $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
-            return $quantity * ($detail->product->price ?? 0);
+            $price = $detail->price ?? $detail->product->price ?? 0;
+            return $quantity * $price;
         });
     }
 
@@ -292,6 +293,8 @@ class OrderList extends Component
             'product_id' => $product->id,
             'quantity' => $this->newProductQuantity,
             'dispatched_quantity' => $this->newProductQuantity,
+            'price' => $product->price,
+            'tva' => $product->tva ?? 11,
         ]);
 
         $this->orderDetails[] = [
