@@ -30,7 +30,7 @@ class ProductList extends Component
             });
         })
         ->latest()
-        ->paginate(20);
+        ->paginate(100);
     }
 
     public function openModal()
