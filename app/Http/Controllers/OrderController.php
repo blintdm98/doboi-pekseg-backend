@@ -35,15 +35,27 @@ class OrderController extends Controller
                     'comment' => $order->comment,
                     'total' => $order->orderDetails->sum(function ($detail) {
                         $price = $detail->price ?? $detail->product->price ?? 0;
-                        return $detail->quantity * $price;
+                        $baseQuantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+                        $unitValue = $detail->unit_value ?? ($detail->product && $detail->product->unit === 'kg' ? ($detail->product->unit_value ?? 1) : 1);
+                        $effectiveMultiplier = ($detail->product && $detail->product->unit === 'kg')
+                            ? ($unitValue > 0 ? ($baseQuantity / $unitValue) : 0)
+                            : $baseQuantity;
+
+                        return $effectiveMultiplier * $price;
                     }),
                     'details' => $order->orderDetails->map(function ($detail) {
                         $price = $detail->price ?? $detail->product->price ?? 0;
+                        $baseQuantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
+                        $unitValue = $detail->unit_value ?? ($detail->product && $detail->product->unit === 'kg' ? ($detail->product->unit_value ?? 1) : 1);
+                        $effectiveMultiplier = ($detail->product && $detail->product->unit === 'kg')
+                            ? ($unitValue > 0 ? ($baseQuantity / $unitValue) : 0)
+                            : $baseQuantity;
+
                         return [
                             'product_name' => $detail->product->name ?? 'N/A',
                             'quantity' => $detail->quantity,
                             'dispatched_quantity' => $detail->dispatched_quantity,
-                            'subtotal' => $detail->quantity * $price,
+                            'subtotal' => $effectiveMultiplier * $price,
                         ];
                     }),
                 ];
@@ -95,6 +107,7 @@ class OrderController extends Controller
                 'dispatched_quantity' => 0,
                 'price' => $product->price,
                 'tva' => $product->tva ?? 11,
+                'unit_value' => $product->unit === 'kg' ? ($product->unit_value ?? 1) : 1,
             ]);
         }
 

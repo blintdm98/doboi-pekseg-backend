@@ -84,4 +84,5 @@ return [
     'chart_label_orders_count' => 'Number of orders',
     'chart_label_orders_total_value' => 'Total value (lei)',
     'chart_label_products_total_value' => 'Quantity (pcs)',
+    'add_product' => 'Add product',
 ];

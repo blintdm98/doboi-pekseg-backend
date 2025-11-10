@@ -93,7 +93,11 @@ class Dashboard extends Component
                             return $order->orderDetails->sum(function($detail) {
                                 $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
                                 $price = $detail->price ?? $detail->product->price ?? 0;
-                                return $quantity * $price;
+                                $unitValue = $detail->unit_value ?? ($detail->product && $detail->product->unit === 'kg' ? ($detail->product->unit_value ?? 1) : 1);
+                                $effectiveMultiplier = ($detail->product && $detail->product->unit === 'kg')
+                                    ? ($unitValue > 0 ? ($quantity / $unitValue) : 0)
+                                    : $quantity;
+                                return $effectiveMultiplier * $price;
                             });
                         });
                     })

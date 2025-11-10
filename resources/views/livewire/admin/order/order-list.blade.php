@@ -96,7 +96,13 @@
                         {{
                             $order->orderDetails->sum(function($detail) {
                                 $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
-                                return $quantity * ($detail->product->price ?? 0);
+                                $price = $detail->price ?? $detail->product->price ?? 0;
+                                $unitValue = $detail->unit_value ?? ($detail->product && $detail->product->unit === 'kg' ? ($detail->product->unit_value ?? 1) : 1);
+                                $effectiveMultiplier = ($detail->product && $detail->product->unit === 'kg')
+                                    ? ($unitValue > 0 ? ($quantity / $unitValue) : 0)
+                                    : $quantity;
+
+                                return $effectiveMultiplier * $price;
                             })
                         }} lej
                     </x-table.td>
@@ -169,10 +175,12 @@
                     </div>
                     @foreach($orderDetails as $index => $detail)
                         <div class="flex justify-between items-center gap-4">
-                            <span>{{ $detail['product_name'] }} – {{ $detail['quantity'] }} db</span>
+                            <span>{{ $detail['product_name'] }} – {{ $detail['quantity'] }} {{ $detail['quantity_unit_label'] ?? __('common.unit_db') }}</span>
                             <div class="w-28">
                                 <x-input
                                     type="number"
+                                    step="{{ ($detail['unit'] ?? 'db') === 'kg' ? '0.01' : '1' }}"
+                                    min="0"
                                     wire:model.live="orderDetails.{{ $index }}.dispatched_quantity"
                                     :disabled="$selectedOrder && ($selectedOrder->status === OrderStatuses::COMPLETED->value || $selectedOrder->status === OrderStatuses::CANCELED->value || $selectedOrder->status === OrderStatuses::RETURNED->value)"
                                 />
@@ -187,13 +195,13 @@
             @if (!$showAddProduct)
                 <x-button
                     primary
-                    label="Termék hozzáadása"
+                    label="{{ __('common.add_product') }}"
                     wire:click="$set('showAddProduct', true)"
                 />
             @else
                 <div class="flex gap-2 items-end">
                     <x-select
-                        label="Termék"
+                        label="{{ __('common.product') }}"
                         wire:model="newProductId"
                         placeholder="Válassz terméket"
                         class="w-full"
@@ -206,8 +214,8 @@
 
                     <x-input
                         type="number"
-                        label="Darab"
-                        wire:model="newProductQuantity"
+                        step="{{ $newProductUnit === 'kg' ? '0.01' : '1' }}"
+                        wire:model.live="newProductQuantity"
                         min="0"
                         class="w-24"
                     />

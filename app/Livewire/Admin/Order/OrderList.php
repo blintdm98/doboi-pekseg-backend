@@ -31,6 +31,7 @@ class OrderList extends Component
     public $dateEnd = null;
     public $newProductId = null;
     public $newProductQuantity = 1;
+    public $newProductUnit = 'db';
     public bool $showAddProduct = false;
     public $existingProductIds = [];
     public $availableProducts = [];
@@ -44,7 +45,12 @@ class OrderList extends Component
         return $this->selectedOrder->orderDetails->sum(function ($detail) {
             $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
             $price = $detail->price ?? $detail->product->price ?? 0;
-            return $quantity * $price;
+            $unitValue = $detail->unit_value ?? ($detail->product && $detail->product->unit === 'kg' ? ($detail->product->unit_value ?? 1) : 1);
+            $effectiveMultiplier = ($detail->product && $detail->product->unit === 'kg')
+                ? ($unitValue > 0 ? ($quantity / $unitValue) : 0)
+                : $quantity;
+
+            return $effectiveMultiplier * $price;
         });
     }
 
@@ -84,9 +90,12 @@ class OrderList extends Component
                 'id' => $item->id,
                 'product_name' => $item->product?->name ?? 'Ez a termék már nem elérhető',
                 'quantity' => $item->quantity,
+                'unit' => $item->product?->unit ?? 'db',
+                'quantity_unit_label' => $item->product?->unit === 'kg' ? __('common.unit_kg') : __('common.unit_db'),
                 'dispatched_quantity' => (($order->status === OrderStatuses::PENDING->value || $order->status === OrderStatuses::RETURNED->value) && $item->dispatched_quantity === 0)
                     ? $item->quantity
                     : $item->dispatched_quantity,
+                'dispatched_unit_label' => $item->product?->unit === 'kg' ? __('common.unit_kg') : __('common.unit_db'),
             ])
             ->toArray();
 
@@ -100,6 +109,7 @@ class OrderList extends Component
 
         // Reset the showAddProduct flag when opening a new order
         $this->showAddProduct = false;
+        $this->newProductUnit = 'db';
 
         $this->orderModal = true;
     }
@@ -266,9 +276,34 @@ class OrderList extends Component
         ]);
     }
 
+    public function updatedNewProductId($value)
+    {
+        if (!$value) {
+            $this->newProductUnit = 'db';
+            return;
+        }
+
+        $product = \App\Models\Product::find($value);
+        $this->newProductUnit = $product?->unit ?? 'db';
+    }
+
     public function addProductToOrder()
     {
-        if (!$this->selectedOrder || !$this->newProductId || $this->newProductQuantity < 1) {
+        if (!$this->selectedOrder || !$this->newProductId) {
+            return;
+        }
+
+        $rawQuantity = $this->newProductQuantity;
+
+        if ($rawQuantity === null || $rawQuantity === '') {
+            return;
+        }
+
+        if (is_string($rawQuantity)) {
+            $rawQuantity = str_replace(',', '.', $rawQuantity);
+        }
+
+        if (!is_numeric($rawQuantity)) {
             return;
         }
 
@@ -288,24 +323,43 @@ class OrderList extends Component
             return;
         }
 
+        if ($product->unit === 'kg') {
+            $quantity = round((float) $rawQuantity, 2);
+
+            if ($quantity <= 0) {
+                return;
+            }
+        } else {
+            $quantity = (int) round((float) $rawQuantity);
+
+            if ($quantity < 1) {
+                return;
+            }
+        }
+
         $detail = OrderDetail::create([
             'order_id' => $this->selectedOrder->id,
             'product_id' => $product->id,
-            'quantity' => $this->newProductQuantity,
-            'dispatched_quantity' => $this->newProductQuantity,
+            'quantity' => $quantity,
+            'dispatched_quantity' => $quantity,
             'price' => $product->price,
             'tva' => $product->tva ?? 11,
+            'unit_value' => $product->unit === 'kg' ? ($product->unit_value ?? 1) : 1,
         ]);
 
         $this->orderDetails[] = [
             'id' => $detail->id,
             'product_name' => $product->name,
             'quantity' => $detail->quantity,
+            'unit' => $product->unit ?? 'db',
+            'quantity_unit_label' => $product->unit === 'kg' ? __('common.unit_kg') : __('common.unit_db'),
             'dispatched_quantity' => $detail->dispatched_quantity,
+            'dispatched_unit_label' => $product->unit === 'kg' ? __('common.unit_kg') : __('common.unit_db'),
         ];
 
         $this->newProductId = null;
         $this->newProductQuantity = 1;
+        $this->newProductUnit = 'db';
 
         $this->notification()->send([
             'title' => 'Termék hozzáadva a rendeléshez',
@@ -457,7 +511,10 @@ class OrderList extends Component
                             $productsSummary[$productId] = [
                                 'name' => $productName,
                                 'accounting_code' => $accountingCode,
-                                'total_quantity' => 0
+                                'total_quantity' => 0,
+                                'unit_label' => $detail->product->unit === 'kg'
+                                    ? __('common.unit_kg')
+                                    : __('common.unit_db'),
                             ];
                         }
                         
@@ -560,7 +617,10 @@ class OrderList extends Component
                         $productsSummary[$productId] = [
                             'name' => $productName,
                             'accounting_code' => $accountingCode,
-                            'total_quantity' => 0
+                            'total_quantity' => 0,
+                            'unit_label' => $detail->product->unit === 'kg'
+                                ? __('common.unit_kg')
+                                : __('common.unit_db'),
                         ];
                     }
                     

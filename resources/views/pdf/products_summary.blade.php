@@ -122,7 +122,8 @@
                         @endif
                     </div>
                 </td>
-                <td><strong>{{ number_format($product['total_quantity'], 0, ',', ' ') }} {{ ($language ?? 'hu') === 'ro' ? 'buc' : 'db' }}</strong></td>
+                <td><strong>{{ number_format($product['total_quantity'], 0, ',', ' ') }}
+                    {{ $product['unit_label'] ?? (($language ?? 'hu') === 'ro' ? 'buc' : 'db') }}</strong></td>
             </tr>
             @endforeach
             <tr class="total-row">
@@ -131,7 +132,19 @@
             </tr>
             <tr class="total-row">
                 <td style="text-align: right;"><strong>{{ ($language ?? 'hu') === 'ro' ? 'Total cantitate:' : 'Összes mennyiség:' }}</strong></td>
-                <td><strong>{{ number_format(array_sum(array_column($products, 'total_quantity')), 0, ',', ' ') }} {{ ($language ?? 'hu') === 'ro' ? 'buc' : 'db' }}</strong></td>
+                <td>
+                    @php
+                        $totalByUnit = collect($products)->groupBy('unit_label')->map(function($items) {
+                            return [
+                                'unit' => $items->first()['unit_label'] ?? __('common.unit_db'),
+                                'sum' => $items->sum('total_quantity'),
+                            ];
+                        });
+                    @endphp
+                    @foreach($totalByUnit as $unit => $data)
+                        <strong>{{ number_format($data['sum'], 0, ',', ' ') }} {{ $unit }}</strong>@if(!$loop->last), @endif
+                    @endforeach
+                </td>
             </tr>
         </tbody>
     </table>

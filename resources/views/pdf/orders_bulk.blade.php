@@ -46,7 +46,11 @@
                         $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
                         $price = $detail->price ?? $detail->product->price;
                         $tvaRate = $detail->tva ?? $detail->product->tva ?? 11;
-                        $subtotal = $quantity * $price;
+                        $unitValue = $detail->unit_value ?? ($detail->product && $detail->product->unit === 'kg' ? ($detail->product->unit_value ?? 1) : 1);
+                        $effectiveMultiplier = ($detail->product && $detail->product->unit === 'kg')
+                            ? ($unitValue > 0 ? ($quantity / $unitValue) : 0)
+                            : $quantity;
+                        $subtotal = $effectiveMultiplier * $price;
                         $tvaAmount = $subtotal * ($tvaRate / 100);
                         
                         $total += $subtotal;
