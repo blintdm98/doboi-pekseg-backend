@@ -10,7 +10,17 @@ class Store extends Model implements HasMedia
 {
     use InteractsWithMedia;
 
-    protected $fillable = ['name', 'address', 'phone', 'contact_person'];
+    protected $fillable = [
+        'name',
+        'address',
+        'phone',
+        'contact_person',
+        'sort_order',
+    ];
+
+    protected $casts = [
+        'sort_order' => 'integer',
+    ];
 
     public function users()
     {

@@ -135,8 +135,12 @@
                 class="w-full md:w-1/3"
             />
         </div>
-        <x-table>
+        <x-table :tbody-attributes="[
+            'x-data' => '{}',
+            'x-init' => 'window.livewireInitSortable($el, function (order) { $wire.updateProductOrder(order); });'
+        ]">
             <x-slot:head>
+                <x-table.th class="w-12"></x-table.th>
                 <x-table.th>{{__('common.product')}}</x-table.th>
                 <x-table.th>{{__('common.price')}}</x-table.th>
                 <x-table.th>{{__('common.tva')}}</x-table.th>
@@ -145,7 +149,17 @@
                 <x-table.th>{{__('common.edit')}}</x-table.th>
             </x-slot:head>
             @foreach($products as $product)
-                <x-table.tr>
+                <x-table.tr wire:key="product-{{ $product->id }}" data-sortable-item data-item-id="{{ $product->id }}">
+                    <x-table.td class="w-12">
+                        <button
+                            type="button"
+                            class="drag-handle mx-auto flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 cursor-grab"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6h.01M9 12h.01M9 18h.01M15 6h.01M15 12h.01M15 18h.01" />
+                            </svg>
+                        </button>
+                    </x-table.td>
                     <x-table.td>
                         {{$product->name}}
                         @if($product->accounting_code)
@@ -174,5 +188,4 @@
             @endforeach
         </x-table>
     </div>
-    {{$products->links()}}
 </div>

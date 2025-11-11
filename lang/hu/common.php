@@ -85,4 +85,5 @@ return [
     'chart_label_orders_total_value' => 'Összérték (lej)',
     'chart_label_products_total_value' => 'Mennyiség (db)',
     'add_product' => 'Termék hozzáadása',
+    'order_updated' => 'Sorrend frissítve!',
 ];

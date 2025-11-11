@@ -5,14 +5,12 @@ namespace App\Livewire\Admin\Products;
 use App\Livewire\Forms\ProductForm;
 use App\Models\Product;
 use Livewire\Component;
-use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
-use Illuminate\Support\Facades\Http;
 use Livewire\WithFileUploads; 
 
 class ProductList extends Component
 {
-    use WithPagination, WireUiActions, WithFileUploads;
+    use WireUiActions, WithFileUploads;
 
     public ProductForm $form;
     public $productModal = false;
@@ -29,8 +27,9 @@ class ProductList extends Component
                   ->orWhere('price', 'like', '%' . $search . '%');
             });
         })
-        ->latest()
-        ->paginate(100);
+        ->orderBy('sort_order')
+        ->orderByDesc('id')
+        ->get();
     }
 
     public function openModal()
@@ -87,5 +86,18 @@ class ProductList extends Component
             $this->form->product->clearMediaCollection('images');
             $this->form->product->refresh();
         }
+    }
+
+    public function updateProductOrder(array $order): void
+    {
+        foreach ($order as $item) {
+            Product::whereKey($item['value'])
+                ->update(['sort_order' => $item['order']]);
+        }
+
+        $this->notification()->send([
+            'icon'  => 'success',
+            'title' => __('common.order_updated'),
+        ]);
     }
 }

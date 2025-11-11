@@ -72,6 +72,7 @@ class ProductForm extends Form
                 'unit' => $this->unit,
                 'unit_value' => $this->unit === 'kg' ? ($this->unit_value ?: '1.00') : null,
                 'accounting_code' => $this->accounting_code,
+                'sort_order' => $this->getNextSortOrder(),
             ]);
         } else {
             $this->product->update([
@@ -98,6 +99,11 @@ class ProductForm extends Form
         }
 
         $this->initForm();
+    }
+
+    protected function getNextSortOrder(): int
+    {
+        return (int) (Product::max('sort_order') ?? 0) + 1;
     }
 
     public function updatedImage()

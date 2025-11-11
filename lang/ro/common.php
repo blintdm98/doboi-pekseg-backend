@@ -37,4 +37,5 @@ return [
     'chart_label_orders_count' => 'Numărul comenzilor',
     'chart_label_orders_total_value' => 'Valoarea totală (lei)',
     'chart_label_products_total_value' => 'Cantitatea (buc)',
+    'order_updated' => 'Ordinea a fost actualizată!',
 ]; 

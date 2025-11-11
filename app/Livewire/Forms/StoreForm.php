@@ -56,6 +56,7 @@ class StoreForm extends Form
                 'address' => $this->address,
                 'phone' => $this->phone,
                 'contact_person' => $this->contact_person,
+                'sort_order' => $this->getNextSortOrder(),
             ]);
         } else {
             $this->store->update([
@@ -79,6 +80,11 @@ class StoreForm extends Form
         }
 
         $this->initForm();
+    }
+
+    protected function getNextSortOrder(): int
+    {
+        return (int) (Store::max('sort_order') ?? 0) + 1;
     }
 
     public function delete()

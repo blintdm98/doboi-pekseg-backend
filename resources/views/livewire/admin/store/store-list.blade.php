@@ -109,8 +109,12 @@
                 class="w-full md:w-1/3"
             />
         </div>
-        <x-table>
+        <x-table :tbody-attributes="[
+            'x-data' => '{}',
+            'x-init' => 'window.livewireInitSortable($el, function (order) { $wire.updateStoreOrder(order); });'
+        ]">
             <x-slot:head>
+                <x-table.th class="w-12"></x-table.th>
                 <x-table.th>{{__('common.store')}}</x-table.th>
                 <x-table.th>{{__('common.address')}}</x-table.th>
                 <x-table.th>{{ __('common.phone') }}</x-table.th>
@@ -119,7 +123,17 @@
                 <x-table.th>{{__('common.edit')}}</x-table.th>
             </x-slot:head>
             @foreach($stores as $store)
-                <x-table.tr>
+                <x-table.tr wire:key="store-{{ $store->id }}" data-sortable-item data-item-id="{{ $store->id }}">
+                    <x-table.td class="w-12">
+                        <button
+                            type="button"
+                            class="drag-handle mx-auto flex h-8 w-8 items-center justify-center rounded-full text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-300 cursor-grab"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6h.01M9 12h.01M9 18h.01M15 6h.01M15 12h.01M15 18h.01" />
+                            </svg>
+                        </button>
+                    </x-table.td>
                     <x-table.td>{{$store->name}}</x-table.td>
                     <x-table.td>{{$store->address}}</x-table.td>
                     <x-table.td>{{$store->phone}}</x-table.td>
@@ -138,5 +152,4 @@
             @endforeach
         </x-table>
     </div>
-    {{$stores->links()}}
 </div>

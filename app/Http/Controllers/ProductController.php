@@ -10,7 +10,11 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::all()->map(function ($product) {
+        $products = Product::query()
+            ->orderBy('sort_order')
+            ->orderBy('id')
+            ->get()
+            ->map(function ($product) {
             return [
                 'id' => $product->id,
                 'name' => $product->name,
@@ -21,7 +25,7 @@ class ProductController extends Controller
                 'accounting_code' => $product->accounting_code,
                 'image' => $product->getFirstMediaUrl('images') ?: null,
             ];
-        });
+            });
 
         return response()->json($products);
     }

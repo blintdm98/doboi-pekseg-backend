@@ -5,13 +5,12 @@ namespace App\Livewire\Admin\Store;
 use App\Livewire\Forms\StoreForm;
 use App\Models\Store;
 use Livewire\Component;
-use Livewire\WithPagination;
 use WireUi\Traits\WireUiActions;
 use Livewire\WithFileUploads;
 
 class StoreList extends Component
 {
-    use WithPagination, WireUiActions, WithFileUploads;
+    use WireUiActions, WithFileUploads;
 
     public StoreForm $form;
 
@@ -53,8 +52,9 @@ class StoreList extends Component
                         ->orWhere('contact_person', 'like', '%' . $this->search . '%');
                 });
             })
-            ->latest()
-            ->paginate(20);
+            ->orderBy('sort_order')
+            ->orderByDesc('id')
+            ->get();
     }
 
 
@@ -77,8 +77,16 @@ class StoreList extends Component
         ]);
     }
 
-    public function updatedSearch()
+    public function updateStoreOrder(array $order): void
     {
-        $this->resetPage();
+        foreach ($order as $item) {
+            Store::whereKey($item['value'])
+                ->update(['sort_order' => $item['order']]);
+        }
+
+        $this->notification()->send([
+            'icon'  => 'success',
+            'title' => __('common.order_updated'),
+        ]);
     }
 }

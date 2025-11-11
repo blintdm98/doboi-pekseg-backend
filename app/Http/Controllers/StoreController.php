@@ -12,11 +12,15 @@ class StoreController extends Controller
     {
         $user = $request->user();
         
-        if ($user->role === 'admin') {
-            $stores = Store::all();
-        } else {
-            $stores = $user->stores;
-        }
+        $stores = $user->role === 'admin'
+            ? Store::query()
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get()
+            : $user->stores()
+                ->orderBy('sort_order')
+                ->orderBy('id')
+                ->get();
         
         $stores = $stores->map(function ($store) {
             return [
