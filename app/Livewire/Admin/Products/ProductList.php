@@ -3,6 +3,7 @@
 namespace App\Livewire\Admin\Products;
 
 use App\Livewire\Forms\ProductForm;
+use App\Models\Category;
 use App\Models\Product;
 use Livewire\Component;
 use WireUi\Traits\WireUiActions;
@@ -20,7 +21,7 @@ class ProductList extends Component
     {
         $search = $this->search;
 
-        return Product::with('media')
+        return Product::with(['media', 'categories'])
         ->when($search, function ($query) use ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
@@ -63,8 +64,15 @@ class ProductList extends Component
 
     public function render()
     {
+        $categories = Category::orderBy('sort_order')->orderBy('id')->get()
+            ->map(fn($category) => [
+                'value' => $category->id,
+                'label' => $category->name,
+            ])->toArray();
+
         return view('livewire.admin.products.product-list', [
             'products' => $this->getProducts(),
+            'categories' => $categories,
         ]);
     }
 

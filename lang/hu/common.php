@@ -86,4 +86,9 @@ return [
     'chart_label_products_total_value' => 'Mennyiség (db)',
     'add_product' => 'Termék hozzáadása',
     'order_updated' => 'Sorrend frissítve!',
+    'category' => 'Kategória',
+    'categories' => 'Kategóriák',
+    'select_category' => 'Válassz kategóriát',
+    'no_category' => 'Nincs kategória',
+    'drag_handle' => 'Fogd meg a sorrendezéshez',
 ];

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\UserController;
+use App\Livewire\Admin\Categories\CategoryList;
 use App\Livewire\Admin\Order\OrderCreate;
 use App\Livewire\Admin\Order\OrderList;
 use App\Livewire\Admin\Products\ProductList;
@@ -18,6 +19,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/', Dashboard::class)->name('dashboard');
 
     Route::get('/products', ProductList::class)->name('products');
+
+    Route::get('/categories', CategoryList::class)->name('categories');
 
     Route::get('/stores', StoreList::class)->name('stores');
 

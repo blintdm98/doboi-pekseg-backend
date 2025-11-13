@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Forms;
 
+use App\Models\Category;
 use App\Models\Product;
 use Livewire\Attributes\Validate;
 use Livewire\Form;
@@ -34,6 +35,9 @@ class ProductForm extends Form
     #[Validate(['nullable', 'image', 'max:2048'])]
     public $image;
 
+    #[Validate(['nullable', 'array'])]
+    public $category_ids = [];
+
     public function initForm()
     {
         $this->product = null;
@@ -45,6 +49,7 @@ class ProductForm extends Form
         $this->unit_value = null;
         $this->accounting_code = '';
         $this->image = null;
+        $this->category_ids = [];
         $this->resetErrorBag();
     }
 
@@ -58,6 +63,7 @@ class ProductForm extends Form
         $this->unit = $product->unit;
         $this->unit_value = $product->unit_value;
         $this->accounting_code = $product->accounting_code;
+        $this->category_ids = $product->categories->pluck('id')->toArray();
     }
 
     public function save()
@@ -97,6 +103,8 @@ class ProductForm extends Form
                     ->usingFileName($this->image->getClientOriginalName())
                     ->toMediaCollection('images');
         }
+
+        $product->categories()->sync($this->category_ids ?? []);
 
         $this->initForm();
     }

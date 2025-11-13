@@ -58,6 +58,16 @@
                         placeholder="{{ __('common.accounting_code') }} (opcionális)"
                         wire:model="form.accounting_code"
                     />
+                    <x-select
+                        label="{{__('common.category')}}"
+                        placeholder="{{__('common.select_category')}}"
+                        :options="$categories"
+                        option-value="value"
+                        option-label="label"
+                        wire:model="form.category_ids"
+                        multiselect
+                        class="w-full"
+                    />
                     <div class="w-full relative">
                         <label class="block text-sm font-medium text-gray-700 mb-1">{{ __('common.image') }}</label>
 
@@ -142,6 +152,7 @@
             <x-slot:head>
                 <x-table.th class="w-12"></x-table.th>
                 <x-table.th>{{__('common.product')}}</x-table.th>
+                <x-table.th>{{__('common.category')}}</x-table.th>
                 <x-table.th>{{__('common.price')}}</x-table.th>
                 <x-table.th>{{__('common.tva')}}</x-table.th>
                 <x-table.th>{{__('common.unit')}}</x-table.th>
@@ -164,6 +175,13 @@
                         {{$product->name}}
                         @if($product->accounting_code)
                             <span class="text-sm text-gray-500 ml-2">({{$product->accounting_code}})</span>
+                        @endif
+                    </x-table.td>
+                    <x-table.td>
+                        @if($product->categories->isNotEmpty())
+                            {{ $product->categories->pluck('name')->join(', ') }}
+                        @else
+                            <span></span>
                         @endif
                     </x-table.td>
                     <x-table.td>{{$product->price}}</x-table.td>

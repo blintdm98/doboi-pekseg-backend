@@ -86,4 +86,9 @@ return [
     'chart_label_products_total_value' => 'Quantity (pcs)',
     'add_product' => 'Add product',
     'order_updated' => 'Order updated successfully!',
+    'category' => 'Category',
+    'categories' => 'Categories',
+    'select_category' => 'Select category',
+    'no_category' => 'No category',
+    'drag_handle' => 'Drag to reorder',
 ];

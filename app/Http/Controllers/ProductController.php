@@ -11,6 +11,7 @@ class ProductController extends Controller
     public function index()
     {
         $products = Product::query()
+            ->with('categories')
             ->orderBy('sort_order')
             ->orderBy('id')
             ->get()
@@ -24,6 +25,12 @@ class ProductController extends Controller
                 'unit_value' => $product->unit_value ? number_format((float)$product->unit_value, 2, '.', '') : null,
                 'accounting_code' => $product->accounting_code,
                 'image' => $product->getFirstMediaUrl('images') ?: null,
+                'categories' => $product->categories->map(function ($category) {
+                    return [
+                        'id' => $category->id,
+                        'name' => $category->name,
+                    ];
+                }),
             ];
             });
 
