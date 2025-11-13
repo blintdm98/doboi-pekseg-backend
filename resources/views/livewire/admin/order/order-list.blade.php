@@ -93,8 +93,7 @@
                     <x-table.td>{{ $order->id }}</x-table.td>
                     <x-table.td>{{ $order->store->name ?? 'Törölt bolt' }}</x-table.td>
                     <x-table.td>
-                        {{
-                            $order->orderDetails->sum(function($detail) {
+                        {{ number_format($order->orderDetails->sum(function($detail) {
                                 $quantity = $detail->dispatched_quantity > 0 ? $detail->dispatched_quantity : $detail->quantity;
                                 $price = $detail->price ?? $detail->product->price ?? 0;
                                 $unitValue = $detail->unit_value ?? ($detail->product && $detail->product->unit === 'kg' ? ($detail->product->unit_value ?? 1) : 1);
@@ -103,8 +102,7 @@
                                     : $quantity;
 
                                 return $effectiveMultiplier * $price;
-                            })
-                        }} lej
+                            }), 2, '.', '') }} lej
                     </x-table.td>
                     <x-table.td>{{ $order->comment }}</x-table.td>
                     <x-table.td>
@@ -163,7 +161,7 @@
                     </span>
                 </p>
 
-                <p><strong>{{ __('common.total') }}:</strong> {{ $this->total }} lej</p>
+                <p><strong>{{ __('common.total') }}:</strong> {{ number_format($this->total, 2, '.', '') }} lej</p>
                 @if($selectedOrder->comment)
                     <p><strong>{{ __('common.comment') }}:</strong> {{ $selectedOrder->comment }}</p>
                 @endif

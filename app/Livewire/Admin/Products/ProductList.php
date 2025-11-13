@@ -25,7 +25,10 @@ class ProductList extends Component
         ->when($search, function ($query) use ($search) {
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('price', 'like', '%' . $search . '%');
+                  ->orWhere('price', 'like', '%' . $search . '%')
+                  ->orWhereHas('categories', function ($categoryQuery) use ($search) {
+                      $categoryQuery->where('name', 'like', '%' . $search . '%');
+                  });
             });
         })
         ->orderBy('sort_order')

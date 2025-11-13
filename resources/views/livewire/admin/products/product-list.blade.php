@@ -184,7 +184,7 @@
                             <span></span>
                         @endif
                     </x-table.td>
-                    <x-table.td>{{$product->price}}</x-table.td>
+                    <x-table.td>{{ number_format((float)$product->price, 2, '.', '') }}</x-table.td>
                     <x-table.td>{{$product->tva}}%</x-table.td>
                     <x-table.td>
                         {{$product->unit}}
